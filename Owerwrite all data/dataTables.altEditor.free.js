@@ -6,7 +6,7 @@
  * @description Lightweight editor for DataTables
  * @version     1.0
  * @file        dataTables.editor.lite.js
- * @author      kingkode (www.kingkode.com)
+ * @author      kingkode (www.kingkode.com) && KasperOlesen
  * @contact     www.kingkode.com/contact
  * @copyright   Copyright 2016 Kingkode
  *
@@ -27,6 +27,7 @@
   - Input validation.
   - Dublicate data check. 
   - Server communication with AJAX calls.
+  - Refresh button for reloading data from ajax source.
   - Cancel button for undoing unsaved changes.
 
  Reworked:
@@ -579,7 +580,7 @@
           inputDataSet.push( $(this).val() );
         });    
 
-        //Adding the inputs from the modal to JsonArray
+        //Adding the inputs from the modal to rowArray
         for(var i = 0; i < inputDataSet.length; i++){
           rowDataArray[columnIds[i+1].id] = inputDataSet[i];
         }
@@ -813,7 +814,7 @@ var sendJsonData = function(tableObj){
         //Adding the JSON array to the comlete JSON template
         comepleteJsonData.aaData.push(jsonDataArray);
 
-        //JSON call to server
+        //AJAX call to server
         var jqxhr =
         $.ajax({
           url: "php/" + dt.context[0].sTableId + ".php",
