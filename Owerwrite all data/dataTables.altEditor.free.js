@@ -6,7 +6,7 @@
  * @description Lightweight editor for DataTables
  * @version 1.0
  * @file dataTables.editor.lite.js
- * @author kingkode (www.kingkode.com)
+ * @author kingkode (www.kingkode.com) && KasperOlesen
  * @contact www.kingkode.com/contact
  * @copyright Copyright 2016 Kingkode
  * 
@@ -23,8 +23,9 @@
 /*
  * Reworked edition This is a modified version of the altEditor 1.0
  * 
- * New functionality: - Input validation. - Server communication with AJAX
- * calls.
+ * New functionality: - Input validation. - Duplicate data check. - Server
+ * communication with AJAX calls. - Refresh button for reloading data from ajax
+ * source. - Cancel button for undoing unsaved changes.
  * 
  * Reworked: - Modal windows. - table rendering. - Add/Edit/Delete functions.
  */
@@ -167,6 +168,12 @@
           </div>\
           </div>\
           </div>');
+                  $(document).on('click', '#saveButton', function(e) {
+                    sendJsonData(that);
+                  });
+                  $(document).on('click', '#cancelButton', function(e) {
+                    undoChanges(that);
+                  });
 
                   // add Edit Button
                   if (this.s.dt.button('edit:name')) {
@@ -180,10 +187,11 @@
                         });
 
                     $(document).on('click', '#editRowBtn', function(e) {
-                      if (initValidation()) {
+                      if (initValidation(that)) {
                         e.preventDefault();
                         e.stopPropagation();
                         that._editRowData();
+                        $("#cancelButton").prop('disabled', false);
                       }
                     });
 
@@ -205,6 +213,7 @@
                       e.stopPropagation();
                       that._deleteRow();
                       $(this).prop('disabled', true);
+                      $("#cancelButton").prop('disabled', false);
                     });
                   }
 
@@ -216,14 +225,21 @@
                             selected : true
                           }).count();
 
+                          // Deselect any selected row
+                          // Important for match-check
+                          dt.row({
+                            selected : true
+                          }).deselect();
+
                           that._openAddModal();
                         });
 
                     $(document).on('click', '#addRowBtn', function(e) {
-                      if (initValidation()) {
+                      if (initValidation(that)) {
                         e.preventDefault();
                         e.stopPropagation();
                         that._addRowData();
+                        $("#cancelButton").prop('disabled', false);
                       }
                     });
                   }
@@ -240,7 +256,8 @@
                           });
                         });
                   }
-                },
+
+                }, // _setup()
 
                 /**
                  * Emit an event on the DataTable for listeners
@@ -268,21 +285,20 @@
                   var columnDefs = [];
 
                   // Adding column attributes to object.
-                  // Assuming that the first defined column is ID - Therefore
-                  // skipping that
-                  // and starting at index 1, because we dont wanna be able to
-                  // change the ID.
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
-                    columnDefs.push({
-                      title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data,
-                      type : dt.context[0].aoColumns[i].type,
-                      options : dt.context[0].aoColumns[i].options,
-                      msg : dt.context[0].aoColumns[i].errorMsg,
-                      hoverMsg : dt.context[0].aoColumns[i].hoverMsg,
-                      pattern : dt.context[0].aoColumns[i].pattern,
-                      special : dt.context[0].aoColumns[i].special
-                    });
+                  // Please set the ID as readonly.
+                  for (var i in dt.context[0].aoColumns) {
+                    var obj = dt.context[0].aoColumns[i];
+                    columnDefs[i] = {
+                        title : obj.sTitle,
+                        name : obj.data ? obj.data : obj.mData,
+                        type : (obj.type ? obj.type : 'text'),
+                        options : (obj.options ? obj.options : []),
+                        msg : (obj.errorMsg ? obj.errorMsg : ''),
+                        hoverMsg : (obj.hoverMsg ? obj.hoverMsg : ''),
+                        pattern : (obj.pattern ? obj.pattern : '.*'),
+                        special : (obj.special ? obj.special : ''),
+                        unique : (obj.unique ? obj.unique : false)
+                      };
                   }
                   var adata = dt.rows({
                     selected : true
@@ -293,7 +309,8 @@
 
                   data += "<form name='altEditor-form' role='form'>";
 
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for ( var j in columnDefs) {
+
                     data += "<div class='form-group'>"
                     data += "<div class='col-sm-5 col-md-5 col-lg-5 text-right' style='padding-top:4px;'>"
                     data += "<label for='" + columnDefs[j].title + "'>"
@@ -318,6 +335,8 @@
                           + columnDefs[j].special
                           + "' data-errorMsg='"
                           + columnDefs[j].msg
+                          + "' data-unique='"
+                          + columnDefs[j].unique
                           + "' style='overflow:hidden'  class='form-control  form-control-sm' value='"
                           + adata.data()[0][columnDefs[j].name] + "'>";
                       data += "<label id='" + columnDefs[j].name + "label"
@@ -325,9 +344,9 @@
                     }
 
                     // Adding readonly-fields
-                    if (columnDefs[j].type.includes("readonly")) {
+                    if (columnDefs[j].type && columnDefs[j].type.includes("readonly")) {
                       data += "<input type='text' readonly  id='"
-                          + columnDefs[j].title
+                          + columnDefs[j].name
                           + "' name='"
                           + columnDefs[j].title
                           + "' placeholder='"
@@ -337,7 +356,7 @@
                     }
 
                     // Adding select-fields
-                    if (columnDefs[j].type.includes("select")) {
+                    if (columnDefs[j].type && columnDefs[j].type.includes("select")) {
                       var options = "";
                       for (var i = 0; i < columnDefs[j].options.length; i++) {
                         // Assigning the selected value of the <selected> option
@@ -366,8 +385,8 @@
                           function() {
                             $('#altEditor-modal').find('.modal-title').html(
                                 'Edit Record');
-                            $('#altEditor-modal').find('.modal-body')
-                                .html(data);
+                            $('#altEditor-modal').find('.modal-body').html(
+                                '<pre>' + data + '</pre>');
                             $('#altEditor-modal')
                                 .find('.modal-footer')
                                 .html(
@@ -378,54 +397,47 @@
 
                   $('#altEditor-modal').modal('show');
                   $('#altEditor-modal input[0]').focus();
-                },
+                }, // _openEditModal()
 
                 _editRowData : function() {
                   var that = this;
                   var dt = this.s.dt;
 
-                  // Data from table columns
-                  var columnIds = [];
-                  // Data from input-fields
-                  var dataSet = [];
-                  // For JSON
-                  var aaData = [];
-                  var jsonDataArray = {};
-                  // complete JSONString for ajax call
-                  var comepleteJsonData = {};
-
-                  comepleteJsonData.data = aaData;
+                  // Complete new row data
+                  var rowDataArray = {};
 
                   var adata = dt.rows({
                     selected : true
                   });
 
-                  // Getting the IDs and Values of the tablerow
-                  for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    columnIds
-                        .push({
-                          id : dt.context[0].aoColumns[i].id,
-                          dataSet : adata.data()[0][dt.context[0].aoColumns[i].data]
-                        });
-                  }
-
-                  // Adding the ID & value of DT_RowId to the JsonArray
-                  jsonDataArray[columnIds[0].id] = columnIds[0].dataSet;
-
                   // Getting the inputs from the edit-modal
                   $('form[name="altEditor-form"] *').filter(':input').each(
                       function(i) {
-                        dataSet.push($(this).val());
+                        rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-                  // Adding the inputs from the edit-modal to JsonArray
-                  for (var i = 0; i < dataSet.length; i++) {
-                    jsonDataArray[columnIds[i + 1].id] = dataSet[i];
-                  }
-                  comepleteJsonData.data.push(jsonDataArray);
+console.log(rowDataArray);
 
-                  // Calling AJAX with data, tableObject, command.
-                  updateJSON(comepleteJsonData, that, "editRow");
+
+                  //FIXME should send to server here
+
+                  // Displaying the updated row data in the datatable
+                  dt.row({
+                    selected : true
+                  }).data(rowDataArray);
+
+                  // Disabling the modal-edit-confirm button
+                  $("#editRowBtn").prop('disabled', true);
+
+                  // Success message for modal
+                  $('#altEditor-modal .modal-body .alert').remove();
+
+                  var message = '<div class="alert alert-success" role="alert">\
+        <strong>Success!</strong> This record has been updated.\
+        </div>';
+
+                  $('#altEditor-modal .modal-body').append(message);
+                  
                 },
 
                 /**
@@ -439,11 +451,11 @@
                   var columnDefs = [];
 
                   // Adding attribute IDs and values to object
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
-                    columnDefs.push({
+                  for (var i in dt.context[0].aoColumns) {
+                    columnDefs[i] = {
                       title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data
-                    });
+                      name : dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data : dt.context[0].aoColumns[i].mData
+                    };
                   }
                   var adata = dt.rows({
                     selected : true
@@ -453,12 +465,12 @@
                   var data = "";
 
                   data += "<form name='altEditor-form' role='form'>";
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for ( var j in columnDefs) { 
                     data += "<div class='form-group'><label for='"
                         + columnDefs[j].title
                         + "'>"
                         + columnDefs[j].title
-                        + " : </label><input  type='hidden'  id='"
+                        + " :  </label><input  type='hidden'  id='"
                         + columnDefs[j].title
                         + "' name='"
                         + columnDefs[j].title
@@ -477,8 +489,8 @@
                           function() {
                             $('#altEditor-modal').find('.modal-title').html(
                                 'Delete Record');
-                            $('#altEditor-modal').find('.modal-body')
-                                .html(data);
+                            $('#altEditor-modal').find('.modal-body').html(
+                                '<pre>' + data + '</pre>');
                             $('#altEditor-modal')
                                 .find('.modal-footer')
                                 .html(
@@ -495,28 +507,18 @@
                   var that = this;
                   var dt = this.s.dt;
 
-                  // For JSON
-                  var aaData = [];
-                  var jsonDataArray = {};
-                  // complete JSONString for ajax call
-                  var comepleteJsonData = {};
+                  $('#altEditor-modal .modal-body .alert').remove();
 
-                  comepleteJsonData.data = aaData;
+                  var message = '<div class="alert alert-success" role="alert">\
+       <strong>Success!</strong> This record has been deleted.\
+       </div>';
 
-                  var adata = dt.rows({
+                  $('#altEditor-modal .modal-body').append(message);
+
+                  dt.row({
                     selected : true
-                  });
-
-                  // Getting the IDs and Values of the tablerow
-                  for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    jsonDataArray[dt.context[0].aoColumns[i].id] = adata.data()[0][dt.context[0].aoColumns[i].data];
-                  }
-
-                  comepleteJsonData.data.push(jsonDataArray);
-
-                  // Calling AJAX with data, tableObject, command.
-                  updateJSON(comepleteJsonData, that, "deleteRow");
-
+                  }).remove();
+                  dt.draw();
                 },
 
                 /**
@@ -530,23 +532,27 @@
                   var columnDefs = [];
 
                   // Adding column attributes to object.
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
-                    columnDefs.push({
-                      title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data,
-                      type : dt.context[0].aoColumns[i].type,
-                      options : dt.context[0].aoColumns[i].options,
-                      msg : dt.context[0].aoColumns[i].errorMsg,
-                      hoverMsg : dt.context[0].aoColumns[i].hoverMsg,
-                      pattern : dt.context[0].aoColumns[i].pattern,
-                      special : dt.context[0].aoColumns[i].special
-                    });
+                  for (var i in dt.context[0].aoColumns)
+                  {
+                    var obj = dt.context[0].aoColumns[i];
+                    columnDefs[i] = {
+                        title : obj.sTitle,
+                        name : (obj.data ? obj.data : obj.mData),
+                        type : (obj.type ? obj.type : 'text'),
+                        options : (obj.options ? obj.options : []),
+                        msg : (obj.errorMsg ? obj.errorMsg : ''),
+                        hoverMsg : (obj.hoverMsg ? obj.hoverMsg : ''),
+                        pattern : (obj.pattern ? obj.pattern : '.*'),
+                        special : (obj.special ? obj.special : ''),
+                        unique : (obj.unique ? obj.unique : false)
+                    }
                   }
+
 
                   // Building add-form
                   var data = "";
                   data += "<form name='altEditor-form' role='form'>";
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for ( var j in columnDefs) { 
                     data += "<div class='form-group'><div class='col-sm-5 col-md-5 col-lg-5 text-right' style='padding-top:4px;'><label for='"
                         + columnDefs[j].title
                         + "'>"
@@ -571,13 +577,15 @@
                           + columnDefs[j].special
                           + "' data-errorMsg='"
                           + columnDefs[j].msg
+                          + "' data-unique='"
+                          + columnDefs[j].unique
                           + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                       data += "<label id='" + columnDefs[j].name + "label"
                           + "' class='errorLabel'></label>";
                     }
 
                     // Adding readonly-fields
-                    if (columnDefs[j].type.includes("readonly")) {
+                    if (columnDefs[j].type && columnDefs[j].type.includes("readonly")) {
                       data += "<input type='text' readonly  id='"
                           + columnDefs[j].name
                           + "' name='"
@@ -588,7 +596,7 @@
                     }
 
                     // Adding select-fields
-                    if (columnDefs[j].type.includes("select")) {
+                    if (columnDefs[j].type && columnDefs[j].type.includes("select")) {
                       var options = "";
                       for (var i = 0; i < columnDefs[j].options.length; i++) {
                         options += "<option value='" + columnDefs[j].options[i]
@@ -607,8 +615,8 @@
                           function() {
                             $('#altEditor-modal').find('.modal-title').html(
                                 'Add Record');
-                            $('#altEditor-modal').find('.modal-body')
-                                .html(data);
+                            $('#altEditor-modal').find('.modal-body').html(
+                                '<pre>' + data + '</pre>');
                             $('#altEditor-modal')
                                 .find('.modal-footer')
                                 .html(
@@ -623,44 +631,50 @@
                 _addRowData : function() {
                   var that = this;
                   var dt = this.s.dt;
-                  var rowID = dt.rows().data().length;
+
+                  // Finding the biggest numerical ID, incrementing it and
+                  // assigning the new ID to the new row.
+                  var highestID = Math.max.apply(Math, dt.column(0).data()) + 1; // FIXME 0 or 'id'
+                  var rowID = "" + highestID;
                   // Containers with data from table columns
                   var columnIds = [];
                   // Data from input-fields.
                   var inputDataSet = [];
-                  // For JSON
-                  var aaData = [];
-                  var jsonDataArray = {};
-                  // complete JSONString for ajax call
-                  var comepleteJsonData = {};
+                  // Complete new row data
+                  var rowDataArray = {};
 
-                  comepleteJsonData.data = aaData;
-
-                  // Getting the IDs and Values of the tablerow
-                  for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
+                  // Getting the IDs of the tablerow
+                  for ( var i in dt.context[0].aoColumns) {
                     columnIds.push({
                       id : dt.context[0].aoColumns[i].id
                     });
                   }
 
-                  // Adding the ID & value(metadata) of the row to the JsonArray
-                  jsonDataArray[columnIds[0].id] = rowID;
+                  // Adding the ID & value of DT_RowId
+                  rowDataArray[columnIds[0].id] = rowID;
 
                   // Getting the inputs from the modal
                   $('form[name="altEditor-form"] *').filter(':input').each(
                       function(i) {
-
-                        inputDataSet.push($(this).val());
+                        inputDataSet[i] = $(this).val();
                       });
 
-                  // Adding the inputs from the modal to JsonArray
-                  for (var i = 0; i < inputDataSet.length; i++) {
-                    jsonDataArray[columnIds[i + 1].id] = inputDataSet[i];
+                  // Adding the inputs from the modal to rowArray
+                  for (var i in inputDataSet) {
+                    rowDataArray[columnIds[i].id] = inputDataSet[i];
                   }
-                  comepleteJsonData.data.push(jsonDataArray);
 
-                  // Calling AJAX with data, tableObject, command.
-                  updateJSON(comepleteJsonData, that, "addRow");
+                  // Adding the new row to the datatable
+                  dt.row.add(rowDataArray).draw(false);
+
+                  // Success message for modal
+                  $('#altEditor-modal .modal-body .alert').remove();
+
+                  var message = '<div class="alert alert-success" role="alert">\
+           <strong>Success!</strong> This record has been added.\
+         </div>';
+
+                  $('#altEditor-modal .modal-body').append(message);
 
                 },
 
@@ -678,7 +692,7 @@
                       .lastIndexOf("/") + 1);
                   return jsFileDirectory;
                 }
-              });
+              }); // extend altEditor.prototype
 
       /**
        * altEditor version
@@ -749,129 +763,163 @@
     }));
 
 // Input validation for text-fields
-var initValidation = function() {
+var initValidation = function(tableObj) {
+  var dt = tableObj.s.dt;
   var isValid = false;
   var errorcount = 0;
+  var matchcount = 0;
 
-  // Looping through all text fields
-  $('form[name="altEditor-form"] *').filter(':text').each(
+  // Looping through all inputs
+  $('form[name="altEditor-form"] *').filter(':input').each(
       function(i) {
-        var errorLabel = "#" + $(this).attr("id") + "label";
+        // We only want the check text inputs.
+        if ($(this).attr("type") === "text") {
+          var errorLabel = "#" + $(this).attr("id") + "label";
+          var unique = $(this).attr("data-unique");
 
-        // Inputvalidation for port range
-        if ($(this).attr("data-special") === "portRange") {
-          var ports;
-          if ($(this).val().includes(":")) {
-            ports = $(this).val().split(":")
+          // Input validation for port range
+          if ($(this).attr("data-special") === "portRange") {
+            var ports;
+            if ($(this).val().includes(":")) {
+              ports = $(this).val().split(":")
 
-            var num1 = parseInt(ports[0])
-            var num2 = parseInt(ports[1])
+              // If port numbers aren't integers, then the "<" doesnt work
+              // properly
+              var num1 = parseInt(ports[0])
+              var num2 = parseInt(ports[1])
 
-            if (num1 < num2) {
-              if (ports[0].match($(this).attr("pattern"))
-                  && ports[1].match($(this).attr("pattern"))) {
-                $(errorLabel).hide();
-                $(errorLabel).empty();
+              if (num1 < num2) {
+                if (ports[0].match($(this).attr("pattern"))
+                    && ports[1].match($(this).attr("pattern"))) {
+                  $(errorLabel).hide();
+                  $(errorLabel).empty();
+                } else {
+                  $(errorLabel).html($(this).attr("data-errorMsg"));
+                  $(errorLabel).show();
+                  errorcount++
+                }
               } else {
                 $(errorLabel).html($(this).attr("data-errorMsg"));
                 $(errorLabel).show();
                 errorcount++
               }
-            } else {
+
+              // If the port isnt a range
+            } else if (!$(this).val().match($(this).attr("pattern"))) {
               $(errorLabel).html($(this).attr("data-errorMsg"));
               $(errorLabel).show();
               errorcount++
+            } else {
+
+              // If no error
+              $(errorLabel).hide();
+              $(errorLabel).empty();
             }
 
-            // If the port isnt a range
-          } else if (!$(this).val().match($(this).attr("pattern"))) {
+            // All other text-inputs
+          } else if ($(this).attr("data-special") != "portRange"
+              && !$(this).context.checkValidity()) {
             $(errorLabel).html($(this).attr("data-errorMsg"));
             $(errorLabel).show();
-            errorcount++
+            errorcount++;
           } else {
-
-            // If no error
             $(errorLabel).hide();
             $(errorLabel).empty();
           }
 
-          // All other text-inputs
-        } else if ($(this).attr("data-special") != "portRange"
-            && !$(this).context.checkValidity()) {
-          $(errorLabel).html($(this).attr("data-errorMsg"));
-          $(errorLabel).show();
-          errorcount++;
-
-          // If no error
-        } else {
-          $(errorLabel).hide();
-          $(errorLabel).empty();
-
+          // Checking for dublicate data in columns with unique attribute
+          if ($(this).attr("data-unique") === "true") {
+            var input = $(this).val();
+            // Looping through an array with all data from the column
+            $.each(dt.column(i).data(),
+                function(index, value) {
+                  // Skipping data from the selected row
+                  if (index != dt.cell('.selected', 0).data()) {
+                    // If value is not empty and found in column
+                    if (input != ""
+                        && input.toLowerCase() === value.toLowerCase()) {
+                      $(errorLabel).html(
+                          "Error: Duplicate data is not allowed.");
+                      $(errorLabel).show();
+                      matchcount++
+                      return false;
+                    }
+                  }
+                });
+          }
         }
       });
 
-  if (errorcount == 0) {
+  // When no errors in input and no matches are found
+  if (errorcount == 0 && matchcount == 0) {
     isValid = true;
   }
 
   return isValid;
 }
 
-// AJAX function - will reload table if succesfull
-var updateJSON = function(data, tableObj, act) {
-
+var undoChanges = function(tableObj) {
   var dt = tableObj.s.dt;
 
-  var jqxhr = $
-      .ajax({
-        url : "php/" + dt.context[0].sTableId + ".php",
-        type : "POST",
-        cache : false,
-        data : {
-          raw : data,
-          action : act
-        }
-      })
-      .done(
-          function(data) {
-
-            // If data = false, then data is already present
-            // Server doesn't allow duplicate data.
-            if (data === "false") {
-              $('#altEditor-modal .modal-body .alert').remove();
-
-              var message = '<div class="alert alert-danger" role="alert">\
-      <strong>Fail!</strong> Data already exists.\
-      </div>';
-              $('#altEditor-modal .modal-body').append(message);
-            } else {
-              $('#altEditor-modal .modal-body .alert').remove();
-
-              var message = '<div class="alert alert-success" role="alert">\
-      <strong>Success!</strong>\
-      </div>';
-              $('#altEditor-modal .modal-body').append(message);
-
-              // Reload data from server to table
-              dt.ajax.reload();
-
-              // Disabling submit button
-              $("#" + act + "Btn").prop('disabled', true);
-
-            }
-          })
-      .fail(
-          function(error) {
-
-            $('#altEditor-modal .modal-body .alert').remove();
-
-            var message = '<div class="alert alert-danger" role="alert">\
-   <strong>Error!</strong> Reponse code: '
-                + error.status + '\
-   </div>';
-
-            $('#altEditor-modal .modal-body').append(message);
+  // Modal creation
+  $('#altEditor-modal')
+      .on(
+          'show.bs.modal',
+          function() {
+            $('#altEditor-modal').find('.modal-title').html('Cancel changes');
+            $('#altEditor-modal').find('.modal-body').html(
+                'Are you sure you want to undo unsaved changes?');
+            $('#altEditor-modal')
+                .find('.modal-footer')
+                .html(
+                    "<button type='button' class='btn btn-danger' data-dismiss='modal'>No</button>\
+     <button class='btn btn-success' data-dismiss='modal' id='cancelConfirm'>Yes</button>");
           });
 
+  $('#altEditor-modal').modal('show');
+
+  // Reload table from AJAX URL on cancel
+  $(document).on('click', '#cancelConfirm', function(e) {
+    if (dt.ajax.url())
+        dt.ajax.reload();
+    $('#cancelButton').attr('disabled', 'disabled')
+  });
+}
+
+var sendJsonData = function(tableObj) {
+  var dt = tableObj.s.dt;
+
+  // Building JSON template
+  var jsonDataArray = {};
+  var comepleteJsonData = {};
+  comepleteJsonData.aaData = [];
+
+  // Container for response from server
+  var response = document.getElementById("messages");
+
+  // Adding data from each row to JSON array
+  for (var i = 0; i < dt.context[0].aoData.length; i++) {
+    jsonDataArray[i] = dt.row(i).data();
+  }
+  // Adding the JSON array to the comlete JSON template
+  comepleteJsonData.aaData.push(jsonDataArray);
+
+  // AJAX call to server
+  var jqxhr = $.ajax({
+    url : "php/" + dt.context[0].sTableId + ".php",
+    type : "POST",
+    cache : false,
+    data : {
+      raw : comepleteJsonData
+    }
+  }).done(function(data) {
+    response.innerHTML = data;
+    $("#cancelButton").prop('disabled', 'disabled');
+
+  }).fail(function(error) {
+    response.style.color = "red";
+    response.innerHTML = "*Errorcode from server: " + error.status;
+
+  });
 }
 
