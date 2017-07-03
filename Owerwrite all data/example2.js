@@ -55,7 +55,7 @@ $(document).ready(function() {
     title: "Extn."
   },
  {
-    data: "startDate:",
+    data: "startDate",
     title: "Start date"
   },
  {
