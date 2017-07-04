@@ -414,8 +414,6 @@
                         rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-console.log(rowDataArray); //OK for array-based
-
 
                   //FIXME should send to server here
 
@@ -641,8 +639,6 @@ console.log(rowDataArray); //OK for array-based
                       function(i) {
                         rowDataArray[$(this).attr('id')] = $(this).val();
                       });
-
-console.log(rowDataArray);
 
                   // Adding the new row to the datatable
                   dt.row.add(rowDataArray).draw(false);
