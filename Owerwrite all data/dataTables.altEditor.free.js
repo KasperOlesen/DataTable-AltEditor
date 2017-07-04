@@ -248,12 +248,10 @@
                   if (this.s.dt.button('refresh:name')) {
                     this.s.dt.button('refresh:name').action(
                         function(e, dt, node, config) {
-                          $.post('php/dhcp.php', {
-                            'act' : 'get'
-                          }).done(function(res) {
-                            dt.ajax.reload();
-                            console.log("Datatable reloaded.")
-                          });
+							if (dt.ajax && dt.ajax.url()) {
+							  dt.ajax.reload();
+                              console.log("Datatable reloaded.")
+                            }
                         });
                   }
 
