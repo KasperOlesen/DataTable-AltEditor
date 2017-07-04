@@ -416,7 +416,7 @@
                         rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-console.log(rowDataArray);
+console.log(rowDataArray); //OK for array-based
 
 
                   //FIXME should send to server here
@@ -515,6 +515,8 @@ console.log(rowDataArray);
 
                   $('#altEditor-modal .modal-body').append(message);
 
+                  //FIXME should send to server here
+
                   dt.row({
                     selected : true
                   }).remove();
@@ -585,7 +587,7 @@ console.log(rowDataArray);
                     }
 
                     // Adding readonly-fields
-                    if (columnDefs[j].type && columnDefs[j].type.includes("readonly")) {
+                    if (columnDefs[j].type.includes("readonly")) {
                       data += "<input type='text' readonly  id='"
                           + columnDefs[j].name
                           + "' name='"
@@ -596,7 +598,7 @@ console.log(rowDataArray);
                     }
 
                     // Adding select-fields
-                    if (columnDefs[j].type && columnDefs[j].type.includes("select")) {
+                    if (columnDefs[j].type.includes("select")) {
                       var options = "";
                       for (var i = 0; i < columnDefs[j].options.length; i++) {
                         options += "<option value='" + columnDefs[j].options[i]
@@ -632,40 +634,22 @@ console.log(rowDataArray);
                   var that = this;
                   var dt = this.s.dt;
 
-                  // Finding the biggest numerical ID, incrementing it and
-                  // assigning the new ID to the new row.
-                  var highestID = Math.max.apply(Math, dt.column(0).data()) + 1; // FIXME 0 or 'id'
-                  var rowID = "" + highestID;
-                  // Containers with data from table columns
-                  var columnIds = [];
-                  // Data from input-fields.
-                  var inputDataSet = [];
-                  // Complete new row data
                   var rowDataArray = {};
-
-                  // Getting the IDs of the tablerow
-                  for ( var i in dt.context[0].aoColumns) {
-                    columnIds.push({
-                      id : dt.context[0].aoColumns[i].id
-                    });
-                  }
-
-                  // Adding the ID & value of DT_RowId
-                  rowDataArray[columnIds[0].id] = rowID;
+                  
+                  //ID must be set server-side
 
                   // Getting the inputs from the modal
                   $('form[name="altEditor-form"] *').filter(':input').each(
                       function(i) {
-                        inputDataSet[i] = $(this).val();
+                        rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-                  // Adding the inputs from the modal to rowArray
-                  for (var i in inputDataSet) {
-                    rowDataArray[columnIds[i].id] = inputDataSet[i];
-                  }
+console.log(rowDataArray);
 
                   // Adding the new row to the datatable
                   dt.row.add(rowDataArray).draw(false);
+
+                  //FIXME should send to server here
 
                   // Success message for modal
                   $('#altEditor-modal .modal-body .alert').remove();
