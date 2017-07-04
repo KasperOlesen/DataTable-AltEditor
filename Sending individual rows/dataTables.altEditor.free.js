@@ -266,21 +266,20 @@
                   var columnDefs = [];
 
                   // Adding column attributes to object.
-                  // Assuming that the first defined column is ID - Therefore
-                  // skipping that
-                  // and starting at index 1, because we dont wanna be able to
-                  // change the ID.
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
-                    columnDefs.push({
-                      title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data,
-                      type : dt.context[0].aoColumns[i].type,
-                      options : dt.context[0].aoColumns[i].options,
-                      msg : dt.context[0].aoColumns[i].errorMsg,
-                      hoverMsg : dt.context[0].aoColumns[i].hoverMsg,
-                      pattern : dt.context[0].aoColumns[i].pattern,
-                      special : dt.context[0].aoColumns[i].special
-                    });
+                  // Please set the ID as readonly.
+                  for (var i in dt.context[0].aoColumns) {
+                    var obj = dt.context[0].aoColumns[i];
+                    columnDefs[i] = {
+                        title : obj.sTitle,
+                        name : obj.data ? obj.data : obj.mData,
+                        type : (obj.type ? obj.type : 'text'),
+                        options : (obj.options ? obj.options : []),
+                        msg : (obj.errorMsg ? obj.errorMsg : ''),
+                        hoverMsg : (obj.hoverMsg ? obj.hoverMsg : ''),
+                        pattern : (obj.pattern ? obj.pattern : '.*'),
+                        special : (obj.special ? obj.special : ''),
+                        unique : (obj.unique ? obj.unique : false)
+                      };
                   }
                   var adata = dt.rows({
                     selected : true
@@ -291,7 +290,8 @@
 
                   data += "<form name='altEditor-form' role='form'>";
 
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for ( var j in columnDefs) {
+
                     data += "<div class='form-group'>"
                     data += "<div class='col-sm-5 col-md-5 col-lg-5 text-right' style='padding-top:4px;'>"
                     data += "<label for='" + columnDefs[j].title + "'>"
@@ -316,6 +316,8 @@
                           + columnDefs[j].special
                           + "' data-errorMsg='"
                           + columnDefs[j].msg
+                          + "' data-unique='"
+                          + columnDefs[j].unique
                           + "' style='overflow:hidden'  class='form-control  form-control-sm' value='"
                           + adata.data()[0][columnDefs[j].name] + "'>";
                       data += "<label id='" + columnDefs[j].name + "label"
@@ -325,7 +327,7 @@
                     // Adding readonly-fields
                     if (columnDefs[j].type.includes("readonly")) {
                       data += "<input type='text' readonly  id='"
-                          + columnDefs[j].title
+                          + columnDefs[j].name
                           + "' name='"
                           + columnDefs[j].title
                           + "' placeholder='"
@@ -382,45 +384,26 @@
                   var that = this;
                   var dt = this.s.dt;
 
-                  // Data from table columns
-                  var columnIds = [];
-                  // Data from input-fields
-                  var dataSet = [];
                   // For JSON
                   var aaData = [];
-                  var jsonDataArray = {};
                   // complete JSONString for ajax call
                   var comepleteJsonData = {};
-
                   comepleteJsonData.data = aaData;
+
+                  // Complete new row data
+                  var rowDataArray = {};
 
                   var adata = dt.rows({
                     selected : true
                   });
 
-                  // Getting the IDs and Values of the tablerow
-                  for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    columnIds
-                        .push({
-                          id : dt.context[0].aoColumns[i].id,
-                          dataSet : adata.data()[0][dt.context[0].aoColumns[i].data]
-                        });
-                  }
-
-                  // Adding the ID & value of DT_RowId to the JsonArray
-                  jsonDataArray[columnIds[0].id] = columnIds[0].dataSet;
-
                   // Getting the inputs from the edit-modal
                   $('form[name="altEditor-form"] *').filter(':input').each(
                       function(i) {
-                        dataSet.push($(this).val());
+                        rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-                  // Adding the inputs from the edit-modal to JsonArray
-                  for (var i = 0; i < dataSet.length; i++) {
-                    jsonDataArray[columnIds[i + 1].id] = dataSet[i];
-                  }
-                  comepleteJsonData.data.push(jsonDataArray);
+                  comepleteJsonData.data.push(rowDataArray);
 
                   // Calling AJAX with data, tableObject, command.
                   updateJSON(comepleteJsonData, that, "editRow");
@@ -437,10 +420,10 @@
                   var columnDefs = [];
 
                   // Adding attribute IDs and values to object
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
+                  for (var i in dt.context[0].aoColumns) {
                     columnDefs.push({
                       title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data
+                      name : dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data : dt.context[0].aoColumns[i].mData
                     });
                   }
                   var adata = dt.rows({
@@ -451,12 +434,12 @@
                   var data = "";
 
                   data += "<form name='altEditor-form' role='form'>";
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for (var j in columnDefs) { 
                     data += "<div class='form-group'><label for='"
                         + columnDefs[j].title
                         + "'>"
                         + columnDefs[j].title
-                        + " : </label><input  type='hidden'  id='"
+                        + " :  </label><input  type='hidden'  id='"
                         + columnDefs[j].title
                         + "' name='"
                         + columnDefs[j].title
@@ -528,23 +511,27 @@
                   var columnDefs = [];
 
                   // Adding column attributes to object.
-                  for (var i = 1; i < dt.context[0].aoColumns.length; i++) {
-                    columnDefs.push({
-                      title : dt.context[0].aoColumns[i].sTitle,
-                      name : dt.context[0].aoColumns[i].data,
-                      type : dt.context[0].aoColumns[i].type,
-                      options : dt.context[0].aoColumns[i].options,
-                      msg : dt.context[0].aoColumns[i].errorMsg,
-                      hoverMsg : dt.context[0].aoColumns[i].hoverMsg,
-                      pattern : dt.context[0].aoColumns[i].pattern,
-                      special : dt.context[0].aoColumns[i].special
-                    });
+                  for (var i in dt.context[0].aoColumns)
+                  {
+                    var obj = dt.context[0].aoColumns[i];
+                    columnDefs[i] = {
+                        title : obj.sTitle,
+                        name : (obj.data ? obj.data : obj.mData),
+                        type : (obj.type ? obj.type : 'text'),
+                        options : (obj.options ? obj.options : []),
+                        msg : (obj.errorMsg ? obj.errorMsg : ''),
+                        hoverMsg : (obj.hoverMsg ? obj.hoverMsg : ''),
+                        pattern : (obj.pattern ? obj.pattern : '.*'),
+                        special : (obj.special ? obj.special : ''),
+                        unique : (obj.unique ? obj.unique : false)
+                    }
                   }
+
 
                   // Building add-form
                   var data = "";
                   data += "<form name='altEditor-form' role='form'>";
-                  for (var j = 0; j < columnDefs.length; j++) {
+                  for (var j in columnDefs) {
                     data += "<div class='form-group'><div class='col-sm-5 col-md-5 col-lg-5 text-right' style='padding-top:4px;'><label for='"
                         + columnDefs[j].title
                         + "'>"
@@ -621,41 +608,25 @@
                 _addRowData : function() {
                   var that = this;
                   var dt = this.s.dt;
-                  var rowID = dt.rows().data().length;
-                  // Containers with data from table columns
-                  var columnIds = [];
-                  // Data from input-fields.
-                  var inputDataSet = [];
+                  
+                  //ID must be set server-side
+
+                  var rowDataArray = {};
+
                   // For JSON
                   var aaData = [];
-                  var jsonDataArray = {};
                   // complete JSONString for ajax call
                   var comepleteJsonData = {};
 
                   comepleteJsonData.data = aaData;
 
-                  // Getting the IDs and Values of the tablerow
-                  for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    columnIds.push({
-                      id : dt.context[0].aoColumns[i].id
-                    });
-                  }
-
-                  // Adding the ID & value(metadata) of the row to the JsonArray
-                  jsonDataArray[columnIds[0].id] = rowID;
-
                   // Getting the inputs from the modal
                   $('form[name="altEditor-form"] *').filter(':input').each(
                       function(i) {
-
-                        inputDataSet.push($(this).val());
+                        rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-                  // Adding the inputs from the modal to JsonArray
-                  for (var i = 0; i < inputDataSet.length; i++) {
-                    jsonDataArray[columnIds[i + 1].id] = inputDataSet[i];
-                  }
-                  comepleteJsonData.data.push(jsonDataArray);
+                  comepleteJsonData.data.push(rowDataArray);
 
                   // Calling AJAX with data, tableObject, command.
                   updateJSON(comepleteJsonData, that, "addRow");
