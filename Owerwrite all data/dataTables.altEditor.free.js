@@ -414,9 +414,6 @@
                         rowDataArray[$(this).attr('id')] = $(this).val();
                       });
 
-
-                  //FIXME should send to server here
-
                   // Displaying the updated row data in the datatable
                   dt.row({
                     selected : true
@@ -510,8 +507,6 @@
        </div>';
 
                   $('#altEditor-modal .modal-body').append(message);
-
-                  //FIXME should send to server here
 
                   dt.row({
                     selected : true
@@ -642,8 +637,6 @@
 
                   // Adding the new row to the datatable
                   dt.row.add(rowDataArray).draw(false);
-
-                  //FIXME should send to server here
 
                   // Success message for modal
                   $('#altEditor-modal .modal-body .alert').remove();
@@ -900,4 +893,5 @@ var sendJsonData = function(tableObj) {
 
   });
 }
+
 
