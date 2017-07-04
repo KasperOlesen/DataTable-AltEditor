@@ -52,6 +52,11 @@ $(document).ready(function() {
             extend: 'selected', // Bind to Selected row
             text: 'Delete',
             name: 'delete'      // do not change name
+         },
+
+          {
+            text: 'Refresh',
+            name: 'refresh'      // do not change name
          }]
   });
 
