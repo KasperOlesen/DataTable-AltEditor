@@ -787,6 +787,7 @@ var initValidation = function() {
 }
 
 // AJAX function - will reload table if succesfull
+//FIXME REST urls would be appreciated
 var updateJSON = function(data, tableObj, act) {
 
   var dt = tableObj.s.dt;
@@ -836,10 +837,16 @@ var updateJSON = function(data, tableObj, act) {
 
             var message = '<div class="alert alert-danger" role="alert">\
    <strong>Error!</strong> Reponse code: '
-                + error.status + '\
+                + error.status + " " + error.statusText + '\
    </div>';
 
             $('#altEditor-modal .modal-body').append(message);
           });
 
 }
+
+function inspect(obj) {
+  var s = "";
+  for (i in obj) s += "" + i + " -> " + obj[i] + "; ";
+  return s;
+} 
