@@ -40,9 +40,12 @@ $(document).ready(function() {
   ];
 
   var columnDefs = [{
+    data: "id",
     title: "Id",
     type: "readonly"
-  }, {
+  },
+  {
+    data: "name",
     title: "Name"
   },
  {
@@ -72,11 +75,11 @@ $(document).ready(function() {
     "sPaginationType": "full_numbers",
     data: dataSet,
     columns: columnDefs,
-		dom: 'Bfrtip',        // Needs button container
-          select: 'single',
-          responsive: true,
-          altEditor: true,     // Enable altEditor
-          buttons: [{
+	dom: 'Bfrtip',        // Needs button container
+    select: 'single',
+    responsive: true,
+    altEditor: true,     // Enable altEditor
+    buttons: [{
             text: 'Add',
             name: 'add'        // do not change name
           },

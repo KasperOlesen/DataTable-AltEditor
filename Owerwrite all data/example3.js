@@ -1,9 +1,12 @@
 $(document).ready(function() {
 
   var columnDefs = [{
+    data: "id",
     title: "Id",
     type: "readonly"
-  }, {
+  },
+  {
+    data: "name",
     title: "Name"
   },
  {
