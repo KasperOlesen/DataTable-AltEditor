@@ -34,5 +34,5 @@
 {"id":33, "name":"Prescott Bartlett", "position":"Technical Author", "office":"London", "extension":"3606", "startDate":"2011/05/07", "salary":"Prescott Bartlett"},
 {"id":34, "name":"Gavin Cortez", "position":"Team Leader", "office":"San Francisco", "extension":"2860", "startDate":"2008/10/26", "salary":"Gavin Cortez"},
 {"id":35, "name":"Martena Mccray", "position":"Post-Sales support", "office":"Edinburgh", "extension":"8240", "startDate":"2011/03/09", "salary":"Martena Mccray"},
-{"id":36, "name":"Unity Butler", "position":"Marketing Designer", "office":"San Francisco", "extension":"5384", "startDate":"2009/12/09", "salary":"Unity Butler"},
+{"id":36, "name":"Unity Butler", "position":"Marketing Designer", "office":"San Francisco", "extension":"5384", "startDate":"2009/12/09", "salary":"Unity Butler"}
 ]
