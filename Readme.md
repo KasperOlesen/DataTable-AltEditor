@@ -13,11 +13,26 @@ Features:
 * Support for using Select2 Dropdowns
 
 ### Usage
+
+Add it to your project after the datatables library and prior to your initialization of the datatable object!
+```
+<!-- Datatables scripts -->
+<!-- Datatables AltEditor -->
+<script src=""></script>
+<!-- Init datatables -->
+```
+
+Below is an example initialization of a datatable with the editor
+
 ```
 $('#dataTable').DataTable({
                 dom: '<"row"<"col-md-4"l><"col-md-4"B><"col-md-4"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>', // requires at least B (for buttons)
                 select: 'single',   // only allow single edits at a time
-                buttons: [
+                buttons: [{
+                    text: 'Add',
+                    name: 'add',        // DO NOT change name (from AltEditor)
+                    className: 'btn btn-primary'
+					},
                     {
                         extend: 'selected',     // Bind to Selected row
                         text: 'Edit',
@@ -37,11 +52,9 @@ $('#dataTable').DataTable({
                     }],
                 altEditor: true,            // enable our plugin
                 columns: [{
-                        id: "id",
-                        data: "id",
-                        type: "hidden",
-                        visible: false,
-                        searchable: false
+                        id: "id",			// value from ajax/read on your server
+                        data: "id",			// value sent to your callback
+                        type: "hidden",		// input type
                     },
                     {
                         title: "Name",
@@ -54,6 +67,7 @@ $('#dataTable').DataTable({
                         id: "username",
                         data: "username",
                         type: "readonly",
+						unique: true		// this column's value is unique, prevents updating/adding the same value
                     },
                     {
                         title: "Group",
@@ -61,14 +75,16 @@ $('#dataTable').DataTable({
                         data: "roles",
                         type: "select",
                         multiple: true,
-                        select2: true,
-                        options: [
+                        select2: { 				// only defined when using select 2
+							theme:'bootstrap' 	// set Select 2 options
+						},		// if select2 is enabled
+                        options: [			// options for select input, the value and option text are the same value
                             'option 1',
                             'option 2'
                         ]
                     },
                 ],
-				onAddRow: function(tableObj, info, cb) {
+				onAddRow: function(tableObj, info, cb) { // callback when a row is added to the table
                     $.ajax({
                         url: '',
                         type: 'PUT',
@@ -84,7 +100,7 @@ $('#dataTable').DataTable({
                         }
                     });
                 },
-                onDeleteRow: function(tableObj, info, cb) {
+                onDeleteRow: function(tableObj, info, cb) { // callback when a row is deleted on the table
                     $.ajax({
                         url: '',
                         type: 'DELETE',
@@ -100,7 +116,7 @@ $('#dataTable').DataTable({
                         }
                     });
                 },
-                onEditRow: function(tableObj, oldInfo, newInfo, cb) {
+                onEditRow: function(tableObj, oldInfo, newInfo, cb) { // callback when a row is edited on the table
                     info = {};
                     info.old = oldInfo;
                     info.new = newInfo;
@@ -122,5 +138,11 @@ $('#dataTable').DataTable({
             });
 ```
 
+## Documentation
+
+### Examples
+
+
+
 ### Contributions
-Originally based off [kingkod](http://kingkode.com/free-datatables-editor-alternative/) and forked from [luca-vercelli](https://github.com/luca-vercelli/DataTable-AltEditor)
+Originally based off [kingkode](http://kingkode.com/free-datatables-editor-alternative/) and forked from [luca-vercelli](https://github.com/luca-vercelli/DataTable-AltEditor)

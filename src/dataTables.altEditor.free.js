@@ -116,8 +116,9 @@
                 that.onAddRow = dt.settings()[0].oInit.onAddRow;
                 that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
                 that.onEditRow = dt.settings()[0].oInit.onEditRow;
-                that.logRowChange = function (tableobj, info) {
+                that.logRowChange = function (info, cb) {
                     console.log(info);
+                    cb();
                 };
 
                 that.onAddRow = (that.onAddRow == null) ? that.logRowChange : that.onAddRow;
@@ -181,7 +182,7 @@
                         });
 
                     $(document).on('click', '#editRowBtn', function (e) {
-                        if (initValidation()) {
+                        if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
                             that._editRowData();
@@ -222,7 +223,7 @@
                             });
 
                     $(document).on('click', '#addRowBtn', function (e) {
-                        if (initValidation()) {
+                        if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
                             that._addRowData();
@@ -311,27 +312,27 @@
                         // Adding text-inputs and errorlabels
                         if (columnDefs[j].type.includes("text")) {
                             data += "<input type='"
-                                + quoteattr(columnDefs[j].type)
+                                + that._quoteattr(columnDefs[j].type)
                                 + "' id='"
-                                + quoteattr(columnDefs[j].name)
+                                + that._quoteattr(columnDefs[j].name)
                                 + "'  pattern='"
-                                + quoteattr(columnDefs[j].pattern)
+                                + that._quoteattr(columnDefs[j].pattern)
                                 + "'  title='"
-                                + quoteattr(columnDefs[j].hoverMsg)
+                                + that._quoteattr(columnDefs[j].hoverMsg)
                                 + "' name='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' data-special='"
-                                + quoteattr(columnDefs[j].special)
+                                + that._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='"
-                                + quoteattr(columnDefs[j].msg)
+                                + that._quoteattr(columnDefs[j].msg)
                                 + "' data-unique='"
                                 + columnDefs[j].unique
                                 + "'"
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
                                 + " style='overflow:hidden'  class='form-control  form-control-sm' value='"
-                                + quoteattr(adata.data()[0][columnDefs[j].name]) + "'>";
+                                + that._quoteattr(adata.data()[0][columnDefs[j].name]) + "'>";
                             data += "<label id='" + columnDefs[j].name + "label"
                                 + "' class='errorLabel'></label>";
                         }
@@ -384,10 +385,13 @@
 
                 $('#altEditor-modal').modal('show');
                 $('#altEditor-modal input[0]').focus();
-                $("#altEditor-modal").find("select.form-control.select2").select2({
-                    theme: "bootstrap4",
-                    width: '100%'
-                });
+
+                // enable select 2 items
+                for (var j in columnDefs) {
+                    if (columnDefs[j].select2) {
+                        $("#altEditor-modal").find("select#"+columnDefs[j].name).select2(columnDefs[j].select2);
+                    }
+                }
             },
 
             _editRowData: function () {
@@ -406,7 +410,9 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onEditRow(that, adata.data()[0], rowDataArray);
+                that.onEditRow({"old":adata.data()[0], "new":rowDataArray}, function(info) {
+                    that._updateTableCallback(info, dt);
+                });
             },
 
             /**
@@ -441,17 +447,17 @@
                     }
                     else {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
-                            + quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].title)
                             + "'>"
                             + columnDefs[j].title
                             + " :  </label><input  type='hidden'  id='"
-                            + quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].title)
                             + "' name='"
-                            + quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].title)
                             + "' placeholder='"
-                            + quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].title)
                             + "' style='overflow:hidden'  class='form-control' value='"
-                            + quoteattr(adata.data()[0][columnDefs[j].name]) + "' >"
+                            + that._quoteattr(adata.data()[0][columnDefs[j].name]) + "' >"
                             + adata.data()[0][columnDefs[j].name]
                             + "</input></div>";
                     }
@@ -486,7 +492,9 @@
                     jsonDataArray[dt.context[0].aoColumns[i].id] = adata.data()[0][dt.context[0].aoColumns[i].data];
                 }
                 
-                that.onDeleteRow(that, jsonDataArray);
+                that.onDeleteRow(jsonDataArray, function(info) {
+                    that._updateTableCallback(info, dt);
+                });
             },
 
             /**
@@ -536,36 +544,38 @@
                         // Adding text-inputs and errorlabels
                         if (columnDefs[j].type.includes("text")) {
                             data += "<input type='"
-                                + quoteattr(columnDefs[j].type)
+                                + that._quoteattr(columnDefs[j].type)
                                 + "' id='"
-                                + quoteattr(columnDefs[j].name)
+                                + that._quoteattr(columnDefs[j].name)
                                 + "'  pattern='"
-                                + quoteattr(columnDefs[j].pattern)
+                                + that._quoteattr(columnDefs[j].pattern)
                                 + "'  title='"
-                                + quoteattr(columnDefs[j].hoverMsg)
+                                + that._quoteattr(columnDefs[j].hoverMsg)
                                 + "' name='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' data-special='"
                                 + columnDefs[j].special
                                 + "' data-errorMsg='"
-                                + quoteattr(columnDefs[j].msg)
+                                + that._quoteattr(columnDefs[j].msg)
+                                + "' data-unique='"
+                                + columnDefs[j].unique
                                 + "'"
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
                                 + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
-                            data += "<label id='" + quoteattr(columnDefs[j].name) + "label"
+                            data += "<label id='" + that._quoteattr(columnDefs[j].name) + "label"
                                 + "' class='errorLabel'></label>";
                         }
 
                         // Adding readonly-fields
                         if (columnDefs[j].type.includes("readonly")) {
                             data += "<input type='text' readonly  id='"
-                                + quoteattr(columnDefs[j].name)
+                                + that._quoteattr(columnDefs[j].name)
                                 + "' name='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
-                                + quoteattr(columnDefs[j].title)
+                                + that._quoteattr(columnDefs[j].title)
                                 + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                         }
 
@@ -573,10 +583,10 @@
                         if (columnDefs[j].type.includes("select")) {
                             var options = "";
                             for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                options += "<option value='" + quoteattr(columnDefs[j].options[i])
+                                options += "<option value='" + that._quoteattr(columnDefs[j].options[i])
                                     + "'>" + columnDefs[j].options[i] + "</option>";
                             }
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + quoteattr(columnDefs[j].name) + "' name='" + quoteattr(columnDefs[j].title) + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
+                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + that._quoteattr(columnDefs[j].name) + "' name='" + that._quoteattr(columnDefs[j].title) + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
                                 + "</select>";
                         }
                         data += "</div><div style='clear:both;'></div></div>";
@@ -599,11 +609,11 @@
                 $('#altEditor-modal').modal('show');
                 $('#altEditor-modal input[0]').focus();
 
-                if (.length) {
-                    $("#altEditor-modal").find("select.form-control.select2").select2({
-                        theme: "bootstrap4",
-                        width: '100%'
-                    });
+                // enable select 2 items
+                for (var j in columnDefs) {
+                    if (columnDefs[j].select2) {
+                        $("#altEditor-modal").find("select#"+columnDefs[j].name).select2(columnDefs[j].select2);
+                    }
                 }
             },
 
@@ -613,28 +623,127 @@
 
                 var rowDataArray = {};
 
-                comepleteJsonData.data = aaData;
-
                 // Getting the inputs from the modal
                 $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onAddRow(that, rowDataArray);
+                that.onAddRow(rowDataArray, function(info) {
+                    that._updateTableCallback(info, dt);
+                });
             },
 
-            /*_getExecutionLocationFolder: function () {
-                var fileName = "dataTables.altEditor.free.js";
-                var scriptList = $("script[src]");
-                var jsFileObject = $.grep(scriptList, function (el) {
-                    if (el.src.indexOf(fileName) !== -1) {
-                        return el;
+            /**
+             * Updates the Datatable after the user defined function completes
+             * @param resp
+             */
+            _updateTableCallback : function (resp, dt) {
+                console.log(resp);
+
+                if (resp == null || resp == "" || resp.status == 200 || resp["success"]) {
+                    $('#altEditor-modal .modal-body .alert').remove();
+
+                    var message = '<div class="alert alert-success" role="alert">'+
+                                    '<strong>Success!</strong>'+
+                                    '</div>';
+                    $('#altEditor-modal .modal-body').append(message);
+
+                    // Reload data from server to table
+					console.log(dt);
+					if (dt.ajax && dt.ajax.url())
+						dt.ajax.reload();
+
+                    // Disabling submit button
+                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+                }
+                else {
+                    var error = resp;
+                    $('#altEditor-modal .modal-body .alert').remove();
+                    var errstr = "There was an unknown error!";
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        errstr = "";
+                        for (var key in error.responseJSON.errors) {
+                            errstr += error.responseJSON.errors[key][0];
+                        }
                     }
-                });
-                var jsFilePath = jsFileObject[0].src;
-                var jsFileDirectory = jsFilePath.substring(0, jsFilePath.lastIndexOf("/") + 1);
-                return jsFileDirectory;
-            }*/
+                    var message = '<div class="alert alert-danger" role="alert">'+
+                        '<strong>Error!</strong> '+(error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
+                        '</div>';
+
+                    $('#altEditor-modal .modal-body').append(message);
+                }
+            },
+
+            /**
+             * Validates input
+             * @returns {boolean}
+             * @private
+             */
+            _inputValidation : function () {
+                var that = this;
+                var dt = this.s.dt;
+                var isValid = false;
+                var errorcount = 0;
+
+                // Looping through all text fields
+                $('form[name="altEditor-form"] *').filter(':text').each(
+                    function (i) {
+                        var errorLabel = "#" + $(this).attr("id") + "label";
+                        if (!$(this).val().match($(this).attr("pattern"))) {
+                            $(errorLabel).html($(this).attr("data-errorMsg"));
+                            $(errorLabel).show();
+                            errorcount++;
+                        }
+                        // now check if its should be unique
+                        else if ($(this).attr("data-unique") == "true") {
+                            // go through each item in this column
+                            var colData = dt.column("th:contains('"+$(this).attr("name")+"')").data();
+                            console.log("COlumn Data:"+colData);
+                            var selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('"+$(this).attr("name")+"')").index()).data();
+                            console.log("Cell to Update:"+selectedCellData);
+                            console.log(dt);
+                            for (var j in colData) {
+                                // if the element is in the column and its not the selected one then its not unique
+                                if ($(this).val() == colData[j] && colData[j] != selectedCellData) {
+                                    $(errorLabel).html($(this).attr("data-errorMsg"));
+                                    $(errorLabel).show();
+                                    errorcount++;
+                                }
+                            }
+                        }
+                        else {
+                            $(errorLabel).hide();
+                            $(errorLabel).empty();
+                        }
+                    });
+
+                if (errorcount == 0) {
+                    isValid = true;
+                }
+
+                return isValid;
+            },
+
+            /**
+             * Sanitizes input for use in HTML
+             * @param s
+             * @param preserveCR
+             * @returns {string}
+             * @private
+             */
+            _quoteattr : function (s, preserveCR) {
+                preserveCR = preserveCR ? '&#13;' : '\n';
+                return ('' + s) /* Forces the conversion to string. */
+                    .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
+                    .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
+                    .replace(/[\r\n]/g, preserveCR);
+            },
         });
 
     /**
@@ -704,90 +813,3 @@
     DataTable.altEditor = altEditor;
     return altEditor;
 });
-
-// Input validation for text-fields
-var initValidation = function () {
-    var isValid = false;
-    var errorcount = 0;
-
-    // Looping through all text fields
-    $('form[name="altEditor-form"] *').filter(':text').each(
-        function (i) {
-            var errorLabel = "#" + $(this).attr("id") + "label";
-            if (!$(this).val().match($(this).attr("pattern"))) {
-                $(errorLabel).html($(this).attr("data-errorMsg"));
-                $(errorLabel).show();
-                errorcount++;
-            } else {
-                $(errorLabel).hide();
-                $(errorLabel).empty();
-            }
-        });
-
-    if (errorcount == 0) {
-        isValid = true;
-    }
-
-    return isValid;
-};
-
-/**
- * Updates the Datatable after the user defined function completes
- * @param tableObj
- * @param resp
- */
-var updateTableCallback = function (tableObj, resp) {
-
-    var dt = tableObj.s.dt;
-    console.log(resp);
-
-    if (resp == null || resp == "" || resp.status == 200 || resp["success"]) {
-        $('#altEditor-modal .modal-body .alert').remove();
-
-        var message = '<div class="alert alert-success" role="alert">\
-		<strong>Success!</strong>\
-		</div>';
-        $('#altEditor-modal .modal-body').append(message);
-
-        // Reload data from server to table
-        dt.ajax.reload();
-
-        // Disabling submit button
-        $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
-    }
-    else {
-        error = resp;
-        $('#altEditor-modal .modal-body .alert').remove();
-        errstr = "There was an unknown error!";
-        if (error.responseJSON && error.responseJSON.errors) {
-            errstr = "";
-            for (var key in error.responseJSON.errors) {
-                errstr += error.responseJSON.errors[key][0];
-            }
-        }
-        var message = '<div class="alert alert-danger" role="alert">'+
-                        '<strong>Error!</strong> '+(error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
-                        '</div>';
-
-        $('#altEditor-modal .modal-body').append(message);
-    }
-};
-
-var quoteattr = function (s, preserveCR) {
-    preserveCR = preserveCR ? '&#13;' : '\n';
-    return ('' + s) /* Forces the conversion to string. */
-        .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
-        .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        /*
-        You may add other replacements here for HTML only 
-        (but it's not necessary).
-        Or for XML, only if the named entities are defined in its DTD.
-        */
-        .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
-        .replace(/[\r\n]/g, preserveCR);
-};
