@@ -141,7 +141,10 @@ $('#dataTable').DataTable({
 
 ### Examples
 
-Examples are coming soon...
+Examples are available in the [gh-pages](https://github.com/zack-hable/DataTable-AltEditor/tree/gh-pages) repo:
+[Example 1](https://zack-hable.github.io/DataTable-AltEditor/example1.html)
+* Console Logging
+* Select inputs (multiple)
 
 ### Contributions
 Originally based off [kingkode](http://kingkode.com/free-datatables-editor-alternative/) and forked from [luca-vercelli](https://github.com/luca-vercelli/DataTable-AltEditor)
