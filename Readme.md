@@ -52,26 +52,25 @@ $('#dataTable').DataTable({
                     }],
                 altEditor: true,            // enable our plugin
                 columns: [{
-                        id: "id",			// value from ajax/read on your server
-                        data: "id",			// value sent to your callback
+                        data: "id",			// value sent to your callback (and read from AJAX)
                         type: "hidden",		// input type
                     },
                     {
                         title: "Name",
-                        id: "name",
                         data: "name",
-                        type: "readonly",
+                        type: "text",
+						pattern: ,								// regex pattern to validate input
+						errorMsg: "This field is invalid"		// message to display to the user when their input is invalid
                     },
                     {
                         title: "Username",
-                        id: "username",
                         data: "username",
                         type: "readonly",
-						unique: true		// this column's value is unique, prevents updating/adding the same value
+						unique: true,		// this column's value is unique, prevents updating/adding the same value
+						uniqueMsg: "This field is unique and that value has already been used!"		// message to display when a unique field's value has already been used
                     },
                     {
                         title: "Group",
-                        id: "roles",
                         data: "roles",
                         type: "select",
                         multiple: true,
@@ -92,11 +91,11 @@ $('#dataTable').DataTable({
                         success: function(result) {
                             // display some message to the user
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         },
                         error: function(result) {
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         }
                     });
                 },
@@ -108,11 +107,11 @@ $('#dataTable').DataTable({
                         success: function(result) {
                             // display some message to the user
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         },
                         error: function(result) {
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         }
                     });
                 },
@@ -127,11 +126,11 @@ $('#dataTable').DataTable({
                         success: function(result) {
                             // display some message to the user
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         },
                         error: function(result) {
                             // perform callback
-                            cb(tableObj, result);
+                            cb(result);
                         }
                     });
                 }
@@ -142,7 +141,7 @@ $('#dataTable').DataTable({
 
 ### Examples
 
-
+Examples are coming soon...
 
 ### Contributions
 Originally based off [kingkode](http://kingkode.com/free-datatables-editor-alternative/) and forked from [luca-vercelli](https://github.com/luca-vercelli/DataTable-AltEditor)

@@ -109,7 +109,6 @@
              * @private
              */
             _constructor: function () {
-                // console.log('altEditor Enabled')
                 var that = this;
                 var dt = this.s.dt;
 
@@ -117,6 +116,7 @@
                 that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
                 that.onEditRow = dt.settings()[0].oInit.onEditRow;
                 that.logRowChange = function (info, cb) {
+                    console.log("Table data changed and no AJAX call setup!");
                     console.log(info);
                     cb();
                 };
@@ -145,41 +145,34 @@
              * @private
              */
             _setup: function () {
-                // console.log('Setup');
-
                 var that = this;
                 var dt = this.s.dt;
 
-                var modal = '<div class="modal fade" id="altEditor-modal" tabindex="-1" role="dialog">'+
-                                '<div class="modal-dialog">'+
-                                    '<div class="modal-content">'+
-                                        '<div class="modal-header">'+
-                                            '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>'+
-                                            '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                                        '</div>'+
-                                        '<div class="modal-body">'+
-                                            '<p></p>'+
-                                        '</div>'+
-                                        '<div class="modal-footer">'+
-                                            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                            '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>'+
-                                        '</div>'+
-                                    '</div>'+
-                                '</div>'+
-				            '</div>';
+                var modal = '<div class="modal fade" id="altEditor-modal" tabindex="-1" role="dialog">' +
+                    '<div class="modal-dialog">' +
+                    '<div class="modal-content">' +
+                    '<div class="modal-header">' +
+                    '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
+                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                    '</div>' +
+                    '<div class="modal-body">' +
+                    '<p></p>' +
+                    '</div>' +
+                    '<div class="modal-footer">' +
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                    '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
                 // add modal
                 $('body').append(modal);
 
                 // add Edit Button
-                if (this.s.dt.button('edit:name')) {
-                    this.s.dt.button('edit:name').action(
-                        function (e, dt, node, config) {
-                            var rows = dt.rows({
-                                selected: true
-                            }).count();
-
-                            that._openEditModal();
-                        });
+                if (dt.button('edit:name')) {
+                    dt.button('edit:name').action(function (e, dt, node, config) {
+                        that._openEditModal();
+                    });
 
                     $(document).on('click', '#editRowBtn', function (e) {
                         if (that._inputValidation()) {
@@ -188,19 +181,13 @@
                             that._editRowData();
                         }
                     });
-
                 }
 
                 // add Delete Button
-                if (this.s.dt.button('delete:name')) {
-                    this.s.dt.button('delete:name').action(
-                        function (e, dt, node, config) {
-                            var rows = dt.rows({
-                                selected: true
-                            }).count();
-
-                            that._openDeleteModal();
-                        });
+                if (dt.button('delete:name')) {
+                    dt.button('delete:name').action(function (e, dt, node, config) {
+                        that._openDeleteModal();
+                    });
 
                     $(document).on('click', '#deleteRowBtn', function (e) {
                         e.preventDefault();
@@ -211,16 +198,10 @@
                 }
 
                 // add Add Button
-                if (this.s.dt.button('add:name')) {
-                    this.addCallback =
-                        this.s.dt.button('add:name').action(
-                            function (e, dt, node, config) {
-                                var rows = dt.rows({
-                                    selected: true
-                                }).count();
-
-                                that._openAddModal();
-                            });
+                if (dt.button('add:name')) {
+                    dt.button('add:name').action(function (e, dt, node, config) {
+                        that._openAddModal();
+                    });
 
                     $(document).on('click', '#addRowBtn', function (e) {
                         if (that._inputValidation()) {
@@ -233,14 +214,11 @@
 
                 // add Refresh button
                 if (this.s.dt.button('refresh:name')) {
-                    this.s.dt.button('refresh:name').action(
-                        function (e, dt, node, config) {
-                            if (dt.ajax && dt.ajax.url()) {
-                                dt.ajax.reload();
-                                console.log("Datatable reloaded.");
-                            }
+                    this.s.dt.button('refresh:name').action(function (e, dt, node, config) {
+                        if (dt.ajax && dt.ajax.url()) {
+                            dt.ajax.reload();
                         }
-                    );
+                    });
                 }
             },
 
@@ -283,6 +261,7 @@
                         pattern: (obj.pattern ? obj.pattern : '.*'),
                         special: (obj.special ? obj.special : ''),
                         unique: (obj.unique ? obj.unique : false),
+                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false)
@@ -327,6 +306,8 @@
                                 + that._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='"
                                 + that._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='"
+                                + that._quoteattr(columnDefs[j].uniqueMsg)
                                 + "' data-unique='"
                                 + columnDefs[j].unique
                                 + "'"
@@ -389,7 +370,7 @@
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
-                        $("#altEditor-modal").find("select#"+columnDefs[j].name).select2(columnDefs[j].select2);
+                        $("#altEditor-modal").find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     }
                 }
             },
@@ -410,7 +391,7 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onEditRow({"old":adata.data()[0], "new":rowDataArray}, function(info) {
+                that.onEditRow({"old": adata.data()[0], "new": rowDataArray}, function (info) {
                     that._updateTableCallback(info, dt);
                 });
             },
@@ -466,8 +447,8 @@
                 data += "</form>";
 
                 $('#altEditor-modal').on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">Delete</button>';
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                        '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">Delete</button>';
                     $('#altEditor-modal').find('.modal-title').html('Delete Record');
                     $('#altEditor-modal').find('.modal-body').html(data);
                     $('#altEditor-modal').find('.modal-footer').html(btns);
@@ -480,7 +461,7 @@
             _deleteRow: function () {
                 var that = this;
                 var dt = this.s.dt;
-                
+
                 var jsonDataArray = {};
 
                 var adata = dt.rows({
@@ -491,8 +472,8 @@
                 for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
                     jsonDataArray[dt.context[0].aoColumns[i].id] = adata.data()[0][dt.context[0].aoColumns[i].data];
                 }
-                
-                that.onDeleteRow(jsonDataArray, function(info) {
+
+                that.onDeleteRow(jsonDataArray, function (info) {
                     that._updateTableCallback(info, dt);
                 });
             },
@@ -520,6 +501,7 @@
                         pattern: (obj.pattern ? obj.pattern : '.*'),
                         special: (obj.special ? obj.special : ''),
                         unique: (obj.unique ? obj.unique : false),
+                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false)
@@ -559,6 +541,8 @@
                                 + columnDefs[j].special
                                 + "' data-errorMsg='"
                                 + that._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='"
+                                + that._quoteattr(columnDefs[j].uniqueMsg)
                                 + "' data-unique='"
                                 + columnDefs[j].unique
                                 + "'"
@@ -595,8 +579,8 @@
                 data += "</form>";
 
                 $('#altEditor-modal').on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">Add</button>';
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                        '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">Add</button>';
                     $('#altEditor-modal').find('.modal-title').html(
                         'Add Record');
                     $('#altEditor-modal').find('.modal-body')
@@ -612,7 +596,7 @@
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
-                        $("#altEditor-modal").find("select#"+columnDefs[j].name).select2(columnDefs[j].select2);
+                        $("#altEditor-modal").find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     }
                 }
             },
@@ -628,7 +612,7 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onAddRow(rowDataArray, function(info) {
+                that.onAddRow(rowDataArray, function (info) {
                     that._updateTableCallback(info, dt);
                 });
             },
@@ -637,21 +621,19 @@
              * Updates the Datatable after the user defined function completes
              * @param resp
              */
-            _updateTableCallback : function (resp, dt) {
-                console.log(resp);
-
+            _updateTableCallback: function (resp, dt) {
                 if (resp == null || resp == "" || resp.status == 200 || resp["success"]) {
                     $('#altEditor-modal .modal-body .alert').remove();
 
-                    var message = '<div class="alert alert-success" role="alert">'+
-                                    '<strong>Success!</strong>'+
-                                    '</div>';
+                    var message = '<div class="alert alert-success" role="alert">' +
+                        '<strong>Success!</strong>' +
+                        '</div>';
                     $('#altEditor-modal .modal-body').append(message);
 
-                    // Reload data from server to table
-					console.log(dt);
-					if (dt.ajax && dt.ajax.url())
-						dt.ajax.reload();
+                    if (dt.ajax && dt.ajax.url()) {
+                        // Reload data from server to table
+                        dt.ajax.reload();
+                    }
 
                     // Disabling submit button
                     $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
@@ -668,8 +650,8 @@
                             errstr += error.responseJSON.errors[key][0];
                         }
                     }
-                    var message = '<div class="alert alert-danger" role="alert">'+
-                        '<strong>Error!</strong> '+(error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
+                    var message = '<div class="alert alert-danger" role="alert">' +
+                        '<strong>Error!</strong> ' + (error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
                         '</div>';
 
                     $('#altEditor-modal .modal-body').append(message);
@@ -681,7 +663,7 @@
              * @returns {boolean}
              * @private
              */
-            _inputValidation : function () {
+            _inputValidation: function () {
                 var that = this;
                 var dt = this.s.dt;
                 var isValid = false;
@@ -691,6 +673,9 @@
                 $('form[name="altEditor-form"] *').filter(':text').each(
                     function (i) {
                         var errorLabel = "#" + $(this).attr("id") + "label";
+                        // reset error display
+                        $(errorLabel).hide();
+                        $(errorLabel).empty();
                         if (!$(this).val().match($(this).attr("pattern"))) {
                             $(errorLabel).html($(this).attr("data-errorMsg"));
                             $(errorLabel).show();
@@ -699,23 +684,18 @@
                         // now check if its should be unique
                         else if ($(this).attr("data-unique") == "true") {
                             // go through each item in this column
-                            var colData = dt.column("th:contains('"+$(this).attr("name")+"')").data();
-                            console.log("COlumn Data:"+colData);
-                            var selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('"+$(this).attr("name")+"')").index()).data();
-                            console.log("Cell to Update:"+selectedCellData);
-                            console.log(dt);
+                            var colData = dt.column("th:contains('" + $(this).attr("name") + "')").data();
+                            var selectedCellData = null;
+                            if (dt.row({selected: true}).index() != null)
+                                selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + $(this).attr("name") + "')").index()).data();
                             for (var j in colData) {
                                 // if the element is in the column and its not the selected one then its not unique
                                 if ($(this).val() == colData[j] && colData[j] != selectedCellData) {
-                                    $(errorLabel).html($(this).attr("data-errorMsg"));
+                                    $(errorLabel).html($(this).attr("data-uniqueMsg"));
                                     $(errorLabel).show();
                                     errorcount++;
                                 }
                             }
-                        }
-                        else {
-                            $(errorLabel).hide();
-                            $(errorLabel).empty();
                         }
                     });
 
@@ -733,7 +713,7 @@
              * @returns {string}
              * @private
              */
-            _quoteattr : function (s, preserveCR) {
+            _quoteattr: function (s, preserveCR) {
                 preserveCR = preserveCR ? '&#13;' : '\n';
                 return ('' + s) /* Forces the conversion to string. */
                     .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */

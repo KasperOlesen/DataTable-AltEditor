@@ -1,15 +1,15 @@
 $(document).ready(function() {
 	var dataSet = [
-		[1,"Tiger Nixon", "System Architect"],
-		[2,"Garrett Winters", "Accountant"],
-		[3,"Ashton Cox", "Junior Technical Author"],
-		[4,"Cedric Kelly", "Senior Javascript Developer"],
-		[5,"Airi Satou", "Accountant"],
-		[6,"Brielle Williamson", "Integration Specialist"],
-		[7,"Herrod Chandler", "Sales Assistant"],
-		[8,"Rhona Davidson", "Integration Specialist"],
-		[9,"Colleen Hurst", "Javascript Developer"],
-		[10,"Sonya Frost", "Software Engineer"],
+		{"id":1,"name":"Tiger Nixon", "job":"System Architect"},
+		{"id":2,"name":"Garrett Winters", "job":"Accountant"},
+		{"id":3,"name":"Ashton Cox", "job":"Junior Technical Author"},
+		{"id":4,"name":"Cedric Kelly", "job":"Senior Javascript Developer"},
+		{"id":5,"name":"Airi Satou", "job":"Accountant"},
+		{"id":6,"name":"Brielle Williamson", "job":"Integration Specialist"},
+		{"id":7,"name":"Herrod Chandler", "job":"Sales Assistant"},
+		{"id":8,"name":"Rhona Davidson", "job":"Integration Specialist"},
+		{"id":9,"name":"Colleen Hurst", "job":"Javascript Developer"},
+		{"id":10,"name":"Sonya Frost", "job":"Software Engineer"},
 	];
 
 	$('#example').DataTable({
@@ -40,17 +40,17 @@ $(document).ready(function() {
 			}],
 		altEditor: true,            // enable our plugin
 		columns: [{
-				//data: "id",			// value sent to your callback
+				data: "id",			// value sent to your callback
 				type: "hidden",		// input type
 			},
 			{
 				title: "Name",
-				//data: "name",
-				type: "readonly",
+				data: "name",
+				type: "text",
 			},
 			{
 				title: "Job",
-				//data: "roles",
+				data: "job",
 				type: "select",
 				multiple: true,
 				options: [			// options for select input, the value and option text are the same value
@@ -75,11 +75,11 @@ $(document).ready(function() {
 				success: function(result) {
 					// display some message to the user
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				},
 				error: function(result) {
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				}
 			});
 		},
@@ -91,11 +91,11 @@ $(document).ready(function() {
 				success: function(result) {
 					// display some message to the user
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				},
 				error: function(result) {
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				}
 			});
 		},
@@ -107,11 +107,11 @@ $(document).ready(function() {
 				success: function(result) {
 					// display some message to the user
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				},
 				error: function(result) {
 					// perform callback
-					cb(tableObj, result);
+					cb(result);
 				}
 			});
 		}
