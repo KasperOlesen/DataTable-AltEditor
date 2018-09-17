@@ -35,7 +35,7 @@ $(document).ready(function() {
   myTable = $('#example').DataTable({
     "sPaginationType": "full_numbers",
     ajax: {
-        url : 'https://raw.githubusercontent.com/luca-vercelli/DataTable-AltEditor/master/example/data3.json',
+        url : 'https://raw.githubusercontent.com/luca-vercelli/DataTable-AltEditor/master/example/03_ajax_objects/data3.json',
         //our data is an array of objects, in the root node instead of /data node, so we need 'dataSrc' parameter
         dataSrc : ''
     },
