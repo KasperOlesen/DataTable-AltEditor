@@ -4,19 +4,17 @@
  * @version 2.0
  * @file dataTables.editor.free.js
  * @author kingkode (www.kingkode.com)
- * @author Zack Hable (www.cobaltdevteam.com)
+ *  Modified by: Kasper Olesen (https://github.com/KasperOlesen), Luca Vercelli (https://github.com/luca-vercelli), Zack Hable (www.cobaltdevteam.com)
  * @contact www.kingkode.com/contact
  * @contact zack@cobaltdevteam.com
  * @copyright Copyright 2016 Kingkode
  *
  * This source file is free software, available under the following license: MIT
- * license - http://datatables.net/license/mit
+ * license
  *
  * This source file is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- *
- * For details please refer to: http://www.kingkode.com
  *
  *
  */
