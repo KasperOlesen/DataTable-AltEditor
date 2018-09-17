@@ -13,10 +13,10 @@
     * Support for using Select2 Dropdowns
 
 2017-07 luca-vercelli
-    * support for object-based arrays
-    * little clean code
-    * refresh button
-    * naive AJAX support
+    * Support for object-based data
+    * Cleaner source code
+    * Refresh button
+    * Naive AJAX support
 
 2016-09 KasperOlesen
     * Initial commit
