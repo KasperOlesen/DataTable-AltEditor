@@ -110,18 +110,12 @@
                 var that = this;
                 var dt = this.s.dt;
 
-                that.onAddRow = dt.settings()[0].oInit.onAddRow;
-                that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
-                that.onEditRow = dt.settings()[0].oInit.onEditRow;
-                that.logRowChange = function (info, cb) {
-                    console.log("Table data changed and no AJAX call setup!");
-                    console.log(info);
-                    cb();
-                };
-
-                that.onAddRow = (that.onAddRow == null) ? that.logRowChange : that.onAddRow;
-                that.onDeleteRow = (that.onDeleteRow == null) ? that.logRowChange : that.onDeleteRow;
-                that.onEditRow = (that.onEditRow == null) ? that.logRowChange : that.onEditRow;
+                if (dt.settings()[0].oInit.onAddRow)
+                    that.onAddRow = dt.settings()[0].oInit.onAddRow;
+                if (dt.settings()[0].oInit.onDeleteRow)
+                    that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
+                if (dt.settings()[0].oInit.onEditRow)
+                    that.onEditRow = dt.settings()[0].oInit.onEditRow;
 
                 this._setup();
 
@@ -389,8 +383,10 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onEditRow({"old": adata.data()[0], "new": rowDataArray}, function (info) {
-                    that._updateTableCallback(info, dt);
+                that.onAddRow(that,
+                    rowDataArray,
+                    function(data){ that._editRowCallback(data); },
+                    function(data){ that._errorCallback(data);
                 });
             },
 
@@ -468,12 +464,15 @@
 
                 // Getting the IDs and Values of the tablerow
                 for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    jsonDataArray[dt.context[0].aoColumns[i].id] = adata.data()[0][dt.context[0].aoColumns[i].data];
+                    //FIXME .id or .idx ? or none? what's the difference?
+                    jsonDataArray[dt.context[0].aoColumns[i].idx] = adata.data()[0][dt.context[0].aoColumns[i].data];
                 }
-
-                that.onDeleteRow(jsonDataArray, function (info) {
-                    that._updateTableCallback(info, dt);
+                that.onDeleteRow(that,
+                    jsonDataArray,
+                    function(data){ that._deleteRowCallback(data); },
+                    function(data){ that._errorCallback(data);
                 });
+                //FIXME why should we send all the data for a DELETE?
             },
 
             /**
@@ -610,17 +609,18 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onAddRow(rowDataArray, function (info) {
-                    that._updateTableCallback(info, dt);
+                that.onAddRow(that,
+                    rowDataArray,
+                    function(data){ that._addRowCallback(data); },
+                    function(data){ that._errorCallback(data);
                 });
+
             },
 
             /**
-             * Updates the Datatable after the user defined function completes
-             * @param resp
+             * Called after a row has been deleted on server
              */
-            _updateTableCallback: function (resp, dt) {
-                if (resp == null || resp == "" || resp.status == 200 || resp["success"]) {
+            _deleteRowCallback: function (data) {
                     $('#altEditor-modal .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
@@ -628,17 +628,71 @@
                         '</div>';
                     $('#altEditor-modal .modal-body').append(message);
 
-                    if (dt.ajax && dt.ajax.url()) {
-                        // Reload data from server to table
-                        dt.ajax.reload();
-                    }
+                    this.s.dt.row({
+                        selected : true
+                    }).remove();
+                    this.s.dt.draw();
 
                     // Disabling submit button
                     $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
                     $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
                     $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
-                }
-                else {
+            },
+
+            /**
+             * Called after a row has been inserted on server
+             */
+            _addRowCallback: function (data) {
+                
+                    //TODO should honor dt.ajax().dataSrc
+                    
+                    $('#altEditor-modal .modal-body .alert').remove();
+
+                    var message = '<div class="alert alert-success" role="alert">' +
+                        '<strong>Success!</strong>' +
+                        '</div>';
+                    $('#altEditor-modal .modal-body').append(message);
+
+                    this.s.dt.row({
+                        selected : true
+                    }).data(data);
+                    this.s.dt.draw();
+
+                    // Disabling submit button
+                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+            },
+
+            /**
+             * Called after a row has been updated on server
+             */
+            _editRowCallback: function (data) {
+                
+                    //TODO should honor dt.ajax().dataSrc
+                    
+                    $('#altEditor-modal .modal-body .alert').remove();
+
+                    var message = '<div class="alert alert-success" role="alert">' +
+                        '<strong>Success!</strong>' +
+                        '</div>';
+                    $('#altEditor-modal .modal-body').append(message);
+
+                    this.s.dt.row({
+                        selected : true
+                    }).data(data);
+                    this.s.dt.draw();
+
+                    // Disabling submit button
+                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
+                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+            },
+
+            /**
+             * Called after AJAX server returned an error
+             */
+            _errorCallback: function (resp, dt) {
                     var error = resp;
                     $('#altEditor-modal .modal-body .alert').remove();
                     var errstr = "There was an unknown error!";
@@ -653,7 +707,30 @@
                         '</div>';
 
                     $('#altEditor-modal .modal-body').append(message);
-                }
+            },
+            
+            /**
+             * Default callback for insertion: mock webservice, always success.
+             */
+            onAddRow: function(dt, rowdata, success, error) {
+                console.log("Missing AJAX configuration for INSERT");
+                success(rowdata);
+            },
+
+            /**
+             * Default callback for editing: mock webservice, always success.
+             */
+            onEditRow: function(dt, rowdata, success, error) {
+                console.log("Missing AJAX configuration for UPDATE");
+                success(rowdata);
+            },
+
+            /**
+             * Default callback for deletion: mock webservice, always success.
+             */
+            onDeleteRow: function(dt, rowdata, success, error) {
+                console.log("Missing AJAX configuration for DELETE");
+                success(rowdata);
             },
 
             /**
