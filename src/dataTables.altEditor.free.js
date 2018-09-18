@@ -430,7 +430,7 @@ console.log(rowDataArray); //DEBUG
                             + that._quoteattr(columnDefs[j].title)
                             + "'>"
                             + columnDefs[j].title
-                            + " :  </label><input  type='hidden'  id='"
+                            + ":  </label> <input  type='hidden'  id='"
                             + that._quoteattr(columnDefs[j].title)
                             + "' name='"
                             + that._quoteattr(columnDefs[j].title)
