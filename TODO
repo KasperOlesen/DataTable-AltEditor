@@ -4,3 +4,4 @@
 * modal dialogs should close on success
 * i18n
 * check if 2 datatables are allowed in the same webpage
+* ENTER should be the same as "submit"
