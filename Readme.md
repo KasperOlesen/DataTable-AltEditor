@@ -23,16 +23,16 @@ The datatable accepts the following callback functions as arguments:
     onEditRow(datatable, rowdata, success, error)
     onDeleteRow(datatable, rowdata, success, error)
 
-In the most common case, these function should call $.ajax as expected by the webservice.
-The two functions success and error should be passed as arguments to $ajax.
+In the most common case, these function should call `$.ajax` as expected by the webservice.
+The two functions `success` and `error` should be passed as arguments to `$.ajax`.
 
-Webservice **must** return the modified row in JSON format, because the success() function expects this.
-Otherwise you have to write your own success() callback (e.g. refreshing the whole table). 
+Webservice **must** return the modified row in JSON format, because the `success()` function expects this.
+Otherwise you have to write your own `success()` callback (e.g. refreshing the whole table). 
 
 # Row key
 
 There is no default key in the table.
-Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the 'rowdata' parameter.
+Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the `rowdata` parameter.
 
 # Column id
 
@@ -49,6 +49,10 @@ Following keywords are provided:
     unique (and uniqueMsg)
     maxLength
     multiple
-    seelct2
+    select2
     
 ... (TODO)
+
+# Credits
+See LICENSE and CHANGELOG for various credits.
+
