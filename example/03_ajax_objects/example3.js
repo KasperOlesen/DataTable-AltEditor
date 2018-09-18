@@ -68,9 +68,9 @@ $(document).ready(function() {
         }],
         onAddRow: function(datatable, rowdata, success, error) {
             $.ajax({
-                // a tipycal url would be /
+                // a tipycal url would be / with type='PUT'
                 url: url_ws_mock_ok,
-                type: 'PUT',
+                type: 'GET',
                 data: rowdata,
                 success: success,
                 error: error
@@ -78,9 +78,9 @@ $(document).ready(function() {
         },
         onDeleteRow: function(datatable, rowdata, success, error) {
             $.ajax({
-                // a tipycal url would be /{id}
+                // a tipycal url would be /{id} with type='DELETE'
                 url: url_ws_mock_ok,
-                type: 'DELETE',
+                type: 'GET',
                 data: rowdata,
                 success: success,
                 error: error
@@ -88,9 +88,9 @@ $(document).ready(function() {
         },
         onEditRow: function(datatable, rowdata, success, error) {
             $.ajax({
-                // a tipycal url would be /{id}
+                // a tipycal url would be /{id} with type='POST'
                 url: url_ws_mock_ok,
-                type: 'POST',
+                type: 'GET',
                 data: rowdata,
                 success: success,
                 error: error
