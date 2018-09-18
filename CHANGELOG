@@ -1,0 +1,27 @@
+
+2018-09 luca-vercelli
+    * some improvements in AJAX callbacks
+    
+2018-07 zach-hable
+    * Version 2.0
+    * Cleaner source code
+    * Improved modal layouts
+    * Input validation
+    * Callbacks for use of AJAX when a row is added/edited/deleted
+    * Support for Max length of items
+    * Support for Multiple select box
+    * Support for using Select2 Dropdowns
+
+2017-07 luca-vercelli
+    * Support for object-based data
+    * Cleaner source code
+    * Refresh button
+    * Naive AJAX support
+
+2016-09 KasperOlesen
+    * Initial commit
+    * Added example and tweaked comments in editor
+
+2016-04 Kingcode
+    * Original script found at http://kingkode.com/free-datatables-editor-alternative/
+    * It seems that, nowadays, the source code is changed there
