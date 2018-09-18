@@ -367,6 +367,9 @@
                 }
             },
 
+            /**
+             * Callback for "Edit" button
+             */
             _editRowData: function () {
                 var that = this;
                 var dt = this.s.dt;
@@ -383,7 +386,9 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-                that.onAddRow(that,
+console.log(rowDataArray); //DEBUG
+
+                that.onEditRow(that,
                     rowDataArray,
                     function(data){ that._editRowCallback(data); },
                     function(data){ that._errorCallback(data);
@@ -452,6 +457,9 @@
                 $('#altEditor-modal input[0]').focus();
             },
 
+            /**
+             * Callback for "Delete" button
+             */
             _deleteRow: function () {
                 var that = this;
                 var dt = this.s.dt;
@@ -598,6 +606,9 @@
                 }
             },
 
+            /**
+             * Callback for "Add" button
+             */
             _addRowData: function () {
                 var that = this;
                 var dt = this.s.dt;
@@ -608,6 +619,8 @@
                 $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
+
+//console.log(rowDataArray); //DEBUG
 
                 that.onAddRow(that,
                     rowDataArray,
@@ -653,10 +666,7 @@
                         '</div>';
                     $('#altEditor-modal .modal-body').append(message);
 
-                    this.s.dt.row({
-                        selected : true
-                    }).data(data);
-                    this.s.dt.draw();
+                    this.s.dt.row.add(data).draw(false);
 
                     // Disabling submit button
                     $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
