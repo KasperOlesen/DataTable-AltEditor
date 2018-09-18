@@ -390,7 +390,7 @@ console.log(rowDataArray); //DEBUG
 
                 that.onEditRow(that,
                     rowDataArray,
-                    function(data){ that._editRowCallback(data); },
+                    function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
                     function(data){ that._errorCallback(data);
                 });
             },
@@ -633,7 +633,7 @@ console.log(rowDataArray); //DEBUG
             /**
              * Called after a row has been deleted on server
              */
-            _deleteRowCallback: function (data) {
+            _deleteRowCallback: function (response, status, more) {
                     $('#altEditor-modal .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
@@ -655,9 +655,11 @@ console.log(rowDataArray); //DEBUG
             /**
              * Called after a row has been inserted on server
              */
-            _addRowCallback: function (data) {
+            _addRowCallback: function (response, status, more) {
                 
                     //TODO should honor dt.ajax().dataSrc
+                    
+                    var data = JSON.parse(response);
                     
                     $('#altEditor-modal .modal-body .alert').remove();
 
@@ -677,10 +679,12 @@ console.log(rowDataArray); //DEBUG
             /**
              * Called after a row has been updated on server
              */
-            _editRowCallback: function (data) {
-                
+            _editRowCallback: function (response, status, more) {
+
                     //TODO should honor dt.ajax().dataSrc
                     
+                    var data = JSON.parse(response);
+
                     $('#altEditor-modal .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
@@ -702,7 +706,7 @@ console.log(rowDataArray); //DEBUG
             /**
              * Called after AJAX server returned an error
              */
-            _errorCallback: function (resp, dt) {
+            _errorCallback: function (response, status, more) {
                     var error = resp;
                     $('#altEditor-modal .modal-body .alert').remove();
                     var errstr = "There was an unknown error!";
