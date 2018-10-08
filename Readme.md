@@ -4,9 +4,9 @@ Add capabilities to add, edit and delete rows in your datatables through the use
 
 Inline editing is not supported (so far).
 
-# Examples
+### Examples
 
-There are 3 examples, for different use cases:
+There are some examples, for different use cases:
 
 * a DataTable populated and maintained via Javascript, (no AJAX, no databases), with data organized in rows;
 
@@ -15,7 +15,7 @@ There are 3 examples, for different use cases:
 * a DataTable populated via AJAX, to be used in connection with a databases, with data organized in objects.
 
 
-# AJAX setup
+### AJAX setup
 
 The datatable accepts the following callback functions as arguments:
 
@@ -29,18 +29,18 @@ The two functions `success` and `error` should be passed as arguments to `$.ajax
 Webservice **must** return the modified row in JSON format, because the `success()` function expects this.
 Otherwise you have to write your own `success()` callback (e.g. refreshing the whole table). 
 
-# Row key
+### Row key
 
 There is no default key in the table.
 Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the `rowdata` parameter.
 
-# Column id
+### Column id
 
 Please always keep in mind that DataTable framework allows two different kinds of "rows": Arrays and Objects.
 In first case columns are indexed through integers; in second case columns are indexed by their attribute name.
 Usually JSON's use the Object approach, but we cannot be sure.
 
-# Validation
+### Validation
 
 Following keywords are provided:
 
@@ -53,6 +53,6 @@ Following keywords are provided:
     
 ... (TODO)
 
-# Credits
+### Credits
 See LICENSE and CHANGELOG for various credits.
 
