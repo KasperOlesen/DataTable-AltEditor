@@ -270,7 +270,7 @@
 
                 for (var j in columnDefs) {
                     // handle hidden fields
-                    if (columnDefs[j].type.includes("hidden")) {
+                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].name + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else {
@@ -281,7 +281,7 @@
                         data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
 
                         // Adding text-inputs and errorlabels
-                        if (columnDefs[j].type.includes("text")) {
+                        if (columnDefs[j].type.indexOf("text") >= 0) {
                             data += "<input type='"
                                 + that._quoteattr(columnDefs[j].type)
                                 + "' id='"
@@ -311,7 +311,7 @@
                         }
 
                         // Adding readonly-fields
-                        if (columnDefs[j].type.includes("readonly")) {
+                        if (columnDefs[j].type.indexOf("readonly") >= 0) {
                             data += "<input type='text' readonly  id='"
                                 + columnDefs[j].name
                                 + "' name='"
@@ -323,12 +323,12 @@
                         }
 
                         // Adding select-fields
-                        if (columnDefs[j].type.includes("select")) {
+                        if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
                             for (var i = 0; i < columnDefs[j].options.length; i++) {
                                 // Assigning the selected value of the <selected> option
                                 if (adata.data()[0][columnDefs[j].name]
-                                    .includes(columnDefs[j].options[i])) {
+                                    .indexOf(columnDefs[j].options[i])>= 0) {
                                     options += "<option value='"
                                         + columnDefs[j].options[i] + "'selected>"
                                         + columnDefs[j].options[i] + "</option>";
@@ -422,7 +422,7 @@ console.log(rowDataArray); //DEBUG
 
                 data += "<form name='altEditor-form' role='form'>";
                 for (var j in columnDefs) {
-                    if (columnDefs[j].type.includes("hidden")) {
+                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else {
@@ -518,7 +518,7 @@ console.log(rowDataArray); //DEBUG
                 var data = "";
                 data += "<form name='altEditor-form' role='form'>";
                 for (var j in columnDefs) {
-                    if (columnDefs[j].type.includes("hidden")) {
+                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         // just do nothing for hidden fields!
                     }
                     else {
@@ -529,7 +529,7 @@ console.log(rowDataArray); //DEBUG
                             + ":</label></div><div class='col-sm-8 col-md-8 col-lg-8'>";
 
                         // Adding text-inputs and errorlabels
-                        if (columnDefs[j].type.includes("text")) {
+                        if (columnDefs[j].type.indexOf("text") >= 0) {
                             data += "<input type='"
                                 + that._quoteattr(columnDefs[j].type)
                                 + "' id='"
@@ -558,7 +558,7 @@ console.log(rowDataArray); //DEBUG
                         }
 
                         // Adding readonly-fields
-                        if (columnDefs[j].type.includes("readonly")) {
+                        if (columnDefs[j].type.indexOf("readonly") >= 0) {
                             data += "<input type='text' readonly  id='"
                                 + that._quoteattr(columnDefs[j].name)
                                 + "' name='"
@@ -569,7 +569,7 @@ console.log(rowDataArray); //DEBUG
                         }
 
                         // Adding select-fields
-                        if (columnDefs[j].type.includes("select")) {
+                        if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
                             for (var i = 0; i < columnDefs[j].options.length; i++) {
                                 options += "<option value='" + that._quoteattr(columnDefs[j].options[i])
