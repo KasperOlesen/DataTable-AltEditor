@@ -472,15 +472,17 @@ console.log(rowDataArray); //DEBUG
 
                 // Getting the IDs and Values of the tablerow
                 for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    //FIXME .id or .idx ? or none? what's the difference?
-                    jsonDataArray[dt.context[0].aoColumns[i].idx] = adata.data()[0][dt.context[0].aoColumns[i].data];
+                    // .data is the attribute name, if any; .idx is the column index, so it should always exists 
+                    var name = dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data :
+                            dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData :
+                            dt.context[0].aoColumns[i].idx;
+                    jsonDataArray[name] = adata.data()[0][name];
                 }
                 that.onDeleteRow(that,
                     jsonDataArray,
                     function(data){ that._deleteRowCallback(data); },
                     function(data){ that._errorCallback(data);
                 });
-                //FIXME why should we send all the data for a DELETE?
             },
 
             /**
