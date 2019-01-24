@@ -139,8 +139,9 @@
             _setup: function () {
                 var that = this;
                 var dt = this.s.dt;
-
-                var modal = '<div class="modal fade" id="altEditor-modal" tabindex="-1" role="dialog">' +
+                var modal_id = 'altEditor-modal-' + ("" + Math.random()).replace(".", "");
+                this.modal_selector = '#' + modal_id;
+                var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
@@ -151,7 +152,7 @@
                     '<p></p>' +
                     '</div>' +
                     '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' + //FIXME need i18n
                     '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>' +
                     '</div>' +
                     '</div>' +
@@ -166,7 +167,7 @@
                         that._openEditModal();
                     });
 
-                    $(document).on('click', '#editRowBtn', function (e) {
+                    $(this.modal_selector).on('click', '#editRowBtn', function (e) {
                         if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -181,7 +182,7 @@
                         that._openDeleteModal();
                     });
 
-                    $(document).on('click', '#deleteRowBtn', function (e) {
+                    $(this.modal_selector).on('click', '#deleteRowBtn', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         that._deleteRow();
@@ -195,7 +196,7 @@
                         that._openAddModal();
                     });
 
-                    $(document).on('click', '#addRowBtn', function (e) {
+                    $(this.modal_selector).on('click', '#addRowBtn', function (e) {
                         if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -347,22 +348,22 @@
                 }
                 // close form
                 data += "</form>";
-
-                $('#altEditor-modal').on('show.bs.modal', function () {
+                var selector = this.modal_selector;
+                $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
                         '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn">Edit</button>';
-                    $('#altEditor-modal').find('.modal-title').html('Edit Record');
-                    $('#altEditor-modal').find('.modal-body').html(data);
-                    $('#altEditor-modal').find('.modal-footer').html(btns);
+                    $(selector).find('.modal-title').html('Edit Record');
+                    $(selector).find('.modal-body').html(data);
+                    $(selector).find('.modal-footer').html(btns);
                 });
 
-                $('#altEditor-modal').modal('show');
-                $('#altEditor-modal input[0]').focus();
+                $(selector).modal('show');
+                $(selector + ' input[0]').focus();
 
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
-                        $("#altEditor-modal").find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
+                        $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     }
                 }
             },
@@ -445,16 +446,17 @@ console.log(rowDataArray); //DEBUG
                 // close the form
                 data += "</form>";
 
-                $('#altEditor-modal').on('show.bs.modal', function () {
+                var selector = this.modal_selector;
+                $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
                         '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">Delete</button>';
-                    $('#altEditor-modal').find('.modal-title').html('Delete Record');
-                    $('#altEditor-modal').find('.modal-body').html(data);
-                    $('#altEditor-modal').find('.modal-footer').html(btns);
+                    $(selector).find('.modal-title').html('Delete Record');
+                    $(selector).find('.modal-body').html(data);
+                    $(selector).find('.modal-footer').html(btns);
                 });
 
-                $('#altEditor-modal').modal('show');
-                $('#altEditor-modal input[0]').focus();
+                $(selector).modal('show');
+                $(selector + ' input[0]').focus();
             },
 
             /**
@@ -585,25 +587,26 @@ console.log(rowDataArray); //DEBUG
                 }
                 data += "</form>";
 
-                $('#altEditor-modal').on('show.bs.modal', function () {
+                var selector = this.modal_selector;
+                $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
                         '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">Add</button>';
-                    $('#altEditor-modal').find('.modal-title').html(
+                    $(selector).find('.modal-title').html(
                         'Add Record');
-                    $('#altEditor-modal').find('.modal-body')
+                    $(selector).find('.modal-body')
                         .html(data);
-                    $('#altEditor-modal')
+                    $(selector)
                         .find('.modal-footer')
                         .html(btns);
                 });
 
-                $('#altEditor-modal').modal('show');
-                $('#altEditor-modal input[0]').focus();
+                $(selector).modal('show');
+                $(selector + ' input[0]').focus();
 
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
-                        $("#altEditor-modal").find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
+                        $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     }
                 }
             },
@@ -636,12 +639,13 @@ console.log(rowDataArray); //DEBUG
              * Called after a row has been deleted on server
              */
             _deleteRowCallback: function (response, status, more) {
-                    $('#altEditor-modal .modal-body .alert').remove();
+                    var selector = this.modal_selector;
+                    $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
                         '<strong>Success!</strong>' +
                         '</div>';
-                    $('#altEditor-modal .modal-body').append(message);
+                    $(selector + ' .modal-body').append(message);
 
                     this.s.dt.row({
                         selected : true
@@ -649,9 +653,9 @@ console.log(rowDataArray); //DEBUG
                     this.s.dt.draw();
 
                     // Disabling submit button
-                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+                    $("div"+selector).find("button#addRowBtn").prop('disabled', true);
+                    $("div"+selector).find("button#editRowBtn").prop('disabled', true);
+                    $("div"+selector).find("button#deleteRowBtn").prop('disabled', true);
             },
 
             /**
@@ -662,20 +666,20 @@ console.log(rowDataArray); //DEBUG
                     //TODO should honor dt.ajax().dataSrc
                     
                     var data = JSON.parse(response);
-                    
-                    $('#altEditor-modal .modal-body .alert').remove();
+                    var selector = this.modal_selector;
+                    $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
                         '<strong>Success!</strong>' +
                         '</div>';
-                    $('#altEditor-modal .modal-body').append(message);
+                    $(selector + ' .modal-body').append(message);
 
                     this.s.dt.row.add(data).draw(false);
 
                     // Disabling submit button
-                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#addRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#editRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#deleteRowBtn").prop('disabled', true);
             },
 
             /**
@@ -686,13 +690,13 @@ console.log(rowDataArray); //DEBUG
                     //TODO should honor dt.ajax().dataSrc
                     
                     var data = JSON.parse(response);
-
-                    $('#altEditor-modal .modal-body .alert').remove();
+                    var selector = this.modal_selector;
+                    $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
                         '<strong>Success!</strong>' +
                         '</div>';
-                    $('#altEditor-modal .modal-body').append(message);
+                    $(selector + ' .modal-body').append(message);
 
                     this.s.dt.row({
                         selected : true
@@ -700,9 +704,9 @@ console.log(rowDataArray); //DEBUG
                     this.s.dt.draw();
 
                     // Disabling submit button
-                    $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-                    $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#addRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#editRowBtn").prop('disabled', true);
+                    $("div" + selector).find("button#deleteRowBtn").prop('disabled', true);
             },
 
             /**
@@ -710,7 +714,8 @@ console.log(rowDataArray); //DEBUG
              */
             _errorCallback: function (response, status, more) {
                     var error = resp;
-                    $('#altEditor-modal .modal-body .alert').remove();
+                    var selector = this.modal_selector;
+                    $(selector + ' .modal-body .alert').remove();
                     var errstr = "There was an unknown error!";
                     if (error.responseJSON && error.responseJSON.errors) {
                         errstr = "";
@@ -722,7 +727,7 @@ console.log(rowDataArray); //DEBUG
                         '<strong>Error!</strong> ' + (error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
                         '</div>';
 
-                    $('#altEditor-modal .modal-body').append(message);
+                    $(selector + ' .modal-body').append(message);
             },
             
             /**
