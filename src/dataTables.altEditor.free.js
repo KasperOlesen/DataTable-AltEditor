@@ -278,7 +278,7 @@
                         // handle fields that are visible to the user
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>"
                         data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>"
-                        data += "<label for='" + columnDefs[j].title + "'>" + columnDefs[j].title + ":</label></div>"
+                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>"
                         data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
 
                         // Adding text-inputs and errorlabels
@@ -428,7 +428,7 @@ console.log(rowDataArray); //DEBUG
                     }
                     else {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
-                            + that._quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].name)
                             + "'>"
                             + columnDefs[j].title
                             + ":&nbsp</label> <input  type='hidden'  id='"
@@ -527,7 +527,7 @@ console.log(rowDataArray); //DEBUG
                     }
                     else {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'><label for='"
-                            + columnDefs[j].title
+                            + columnDefs[j].name
                             + "'>"
                             + columnDefs[j].title
                             + ":</label></div><div class='col-sm-8 col-md-8 col-lg-8'>";
