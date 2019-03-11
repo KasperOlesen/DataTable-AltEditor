@@ -431,7 +431,7 @@ console.log(rowDataArray); //DEBUG
                             + that._quoteattr(columnDefs[j].title)
                             + "'>"
                             + columnDefs[j].title
-                            + ":  </label> <input  type='hidden'  id='"
+                            + ":&nbsp</label> <input  type='hidden'  id='"
                             + that._quoteattr(columnDefs[j].title)
                             + "' name='"
                             + that._quoteattr(columnDefs[j].title)
@@ -713,7 +713,7 @@ console.log(rowDataArray); //DEBUG
              * Called after AJAX server returned an error
              */
             _errorCallback: function (response, status, more) {
-                    var error = resp;
+                    var error = response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
                     var errstr = "There was an unknown error!";
