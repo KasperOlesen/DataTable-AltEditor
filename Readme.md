@@ -72,6 +72,10 @@ If type is `"select"`, the options that shall be presented.
 
 If type is `"select"`, enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array.
 
+    datepicker = {}
+
+If type is `"text"`, enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array.
+
     multiple = true | false
 
 Set HTML `"multiple"` attribute (for use with select2).
