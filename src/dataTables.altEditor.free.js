@@ -257,7 +257,8 @@
                         uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
-                        select2: (obj.select2 ? obj.select2 : false)
+                        select2: (obj.select2 ? obj.select2 : false),
+                        datepicker: (obj.datepicker ? obj.datepicker : false)
                     };
                 }
                 var adata = dt.rows({
@@ -363,7 +364,16 @@
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
+                        // require select2
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
+                    }
+                }
+
+                // enable datepicker
+                for (var j in columnDefs) {
+                    if (columnDefs[j].datepicker) {
+                        // Require jquery-ui
+                        $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
                     }
                 }
             },
