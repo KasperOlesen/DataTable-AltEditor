@@ -699,7 +699,7 @@ console.log(rowDataArray); //DEBUG
 
                     //TODO should honor dt.ajax().dataSrc
                     
-                    var data = JSON.parse(response);
+                    var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
 
