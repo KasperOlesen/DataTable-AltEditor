@@ -820,6 +820,8 @@ console.log(rowDataArray); //DEBUG
              * @private
              */
             _quoteattr: function (s, preserveCR) {
+                if (s == null)
+                    return "";
                 preserveCR = preserveCR ? '&#13;' : '\n';
                 return ('' + s) /* Forces the conversion to string. */
                     .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
