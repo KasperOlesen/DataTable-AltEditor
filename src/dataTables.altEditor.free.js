@@ -257,7 +257,8 @@
                         uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
-                        select2: (obj.select2 ? obj.select2 : false)
+                        select2: (obj.select2 ? obj.select2 : false),
+                        datepicker: (obj.datepicker ? obj.datepicker : false)
                     };
                 }
                 var adata = dt.rows({
@@ -278,7 +279,7 @@
                         // handle fields that are visible to the user
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>"
                         data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>"
-                        data += "<label for='" + columnDefs[j].title + "'>" + columnDefs[j].title + ":</label></div>"
+                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>"
                         data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
 
                         // Adding text-inputs and errorlabels
@@ -363,7 +364,16 @@
                 // enable select 2 items
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
+                        // require select2
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
+                    }
+                }
+
+                // enable datepicker
+                for (var j in columnDefs) {
+                    if (columnDefs[j].datepicker) {
+                        // Require jquery-ui
+                        $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
                     }
                 }
             },
@@ -428,7 +438,7 @@ console.log(rowDataArray); //DEBUG
                     }
                     else {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
-                            + that._quoteattr(columnDefs[j].title)
+                            + that._quoteattr(columnDefs[j].name)
                             + "'>"
                             + columnDefs[j].title
                             + ":&nbsp</label> <input  type='hidden'  id='"
@@ -527,7 +537,7 @@ console.log(rowDataArray); //DEBUG
                     }
                     else {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'><label for='"
-                            + columnDefs[j].title
+                            + columnDefs[j].name
                             + "'>"
                             + columnDefs[j].title
                             + ":</label></div><div class='col-sm-8 col-md-8 col-lg-8'>";
@@ -689,7 +699,7 @@ console.log(rowDataArray); //DEBUG
 
                     //TODO should honor dt.ajax().dataSrc
                     
-                    var data = JSON.parse(response);
+                    var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
 
@@ -810,6 +820,8 @@ console.log(rowDataArray); //DEBUG
              * @private
              */
             _quoteattr: function (s, preserveCR) {
+                if (s == null)
+                    return "";
                 preserveCR = preserveCR ? '&#13;' : '\n';
                 return ('' + s) /* Forces the conversion to string. */
                     .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */

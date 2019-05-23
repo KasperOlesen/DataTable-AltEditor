@@ -40,18 +40,58 @@ Please always keep in mind that DataTable framework allows two different kinds o
 In first case columns are indexed through integers; in second case columns are indexed by their attribute name.
 Usually JSON's use the Object approach, but we cannot be sure.
 
-### Validation
+### Column modifiers, and validation
 
-Following keywords are provided:
+Following column options are provided.
 
-    pattern
-    special
-    unique (and uniqueMsg)
-    maxLength
-    multiple
-    select2
-    
-... (TODO)
+    type = "text" | "select" | "hidden" | "readonly"
+
+Type of HTML input to be shown.
+
+    hoverMsg = "some msg"
+
+The message will appear as a tooltip over the input field.
+
+    pattern = r.e.
+
+If type is `"input"`, the typed text will be matched against given regular expression, before submit.
+
+    msg = "some string"
+
+An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute.
+
+    maxLength = integer
+
+If type is `"input"`, set HTML `"maxlength"` attribute.
+
+    options = ["a", "b", "c"]
+
+If type is `"select"`, the options that shall be presented.
+
+    select2 = {}
+
+If type is `"select"`, enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array.
+
+    datepicker = {}
+
+If type is `"text"`, enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array.
+
+    multiple = true | false
+
+Set HTML `"multiple"` attribute (for use with select2).
+
+    unique = true | false
+
+Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this).
+
+    uniqueMsg = "some string"
+
+An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute.
+
+    special = "any string"
+
+Set HTML `"data-special"` attribute (don't know what's that needed for).
+
 
 ### Credits
 See LICENSE and CHANGELOG for various credits.
