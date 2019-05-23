@@ -4,9 +4,18 @@ Add capabilities to add, edit and delete rows in your datatables through the use
 
 Inline editing is not supported (so far).
 
+### Basic usage
+
+Include in the project the libraries jQuery, jquery.dataTables, dataTables.buttons, dataTables.select.
+
+Define a DataTable as usual. 
+
+Pass to the DataTable constructor at least the following arguments: `dom`, `select`, `buttons`, `altEditor: true` (see the examples).
+
+
 ### Examples
 
-There are some examples, for different use cases:
+There are some examples in the folder `example`, for different use cases:
 
 * a DataTable populated and maintained via Javascript, (no AJAX, no databases), with data organized in rows;
 
