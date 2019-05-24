@@ -65,12 +65,12 @@ Following column options are supported.
 |    `pattern` | `r.e.`             |   The typed text will be matched against given regular expression, before submit. |
 |    `msg`     | `"some msg"`       |   An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute. |
 |  `maxLength` | `integer`          |   Set HTML `"maxlength"` attribute. |
-| `datepicker` | `{}`               |   Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array. |
+| `datepicker` | `{}`               |   Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the object. |
 | | |
 | **Options for columns with type `"select"`:**                |                                   | |
-|    `options` | `["a", "b", "c"]`  |   If type is `"select"`, the options that shall be presented. |
-|    `select2` | `{}`               |   If type is `"select"`, enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array. |
-|   `multiple` | `true \| false`   |   Set HTML `"multiple"` attribute (for use with select2). |
+|    `options` | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
+|    `select2` | `{}`               |   Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object. |
+|   `multiple` | `true \| false`    |   Set HTML `"multiple"` attribute (for use with select2). |
 
 
 
