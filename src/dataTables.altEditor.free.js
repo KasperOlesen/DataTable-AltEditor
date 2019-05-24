@@ -327,17 +327,33 @@
                         // Adding select-fields
                         if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
-                            for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                // Assigning the selected value of the <selected> option
-                                if (adata.data()[0][columnDefs[j].name]
-                                    .indexOf(columnDefs[j].options[i])>= 0) {
-                                    options += "<option value='"
-                                        + columnDefs[j].options[i] + "'selected>"
-                                        + columnDefs[j].options[i] + "</option>";
-                                } else {
-                                    options += "<option value='"
-                                        + columnDefs[j].options[i] + "'>"
-                                        + columnDefs[j].options[i] + "</option>";
+                            if (columnDefs[j].options.length > 0) {
+                                // array-style select or select2
+                                for (var i = 0; i < columnDefs[j].options.length; i++) {
+                                    // Assigning the selected value of the <selected> option
+                                    if (adata.data()[0][columnDefs[j].name]
+                                        .indexOf(columnDefs[j].options[i])>= 0) {
+                                        options += "<option value='"
+                                            + that._quoteattr(columnDefs[j].options[i]) + "' selected>"
+                                            + columnDefs[j].options[i] + "</option>";
+                                    } else {
+                                        options += "<option value='"
+                                            + that._quoteattr(columnDefs[j].options[i]) + "'>"
+                                            + columnDefs[j].options[i] + "</option>";
+                                    }
+                                }
+                            } else {
+                                // object-style select or select2
+                                for (var x in columnDefs[j].options) {
+                                    // Assigning the selected value of the <selected> option
+                                    if (adata.data()[0][columnDefs[j].name]
+                                        .indexOf(columnDefs[j].options[x])>= 0) {
+                                        options += "<option value='" + that._quoteattr(x) + "' selected>"
+                                            + columnDefs[j].options[x] + "</option>";
+                                    } else {
+                                        options += "<option value='" + that._quoteattr(x) + "'>"
+                                            + columnDefs[j].options[x] + "</option>";
+                                    }
                                 }
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + columnDefs[j].name + "' name='" + columnDefs[j].title + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
@@ -585,9 +601,18 @@ console.log(rowDataArray); //DEBUG
                         // Adding select-fields
                         if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
-                            for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                options += "<option value='" + that._quoteattr(columnDefs[j].options[i])
-                                    + "'>" + columnDefs[j].options[i] + "</option>";
+                            if (columnDefs[j].options.length > 0) {
+                                // array-style select or select2
+                                for (var i = 0; i < columnDefs[j].options.length; i++) {
+                                    options += "<option value='" + that._quoteattr(columnDefs[j].options[i])
+                                        + "'>" + columnDefs[j].options[i] + "</option>";
+                                }
+                            } else {
+                                // object-style select or select2
+                                for (var x in columnDefs[j].options) {
+                                    options += "<option value='" + that._quoteattr(x) + "' >"
+                                        + columnDefs[j].options[x] + "</option>";
+                                }
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + that._quoteattr(columnDefs[j].name) + "' name='" + that._quoteattr(columnDefs[j].title) + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
                                 + "</select>";
