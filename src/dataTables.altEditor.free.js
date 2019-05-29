@@ -258,7 +258,8 @@
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false),
-                        datepicker: (obj.datepicker ? obj.datepicker : false)
+                        datepicker: (obj.datepicker ? obj.datepicker : false),
+                        datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false)
                     };
                 }
                 var adata = dt.rows({
@@ -377,19 +378,17 @@
                 $(selector).modal('show');
                 $(selector + ' input[0]').focus();
 
-                // enable select 2 items
+                // enable select 2 items, datepicker, datetimepickerm
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
-                        // require select2
+                        // Require select2 plugin
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
-                    }
-                }
-
-                // enable datepicker
-                for (var j in columnDefs) {
-                    if (columnDefs[j].datepicker) {
+                    } else if (columnDefs[j].datepicker) {
                         // Require jquery-ui
                         $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
+                    } else if (columnDefs[j].datetimepicker) {
+                        // Require datetimepicker plugin
+                        $(selector).find("#" + columnDefs[j].name).datetimepicker(columnDefs[j].datetimepicker);
                     }
                 }
             },
@@ -638,10 +637,17 @@ console.log(rowDataArray); //DEBUG
                 $(selector).modal('show');
                 $(selector + ' input[0]').focus();
 
-                // enable select 2 items
+                // enable select 2 items, datepicker, datetimepickerm
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
+                        // Require select2 plugin
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
+                    } else if (columnDefs[j].datepicker) {
+                        // Require jquery-ui
+                        $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
+                    } else if (columnDefs[j].datetimepicker) {
+                        // Require datetimepicker plugin
+                        $(selector).find("#" + columnDefs[j].name).datetimepicker(columnDefs[j].datetimepicker);
                     }
                 }
             },
