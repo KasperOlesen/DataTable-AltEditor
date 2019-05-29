@@ -17,7 +17,11 @@ $(document).ready(function() {
     title: "Position",
     type : "select",
     options : employeeOptions,
-    select2 : { width: "100%"}
+    select2 : { width: "100%"},
+    render: function (data, type, row, meta) {
+        if (data == null || !(data in employeeOptions)) return null;
+        return employeeOptions[data];
+    }
   },
  {
     data: "startDate",
