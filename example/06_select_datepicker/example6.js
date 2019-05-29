@@ -1,3 +1,6 @@
+var employeeOptions = { "1" : "Employee", "2" : "Official" , "3" : "Director" };
+var friendsOptions = { "G" : "Goofy", "D" : "Donald duck" , "M" : "Mickey" , "D" : "Daisy" };
+
 $(document).ready(function() {
 
   var columnDefs = [{
@@ -13,7 +16,7 @@ $(document).ready(function() {
     data: "position",
     title: "Position",
     type : "select",
-    options : { "1" : "Employee", "2" : "Official" , "3" : "Director" },
+    options : employeeOptions,
     select2 : { width: "100%"}
   },
  {
@@ -25,6 +28,14 @@ $(document).ready(function() {
     data: "creationTimestamp",
     title: "Creation timestamp",
     datetimepicker: { timepicker: true, format : "Y/m/d H:i"}
+  },
+ {
+    data: "friends",
+    title: "Friends",
+    type: "select",
+    options: friendsOptions,
+    multiple : true,
+    select2 : { width: "100%"}
   }];
 
   var myTable;
