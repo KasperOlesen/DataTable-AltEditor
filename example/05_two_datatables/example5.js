@@ -33,8 +33,8 @@ $(document).ready(function() {
   var myTable;
 
   // local URL's are not allowed
-  var url_ws_mock_get = './03_ajax_objects/mock_svc_load.json';
-  var url_ws_mock_ok = './03_ajax_objects/mock_svc_ok.json';
+  var url_ws_mock_get = '../03_ajax_objects/mock_svc_load.json';
+  var url_ws_mock_ok = '../03_ajax_objects/mock_svc_ok.json';
   
   myTable = $('#example').DataTable({
     "sPaginationType": "full_numbers",
