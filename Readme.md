@@ -23,6 +23,7 @@ There are some examples in the folder `example`, for different use cases:
 
 * a DataTable populated via AJAX, to be used in connection with a databases, with data organized in objects.
 
+Examples can be browsed at https://luca-vercelli.github.io/DataTable-AltEditor .
 
 ### AJAX setup
 
