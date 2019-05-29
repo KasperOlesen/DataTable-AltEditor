@@ -44,18 +44,21 @@ $(document).ready(function() {
   },
   {
     data: "degree.id",
-    title: "Degree (nested)",
+    title: "Degree (nested obj.)",
     type: "select",
     options: degreesOptions,
-    select2 : { width: "100%"}
-    //render : "degree.caption"
+    select2 : { width: "100%"},
+    render : function (data, type, row, meta) {
+        if (data == null || row == null || row.degree == null) return null;
+        return row.degree.caption;
+    }
   }];
 
   var myTable;
 
   // local URL's are not allowed
-  var url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/06_select_datepicker/mock_svc_load.json';
-  var url_ws_mock_ok = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/06_select_datepicker/mock_svc_ok.json';
+  var url_ws_mock_get = './mock_svc_load.json';
+  var url_ws_mock_ok = './mock_svc_ok.json';
   
   myTable = $('#example').DataTable({
     "sPaginationType": "full_numbers",
