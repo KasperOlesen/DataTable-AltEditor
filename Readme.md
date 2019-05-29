@@ -66,6 +66,7 @@ Following column options are supported.
 |    `msg`     | `"some msg"`       |   An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute. |
 |  `maxLength` | `integer`          |   Set HTML `"maxlength"` attribute. |
 | `datepicker` | `{}`               |   Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the object. |
+| `datetimepicker` | `{}`               |   Enable a datetimepicker component. jQuery datetimepicker plugin must be linked. More datetimepicker configuration options may be passed within the object. |
 | | |
 | **Options for columns with type `"select"`:**                |                                   | |
 |    `options` | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
