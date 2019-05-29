@@ -332,8 +332,8 @@
                                 // array-style select or select2
                                 for (var i = 0; i < columnDefs[j].options.length; i++) {
                                     // Assigning the selected value of the <selected> option
-                                    if (adata.data()[0][columnDefs[j].name]
-                                        .indexOf(columnDefs[j].options[i])>= 0) {
+                                    var selectedValue = adata.data()[0][columnDefs[j].name];
+                                    if (selectedValue != null && selectedValue == columnDefs[j].options[i]) {
                                         options += "<option value='"
                                             + that._quoteattr(columnDefs[j].options[i]) + "' selected>"
                                             + columnDefs[j].options[i] + "</option>";
@@ -347,8 +347,10 @@
                                 // object-style select or select2
                                 for (var x in columnDefs[j].options) {
                                     // Assigning the selected value of the <selected> option
-                                    if (adata.data()[0][columnDefs[j].name]
-                                        .indexOf(columnDefs[j].options[x])>= 0) {
+                                    var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
+                                    var selectedValue = eval("adata.data()[0]" + arrIndex);
+                                    console.log("HERE", selectedValue, options[x], selectedValue == options[x]);
+                                    if (selectedValue != null && selectedValue == x) {
                                         options += "<option value='" + that._quoteattr(x) + "' selected>"
                                             + columnDefs[j].options[x] + "</option>";
                                     } else {
