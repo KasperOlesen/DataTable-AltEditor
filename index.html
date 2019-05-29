@@ -16,7 +16,7 @@
 <body>
   <p><br></p>
       <h1>DataTable-AltEditor - Example #4</h1>
-This is the original example, not sure everything works yet.
+<p>This is the original example, not sure everything works yet.</p>
 
       <table class="table table-striped" id="testTableData">
         <thead>
@@ -58,7 +58,7 @@ This is the original example, not sure everything works yet.
 <script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.js" ></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js" ></script>
 <script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.js" ></script>
-<script src="../../src/dataTables.altEditor.free.js" ></script>
+<script src="./src/dataTables.altEditor.free.js" ></script>
 
   <script>
 
@@ -142,7 +142,7 @@ var columnDefs = [{
 //Table creation
 var myTable = $('#testTableData').dataTable({
   dom: 'Bfrltip',                   //Element order: Button container(B) is essential.
-  ajax: "https://raw.githubusercontent.com/luca-vercelli/DataTable-AltEditor/master/example/04_more/example4.json",   //Receiving data from this source. 
+  ajax: "./example4.json",          //Receiving data from this source. 
     columns: columnDefs,            //Columns defined above.
     select: 'single',               //Only single column selection is implemented.
     altEditor: true,                //Enable altEditor.
