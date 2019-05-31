@@ -236,163 +236,26 @@
              * @private
              */
             _openEditModal: function () {
-                var that = this;
+                
                 var dt = this.s.dt;
-                var columnDefs = [];
-
-                // Adding column attributes to object.
-                // Please set the ID as readonly.
-                for (var i in dt.context[0].aoColumns) {
-                    var obj = dt.context[0].aoColumns[i];
-                    columnDefs[i] = {
-                        title: obj.sTitle,
-                        name: obj.data ? obj.data : obj.mData,
-                        type: (obj.type ? obj.type : 'text'),
-                        options: (obj.options ? obj.options : []),
-                        msg: (obj.errorMsg ? obj.errorMsg : ''),
-                        hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
-                        pattern: (obj.pattern ? obj.pattern : '.*'),
-                        special: (obj.special ? obj.special : ''),
-                        unique: (obj.unique ? obj.unique : false),
-                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
-                        maxLength: (obj.maxLength ? obj.maxLength : false),
-                        multiple: (obj.multiple ? obj.multiple : false),
-                        select2: (obj.select2 ? obj.select2 : false),
-                        datepicker: (obj.datepicker ? obj.datepicker : false),
-                        datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false)
-                    };
-                }
                 var adata = dt.rows({
                     selected: true
                 });
+                
+                var columnDefs = this.completeColumnDefs();
+                var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close');
 
-                // Building edit-form
-                var data = "";
-
-                data += "<form name='altEditor-form' role='form'>";
-
-                for (var j in columnDefs) {
-                    // handle hidden fields
-                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        data += "<input type='hidden' id='" + columnDefs[j].name + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
-                    }
-                    else {
-                        // handle fields that are visible to the user
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>"
-                        data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>"
-                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>"
-                        data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
-
-                        // Adding text-inputs and errorlabels
-                        if (columnDefs[j].type.indexOf("text") >= 0) {
-                            data += "<input type='"
-                                + that._quoteattr(columnDefs[j].type)
-                                + "' id='"
-                                + that._quoteattr(columnDefs[j].name)
-                                + "'  pattern='"
-                                + that._quoteattr(columnDefs[j].pattern)
-                                + "'  title='"
-                                + that._quoteattr(columnDefs[j].hoverMsg)
-                                + "' name='"
-                                + that._quoteattr(columnDefs[j].title)
-                                + "' placeholder='"
-                                + that._quoteattr(columnDefs[j].title)
-                                + "' data-special='"
-                                + that._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='"
-                                + that._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='"
-                                + that._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='"
-                                + columnDefs[j].unique
-                                + "'"
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden'  class='form-control  form-control-sm' value='"
-                                + that._quoteattr(adata.data()[0][columnDefs[j].name]) + "'>";
-                            data += "<label id='" + columnDefs[j].name + "label"
-                                + "' class='errorLabel'></label>";
-                        }
-
-                        // Adding readonly-fields
-                        if (columnDefs[j].type.indexOf("readonly") >= 0) {
-                            data += "<input type='text' readonly  id='"
-                                + columnDefs[j].name
-                                + "' name='"
-                                + columnDefs[j].title
-                                + "' placeholder='"
-                                + columnDefs[j].title
-                                + "' style='overflow:hidden'  class='form-control  form-control-sm' value='"
-                                + adata.data()[0][columnDefs[j].name] + "'>";
-                        }
-
-                        // Adding select-fields
-                        if (columnDefs[j].type.indexOf("select") >= 0) {
-                            var options = "";
-                            if (columnDefs[j].options.length > 0) {
-                                // array-style select or select2
-                                for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                    // Assigning the selected value of the <selected> option
-                                    var selectedValue = adata.data()[0][columnDefs[j].name];
-                                    if (selectedValue != null && selectedValue == columnDefs[j].options[i]) {
-                                        options += "<option value='"
-                                            + that._quoteattr(columnDefs[j].options[i]) + "' selected>"
-                                            + columnDefs[j].options[i] + "</option>";
-                                    } else {
-                                        options += "<option value='"
-                                            + that._quoteattr(columnDefs[j].options[i]) + "'>"
-                                            + columnDefs[j].options[i] + "</option>";
-                                    }
-                                }
-                            } else {
-                                // object-style select or select2
-                                for (var x in columnDefs[j].options) {
-                                    // Assigning the selected value of the <selected> option
-                                    var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
-                                    var selectedValue = eval("adata.data()[0]" + arrIndex);
-                                    console.log("HERE", selectedValue, options[x], selectedValue == options[x]);
-                                    if (selectedValue != null && selectedValue == x) {
-                                        options += "<option value='" + that._quoteattr(x) + "' selected>"
-                                            + columnDefs[j].options[x] + "</option>";
-                                    } else {
-                                        options += "<option value='" + that._quoteattr(x) + "'>"
-                                            + columnDefs[j].options[x] + "</option>";
-                                    }
-                                }
-                            }
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + columnDefs[j].name + "' name='" + columnDefs[j].title + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
-                                + "</select>";
-                        }
-                        data += "</div><div style='clear:both;'></div></div>";
-
-                    }
-                }
-                // close form
-                data += "</form>";
                 var selector = this.modal_selector;
-                $(selector).on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-                        '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn">Edit</button>';
-                    $(selector).find('.modal-title').html('Edit Record');
-                    $(selector).find('.modal-body').html(data);
-                    $(selector).find('.modal-footer').html(btns);
-                });
-
                 $(selector).modal('show');
-                $(selector + ' input[0]').focus();
-
-                // enable select 2 items, datepicker, datetimepickerm
+                
                 for (var j in columnDefs) {
-                    if (columnDefs[j].select2) {
-                        // Require select2 plugin
-                        $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
-                    } else if (columnDefs[j].datepicker) {
-                        // Require jquery-ui
-                        $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
-                    } else if (columnDefs[j].datetimepicker) {
-                        // Require datetimepicker plugin
-                        $(selector).find("#" + columnDefs[j].name).datetimepicker(columnDefs[j].datetimepicker);
-                    }
+                    var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
+                    var selectedValue = eval("adata.data()[0]" + arrIndex);
+                    var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+                    $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
                 }
+                
+                $(selector + ' input[0]').focus();
             },
 
             /**
@@ -520,11 +383,21 @@ console.log(rowDataArray); //DEBUG
              * @private
              */
             _openAddModal: function () {
-                var that = this;
                 var dt = this.s.dt;
-                var columnDefs = [];
+                var columnDefs = this.completeColumnDefs();
+                var data = this.createDialog(columnDefs, 'Add Record', 'Add', 'Close');
 
-                // Adding column attributes to object.
+                var selector = this.modal_selector;
+                $(selector).modal('show');
+                $(selector + ' input[0]').focus();
+            },
+            
+            /**
+            * Complete DataTable.context[0].aoColumns with default values
+            */
+            completeColumnDefs() {
+                var columnDefs = [];
+                var dt = this.s.dt;
                 for (var i in dt.context[0].aoColumns) {
                     var obj = dt.context[0].aoColumns[i];
                     columnDefs[i] = {
@@ -540,100 +413,107 @@ console.log(rowDataArray); //DEBUG
                         uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
-                        select2: (obj.select2 ? obj.select2 : false)
+                        select2: (obj.select2 ? obj.select2 : false),
+                        datepicker: (obj.datepicker ? obj.datepicker : false),
+                        datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false)
                     }
                 }
-
-
-                // Building add-form
+                return columnDefs;
+            },
+            
+            /**
+            * Create both Edit and Add dialogs
+            * @param columnDefs as returned by completeColumnDefs()
+            */
+            createDialog: function(columnDefs, title, buttonCaption, closeCaption) {
+                                
                 var data = "";
                 data += "<form name='altEditor-form' role='form'>";
                 for (var j in columnDefs) {
+                    
+                    //handle hidden fields
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        // just do nothing for hidden fields!
+                        data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
                     }
                     else {
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'><label for='"
-                            + columnDefs[j].name
-                            + "'>"
-                            + columnDefs[j].title
-                            + ":</label></div><div class='col-sm-8 col-md-8 col-lg-8'>";
-
-                        // Adding text-inputs and errorlabels
-                        if (columnDefs[j].type.indexOf("text") >= 0) {
-                            data += "<input type='"
-                                + that._quoteattr(columnDefs[j].type)
-                                + "' id='"
-                                + that._quoteattr(columnDefs[j].name)
-                                + "'  pattern='"
-                                + that._quoteattr(columnDefs[j].pattern)
-                                + "'  title='"
-                                + that._quoteattr(columnDefs[j].hoverMsg)
-                                + "' name='"
-                                + that._quoteattr(columnDefs[j].title)
-                                + "' placeholder='"
-                                + that._quoteattr(columnDefs[j].title)
-                                + "' data-special='"
-                                + columnDefs[j].special
-                                + "' data-errorMsg='"
-                                + that._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='"
-                                + that._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='"
-                                + columnDefs[j].unique
-                                + "'"
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
-                            data += "<label id='" + that._quoteattr(columnDefs[j].name) + "label"
-                                + "' class='errorLabel'></label>";
-                        }
+                        // handle fields that are visible to the user
+                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>";
+                        data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                        data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
 
                         // Adding readonly-fields
                         if (columnDefs[j].type.indexOf("readonly") >= 0) {
                             data += "<input type='text' readonly  id='"
-                                + that._quoteattr(columnDefs[j].name)
+                                + this._quoteattr(columnDefs[j].name)
                                 + "' name='"
-                                + that._quoteattr(columnDefs[j].title)
+                                + this._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
-                                + that._quoteattr(columnDefs[j].title)
+                                + this._quoteattr(columnDefs[j].title)
                                 + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                         }
-
                         // Adding select-fields
-                        if (columnDefs[j].type.indexOf("select") >= 0) {
+                        else if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
                             if (columnDefs[j].options.length > 0) {
                                 // array-style select or select2
                                 for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                    options += "<option value='" + that._quoteattr(columnDefs[j].options[i])
+                                    options += "<option value='" + this._quoteattr(columnDefs[j].options[i])
                                         + "'>" + columnDefs[j].options[i] + "</option>";
                                 }
                             } else {
                                 // object-style select or select2
                                 for (var x in columnDefs[j].options) {
-                                    options += "<option value='" + that._quoteattr(x) + "' >"
+                                    options += "<option value='" + this._quoteattr(x) + "' >"
                                         + columnDefs[j].options[x] + "</option>";
                                 }
                             }
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' id='" + that._quoteattr(columnDefs[j].name) + "' name='" + that._quoteattr(columnDefs[j].title) + "' " + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
+                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
+                                + "' id='" + this._quoteattr(columnDefs[j].name) + "' name='" + this._quoteattr(columnDefs[j].title) + "' "
+                                + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
                                 + "</select>";
                         }
+                        // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
+                        else {
+                            data += "<input type='"
+                                + this._quoteattr(columnDefs[j].type)
+                                + "' id='"
+                                + this._quoteattr(columnDefs[j].name)
+                                + "'  pattern='"
+                                + this._quoteattr(columnDefs[j].pattern)
+                                + "'  title='"
+                                + this._quoteattr(columnDefs[j].hoverMsg)
+                                + "' name='"
+                                + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='"
+                                + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='"
+                                + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='"
+                                + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='"
+                                + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='"
+                                + columnDefs[j].unique
+                                + "'"
+                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
+                                + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
+                            data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
+                                + "' class='errorLabel'></label>";
+                        }
+
                         data += "</div><div style='clear:both;'></div></div>";
                     }
                 }
                 data += "</form>";
-
+                
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">Add</button>';
-                    $(selector).find('.modal-title').html(
-                        'Add Record');
-                    $(selector).find('.modal-body')
-                        .html(data);
-                    $(selector)
-                        .find('.modal-footer')
-                        .html(btns);
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
+                        '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">'+buttonCaption+'</button>';
+                    $(selector).find('.modal-title').html(title);
+                    $(selector).find('.modal-body').html(data);
+                    $(selector).find('.modal-footer').html(btns);
                 });
 
                 $(selector).modal('show');
@@ -653,7 +533,7 @@ console.log(rowDataArray); //DEBUG
                     }
                 }
             },
-
+            
             /**
              * Callback for "Add" button
              */
@@ -856,6 +736,12 @@ console.log(rowDataArray); //DEBUG
                 if (s == null)
                     return "";
                 preserveCR = preserveCR ? '&#13;' : '\n';
+                if (Array.isArray(s)) {
+                    // for MULTIPLE SELECT
+                    var newArray = [];
+                    for (x in s) newArray.push(this._quoteattr(x));
+                    return newArray;
+                }
                 return ('' + s) /* Forces the conversion to string. */
                     .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
                     .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
