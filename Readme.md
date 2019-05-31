@@ -72,7 +72,7 @@ Following column options are supported.
 | **Options for columns with type `"select"`:**                |                                   | |
 |    `options` | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
 |    `select2` | `{}`               |   Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object. |
-|   `multiple` | `true \| false`    |   Set HTML `"multiple"` attribute (for use with select2). |
+|   `multiple` | `true \| false`    |   Set HTML `"multiple"` attribute. |
 
 
 
