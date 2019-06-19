@@ -1,6 +1,6 @@
 [
-{"id":1, "name":"Tiger Nixon", "position":"1", "office":"Edinburgh", "extension":"5421", "startDate":"2011/04/25", "salary":"Tiger Nixon","creationTimestamp":"2000-01-01 13:50:43", "friends":[], "degree":{"id":0,"caption":"None"}},
-{"id":2, "name":"Garrett Winters", "position":"1", "office":"Tokyo", "extension":"8422", "startDate":"2011/07/25", "salary":"Garrett Winters","creationTimestamp":"2000-01-01 13:50:43", "friends":[], "degree":{"id":2,"caption":"High school"}},
+{"id":1, "name":"Tiger Nixon", "position":"1", "office":"Edinburgh", "extension":"5421", "startDate":"2011/04/25", "salary":"Tiger Nixon","creationTimestamp":"2000-01-01 13:50:43", "friends":["G","D"], "degree":{"id":0,"caption":"None"}},
+{"id":2, "name":"Garrett Winters", "position":"1", "office":"Tokyo", "extension":"8422", "startDate":"2011/07/25", "salary":"Garrett Winters","creationTimestamp":"2000-01-01 13:50:43", "friends":["D"], "degree":{"id":2,"caption":"High school"}},
 {"id":3, "name":"Ashton Cox", "position":"2", "office":"San Francisco", "extension":"1562", "startDate":"2009/01/12", "salary":"Ashton Cox","creationTimestamp":"2000-01-01 13:50:43", "friends":[], "degree":{"id":2,"caption":"High school"}},
 {"id":4, "name":"Cedric Kelly", "position":"1", "office":"Edinburgh", "extension":"6224", "startDate":"2012/03/29", "salary":"Cedric Kelly","creationTimestamp":"2000-01-01 13:50:43", "friends":[], "degree":{"id":2,"caption":"High school"}},
 {"id":5, "name":"Airi Satou", "position":"1", "office":"Tokyo", "extension":"5407", "startDate":"2008/11/28", "salary":"Airi Satou","creationTimestamp":"2000-01-01 13:50:43", "friends":[], "degree":{"id":2,"caption":"High school"}},
