@@ -739,7 +739,8 @@ console.log(rowDataArray); //DEBUG
                 if (Array.isArray(s)) {
                     // for MULTIPLE SELECT
                     var newArray = [];
-                    for (x in s) newArray.push(this._quoteattr(x));
+		    var x;
+                    for (x in s) newArray.push(s[x]);
                     return newArray;
                 }
                 return ('' + s) /* Forces the conversion to string. */
