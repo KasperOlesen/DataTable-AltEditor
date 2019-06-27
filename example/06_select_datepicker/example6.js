@@ -40,7 +40,11 @@ $(document).ready(function() {
     type: "select",
     options: friendsOptions,
     multiple : true,
-    select2 : { width: "100%"}
+    select2 : { width: "100%"},
+    render : function (data, type, row, meta) {
+        if (data == null || row == null || row.degree == null) return null;
+        return data.map(function(x) {return friendsOptions[x];});
+    }
   },
   {
     data: "degree.id",
