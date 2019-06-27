@@ -243,7 +243,7 @@
                 });
                 
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close');
+                var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close', 'editRowBtn');
 
                 var selector = this.modal_selector;
                 $(selector).modal('show');
@@ -277,7 +277,7 @@
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-console.log(rowDataArray); //DEBUG
+                console.log(rowDataArray); //DEBUG
 
                 that.onEditRow(that,
                     rowDataArray,
@@ -292,22 +292,18 @@ console.log(rowDataArray); //DEBUG
              * @private
              */
             _openDeleteModal: function () {
+                
                 var that = this;
                 var dt = this.s.dt;
-                var columnDefs = [];
-
-                // Adding attribute IDs and values to object
-                for (var i in dt.context[0].aoColumns) {
-                    columnDefs.push({
-                        title: dt.context[0].aoColumns[i].sTitle,
-                        type: (dt.context[0].aoColumns[i].type ? dt.context[0].aoColumns[i].type : 'text'),
-                        name: dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data : dt.context[0].aoColumns[i].mData
-                    });
-                }
                 var adata = dt.rows({
                     selected: true
                 });
+                var columnDefs = this.completeColumnDefs();
 
+                // TODO
+                // we should use createDialog()
+                // var data = this.createDialog(columnDefs, 'Delete Record', 'Delete', 'Close', 'deleteRowBtn');
+                
                 // Building delete-modal
                 var data = "";
 
@@ -333,7 +329,6 @@ console.log(rowDataArray); //DEBUG
                             + "</input></div>";
                     }
                 }
-                // close the form
                 data += "</form>";
 
                 var selector = this.modal_selector;
@@ -385,7 +380,7 @@ console.log(rowDataArray); //DEBUG
             _openAddModal: function () {
                 var dt = this.s.dt;
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, 'Add Record', 'Add', 'Close');
+                var data = this.createDialog(columnDefs, 'Add Record', 'Add', 'Close', 'addRowBtn');
 
                 var selector = this.modal_selector;
                 $(selector).modal('show');
@@ -425,7 +420,7 @@ console.log(rowDataArray); //DEBUG
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
             */
-            createDialog: function(columnDefs, title, buttonCaption, closeCaption) {
+            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass) {
                                 
                 var data = "";
                 data += "<form name='altEditor-form' role='form'>";
@@ -510,7 +505,7 @@ console.log(rowDataArray); //DEBUG
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">'+buttonCaption+'</button>';
+                        '<button type="button"  data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
