@@ -246,7 +246,6 @@
                 var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close', 'editRowBtn');
 
                 var selector = this.modal_selector;
-                $(selector).modal('show');
                 
                 for (var j in columnDefs) {
                     var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
@@ -383,7 +382,6 @@
                 var data = this.createDialog(columnDefs, 'Add Record', 'Add', 'Close', 'addRowBtn');
 
                 var selector = this.modal_selector;
-                $(selector).modal('show');
                 $(selector + ' input[0]').focus();
             },
             
