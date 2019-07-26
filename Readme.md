@@ -56,11 +56,13 @@ Following column options are supported.
 
 | Column option          | Accepted values                         | Description                       |
 |------------------------|-----------------------------------------|-----------------------------------|
-|    `type`     | `"text" \| "select" \| "hidden" \| "readonly"`   |   Type of HTML input to be shown. |
+|    `type`     | `"text" \| "select" \| "hidden" \| ...`   |   Type of HTML input to be shown. The value `readonly` is accepted for backward compatibility, but deprecated. |
+|    `readonly` | `true \| false`   |   Add `readonly` HTML attribute |
+|    `disabled` | `true \| false`   |   Add `disabled` HTML attribute |
 |    `hoverMsg` | `"some msg"`      |   The message will appear as a tooltip over the input field.     |
 |    `unique`   | `true \| false`   |   Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this). |
 |   `uniqueMsg` | `"some msg"`      |   An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute. |
-|    `special` | `"any string"`     |   Set HTML `"data-special"` attribute (don't know what's that needed for). |
+|    `special`  | `"any string"`    |   Set HTML `"data-special"` attribute (don't know what's that needed for). |
 | | |
 | **Options for columns with type `"text"`:**                |                                   | |
 |    `pattern` | `r.e.`             |   The typed text will be matched against given regular expression, before submit. |
