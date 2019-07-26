@@ -1,7 +1,17 @@
 
+2019-07 luca-vercelli
+    * better support for readonly and disabled fields, see issue #35
+
+2019-05 luca-vercelli
+    * better documentation
+    * limited support for nested objects, see issue #15
+
+2019-03 luca-vercelli
+    * support for datepicker, datetimepicker, select2
+
 2018-09 luca-vercelli
     * some improvements in AJAX callbacks
-    
+
 2018-07 zach-hable
     * Version 2.0
     * Cleaner source code

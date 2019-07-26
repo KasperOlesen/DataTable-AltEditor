@@ -398,6 +398,8 @@
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
                         options: (obj.options ? obj.options : []),
+                        readonly: (obj.readonly ? obj.readonly : false),
+                        disabled: (obj.disabled ? obj.disabled : false),
                         msg: (obj.errorMsg ? obj.errorMsg : ''),
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
@@ -437,6 +439,7 @@
 
                         // Adding readonly-fields
                         if (columnDefs[j].type.indexOf("readonly") >= 0) {
+                            // type=readonly is deprecated, kept for backward compatibility
                             data += "<input type='text' readonly  id='"
                                 + this._quoteattr(columnDefs[j].name)
                                 + "' name='"
@@ -462,33 +465,29 @@
                                 }
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
-                                + "' id='" + this._quoteattr(columnDefs[j].name) + "' name='" + this._quoteattr(columnDefs[j].title) + "' "
-                                + (columnDefs[j].multiple ? 'multiple' : '') + ">" + options
+                                + "' id='" + this._quoteattr(columnDefs[j].name)
+                                + "' name='" + this._quoteattr(columnDefs[j].title) + "' "
+                                + (columnDefs[j].multiple ? ' multiple ' : '')
+                                + (columnDefs[j].readonly ? ' readonly ' : '')
+                                + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + ">" + options
                                 + "</select>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
-                            data += "<input type='"
-                                + this._quoteattr(columnDefs[j].type)
-                                + "' id='"
-                                + this._quoteattr(columnDefs[j].name)
-                                + "'  pattern='"
-                                + this._quoteattr(columnDefs[j].pattern)
-                                + "'  title='"
-                                + this._quoteattr(columnDefs[j].hoverMsg)
-                                + "' name='"
-                                + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='"
-                                + this._quoteattr(columnDefs[j].title)
-                                + "' data-special='"
-                                + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='"
-                                + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='"
-                                + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='"
-                                + columnDefs[j].unique
-                                + "'"
+                            data += "<input type='" + this._quoteattr(columnDefs[j].type)
+                                + "' id='" + this._quoteattr(columnDefs[j].name)
+                                + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
+                                + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
+                                + "' name='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='" + columnDefs[j].unique
+                                + "' "
+                                + (columnDefs[j].readonly ? ' readonly ' : '')
+                                + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
                                 + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                             data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
