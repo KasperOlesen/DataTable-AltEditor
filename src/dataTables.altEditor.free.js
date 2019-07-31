@@ -252,6 +252,7 @@
                     var selectedValue = eval("adata.data()[0]" + arrIndex);
                     var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
                     $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
+                    $(selector).find(jquerySelector).trigger("change"); // required by select2
                 }
                 
                 $(selector + ' input[0]').focus();
