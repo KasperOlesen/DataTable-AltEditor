@@ -256,6 +256,7 @@
                 }
                 
                 $(selector + ' input[0]').focus();
+                $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:edit_dialog_opened");
             },
 
             /**
@@ -342,6 +343,7 @@
 
                 $(selector).modal('show');
                 $(selector + ' input[0]').focus();
+                $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:delete_dialog_opened");
             },
 
             /**
@@ -384,6 +386,7 @@
 
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').focus();
+                $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
             },
             
             /**
