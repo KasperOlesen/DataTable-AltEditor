@@ -389,7 +389,7 @@
             /**
             * Complete DataTable.context[0].aoColumns with default values
             */
-            completeColumnDefs() {
+            completeColumnDefs: function () {
                 var columnDefs = [];
                 var dt = this.s.dt;
                 for (var i in dt.context[0].aoColumns) {
