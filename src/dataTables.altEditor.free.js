@@ -109,6 +109,7 @@
             _constructor: function () {
                 var that = this;
                 var dt = this.s.dt;
+		dt.altEditor = this;
 
                 if (dt.settings()[0].oInit.onAddRow)
                     that.onAddRow = dt.settings()[0].oInit.onAddRow;
