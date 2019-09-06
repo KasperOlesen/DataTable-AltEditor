@@ -808,7 +808,12 @@
             var opts = $.extend({}, init, defaults);
 
             if (init !== false) {
-                new altEditor(settings, opts);
+
+                var editor = new altEditor(settings, opts);
+                // e is a jQuery event object
+                // e.target is the underlying jQuery object, e.g. $('#mytable')
+                // so that you can retrieve the altEditor object later
+                e.target.altEditor = editor;
             }
         }
     });
