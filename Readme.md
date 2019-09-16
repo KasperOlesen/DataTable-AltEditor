@@ -29,12 +29,14 @@ Examples can be browsed at https://luca-vercelli.github.io/DataTable-AltEditor .
 
 The datatable accepts the following callback functions as arguments:
 
-    onAddRow(datatable, rowdata, success, error)
-    onEditRow(datatable, rowdata, success, error)
-    onDeleteRow(datatable, rowdata, success, error)
+    onAddRow(alteditor, rowdata, success, error)
+    onEditRow(alteditor, rowdata, success, error)
+    onDeleteRow(alteditor, rowdata, success, error)
 
 In the most common case, these function should call `$.ajax` as expected by the webservice.
 The two functions `success` and `error` should be passed as arguments to `$.ajax`.
+
+Within the procedures `onAddRow`, `onEditRow`, `onDeleteRow`, you can access datatable object using `alteditor.s.dt`.
 
 Webservice **must** return the modified row in JSON format, because the `success()` function expects this.
 Otherwise you have to write your own `success()` callback (e.g. refreshing the whole table). 
