@@ -1,5 +1,26 @@
+// local URL's are not allowed
+//var url_ws_mock_get = './mock_svc_load.json';
+//var url_ws_mock_ok = './mock_svc_ok.json';
+//var url_ws_mock_dep = './mock_svc_dependent.json';
+var url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/mock_svc_load.json';
+var url_ws_mock_ok = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/mock_svc_ok.json';
+var url_ws_mock_dep = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select//mock_svc_dependent.json';
+
+
 var countryOptions = ['Italy', 'France', 'Germany'];
-var townOptions = [];
+var townOptions = function(rowdata) {
+	var options = [];
+    $.ajax({
+        // a tipycal url would be / with type='PUT'
+        async: false; 			// <-- IMPORTANT...
+        url: url_ws_mock_dep,  // in a real world application this should depend on rowdata
+        type: 'GET',
+        success: function(data) {
+            options = data;
+        }
+    });
+    return options;
+};
 
 $(document).ready(function() {
 
@@ -28,15 +49,6 @@ $(document).ready(function() {
   }];
 
   var myTable;
-
-  // local URL's are not allowed
-  //var url_ws_mock_get = './mock_svc_load.json';
-  //var url_ws_mock_ok = './mock_svc_ok.json';
-  //var url_ws_mock_dep = './mock_svc_dependent.json';
-  var url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/03_ajax_objects/mock_svc_load.json';
-  var url_ws_mock_ok = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/03_ajax_objects/mock_svc_ok.json';
-  //var url_ws_mock_dep = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/03_ajax_objects/mock_svc_ok.json';
-  
   myTable = $('#example').DataTable({
     "sPaginationType": "full_numbers",
     ajax: {

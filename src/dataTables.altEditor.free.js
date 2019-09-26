@@ -455,17 +455,23 @@
                         // Adding select-fields
                         else if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
-                            if (columnDefs[j].options.length > 0) {
+                            var optionsArray;
+                            if (typeof columnDefs[j].options === "function") {
+                                optionsArray = columnDefs[j].options();
+                            } else {
+                                optionsArray = columnDefs[j].options;
+                            }
+                            if (optionsArray.length > 0) {
                                 // array-style select or select2
-                                for (var i = 0; i < columnDefs[j].options.length; i++) {
-                                    options += "<option value='" + this._quoteattr(columnDefs[j].options[i])
-                                        + "'>" + columnDefs[j].options[i] + "</option>";
+                                for (var i = 0; i < optionsArray.length; i++) {
+                                    options += "<option value='" + this._quoteattr(optionsArray[i])
+                                        + "'>" + optionsArray[i] + "</option>";
                                 }
                             } else {
                                 // object-style select or select2
-                                for (var x in columnDefs[j].options) {
+                                for (var x in optionsArray) {
                                     options += "<option value='" + this._quoteattr(x) + "' >"
-                                        + columnDefs[j].options[x] + "</option>";
+                                        + optionsArray[x] + "</option>";
                                 }
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
