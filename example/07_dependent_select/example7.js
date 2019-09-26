@@ -12,7 +12,7 @@ var townOptions = function(rowdata) {
 	var options = [];
     $.ajax({
         // a tipycal url would be / with type='PUT'
-        async: false; 			// <-- IMPORTANT...
+        async: false, 			// <-- IMPORTANT...
         url: url_ws_mock_dep,  // in a real world application this should depend on rowdata
         type: 'GET',
         success: function(data) {
