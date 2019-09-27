@@ -65,6 +65,7 @@ Following column options are supported.
 |    `unique`   | `true \| false`   |   Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this). |
 |   `uniqueMsg` | `"some msg"`      |   An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute. |
 |    `special`  | `"any string"`    |   Set HTML `"data-special"` attribute (don't know what's that needed for). |
+|`editorOnChange`| function         |   Custom onchange function. It will take as arguments the jquery event and the altEditor object. |
 | | |
 | **Options for columns with type `"text"`:**                |                                   | |
 |    `pattern` | `r.e.`             |   The typed text will be matched against given regular expression, before submit. |

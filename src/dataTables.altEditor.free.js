@@ -437,7 +437,7 @@
                     }
                     else {
                         // handle fields that are visible to the user
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>";
+                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
                         data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
                         data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
                         data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
@@ -516,6 +516,8 @@
 
                 $(selector).modal('show');
                 $(selector + ' input[0]').focus();
+                
+                var that = this;
 
                 // enable select 2 items, datepicker, datetimepickerm
                 for (var j in columnDefs) {
@@ -528,6 +530,13 @@
                     } else if (columnDefs[j].datetimepicker) {
                         // Require datetimepicker plugin
                         $(selector).find("#" + columnDefs[j].name).datetimepicker(columnDefs[j].datetimepicker);
+                    }
+                    // custom onchange triggers
+                    if (columnDefs[j].editorOnChange) {
+                        var f = columnDefs[j].editorOnChange; // FIXME what if more than 1 editorOnChange ?
+                        $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
+                            f(elm, that);
+                        });
                     }
                 }
             },
@@ -673,6 +682,29 @@
             onDeleteRow: function(dt, rowdata, success, error) {
                 console.log("Missing AJAX configuration for DELETE");
                 success(rowdata);
+            },
+            
+            /**
+             * Dinamically reload options in SELECT menu
+            */
+            reloadOptions: function($select, options) {
+                var oldValue = $select.val();
+                $select.empty(); // remove old options
+                if (options.length > 0) {
+                    // array-style select or select2
+                    $.each(options, function(key, value) {
+                      $select.append($("<option></option>")
+                         .attr("value", value).text(value));
+                    });
+                } else {
+                    // object-style select or select2
+                    $.each(options, function(key, value) {
+                      $select.append($("<option></option>")
+                         .attr("value", value).text(key));
+                    });
+                }
+                $select.val(oldValue); // if still present, of course
+                $select.trigger('change');
             },
 
             /**

@@ -1,9 +1,10 @@
 // local URL's are not allowed
 
-var url_mock_prefix = './';
-var url_mock_prefix = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/';
+var url_ws_mock_prefix = './';
+//var url_ws_mock_prefix = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/';
 
 var countryOptions = ['Italy', 'France', 'Germany'];
+var allTownsOptions = [ "Torino", "Roma", "Milano", "Napoli", "Paris", "Lyon", "Toulose" ];
 
 $(document).ready(function() {
 
@@ -22,30 +23,37 @@ $(document).ready(function() {
     type : "select",
     options : countryOptions,
     select2 : { width: "100%"},
-    editorOnChange : function(dt, rowdata) {
-        console.log(dt, rowdata);
+    editorOnChange : function(event, altEditor) {
+        console.log(event, altEditor);
+        var country = $(event.currentTarget).val();
         /*
         In a real world application, this should just call a single webservice,
         passing rowdatata.country as argument
         */
-        if (rowdatata.country == "Italy"){
+        if (country == "Italy"){
+            $(altEditor.modal_selector).find("#alteditor-row-town").show();
             $.ajax({
                 url: url_ws_mock_prefix + 'mock_svc_italy.json',
                 type: 'GET',
-                success: function(data) {
-                    console.log(data);
+                success: function(options) {
+                    console.log(options);
+                    var town = $(altEditor.modal_selector).find('#town');
+                    altEditor.reloadOptions(town, options);
                 }
             });
-        } else if (rowdatata.country == "France"){
+        } else if (country == "France"){
+            $(altEditor.modal_selector).find("#alteditor-row-town").show();
             $.ajax({
                 url: url_ws_mock_prefix + 'mock_svc_france.json',
                 type: 'GET',
-                success: function(data) {
-                    console.log(data);
+                success: function(options) {
+                    console.log(options);
+                    var town = $(altEditor.modal_selector).find('#town');
+                    altEditor.reloadOptions(town, options);
                 }
             });
         } else {
-            dt.find("#townn").hide();
+            $(altEditor.modal_selector).find("#alteditor-row-town").hide();
         }
     }
   },
@@ -53,7 +61,7 @@ $(document).ready(function() {
     data: "town",
     title: "Town",
     type : "select",
-    options : [],
+    options : allTownsOptions,
     select2 : { width: "100%"}
   }];
 
@@ -91,7 +99,7 @@ $(document).ready(function() {
         onAddRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be / with type='PUT'
-                url: url_ws_mock_ok + 'mock_svc_ok.json',
+                url: url_ws_mock_prefix + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
@@ -101,7 +109,7 @@ $(document).ready(function() {
         onDeleteRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='DELETE'
-                url: url_ws_mock_ok + 'mock_svc_ok.json',
+                url: url_ws_mock_prefix + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
@@ -111,7 +119,7 @@ $(document).ready(function() {
         onEditRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='POST'
-                url: url_ws_mock_ok + 'mock_svc_ok.json',
+                url: url_ws_mock_prefix + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
