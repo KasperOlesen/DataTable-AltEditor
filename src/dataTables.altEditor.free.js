@@ -414,7 +414,8 @@
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false),
                         datepicker: (obj.datepicker ? obj.datepicker : false),
-                        datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false)
+                        datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false),
+                        editorOnChange: (obj.editorOnChange ? obj.editorOnChange : null)
                     }
                 }
                 return columnDefs;
@@ -455,12 +456,7 @@
                         // Adding select-fields
                         else if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = "";
-                            var optionsArray;
-                            if (typeof columnDefs[j].options === "function") {
-                                optionsArray = columnDefs[j].options();
-                            } else {
-                                optionsArray = columnDefs[j].options;
-                            }
+                            var optionsArray = columnDefs[j].options;
                             if (optionsArray.length > 0) {
                                 // array-style select or select2
                                 for (var i = 0; i < optionsArray.length; i++) {

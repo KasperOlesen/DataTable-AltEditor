@@ -1,26 +1,9 @@
 // local URL's are not allowed
-//var url_ws_mock_get = './mock_svc_load.json';
-//var url_ws_mock_ok = './mock_svc_ok.json';
-//var url_ws_mock_dep = './mock_svc_dependent.json';
-var url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/mock_svc_load.json';
-var url_ws_mock_ok = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/mock_svc_ok.json';
-var url_ws_mock_dep = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select//mock_svc_dependent.json';
 
+var url_mock_prefix = './';
+var url_mock_prefix = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/';
 
 var countryOptions = ['Italy', 'France', 'Germany'];
-var townOptions = function(rowdata) {
-	var options = [];
-    $.ajax({
-        // a tipycal url would be / with type='PUT'
-        async: false, 			// <-- IMPORTANT...
-        url: url_ws_mock_dep,  // in a real world application this should depend on rowdata
-        type: 'GET',
-        success: function(data) {
-            options = data;
-        }
-    });
-    return options;
-};
 
 $(document).ready(function() {
 
@@ -38,13 +21,39 @@ $(document).ready(function() {
     title: "Country",
     type : "select",
     options : countryOptions,
-    select2 : { width: "100%"}
+    select2 : { width: "100%"},
+    editorOnChange : function(dt, rowdata) {
+        console.log(dt, rowdata);
+        /*
+        In a real world application, this should just call a single webservice,
+        passing rowdatata.country as argument
+        */
+        if (rowdatata.country == "Italy"){
+            $.ajax({
+                url: url_ws_mock_prefix + 'mock_svc_italy.json',
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        } else if (rowdatata.country == "France"){
+            $.ajax({
+                url: url_ws_mock_prefix + 'mock_svc_france.json',
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        } else {
+            dt.find("#townn").hide();
+        }
+    }
   },
  {
     data: "town",
     title: "Town",
     type : "select",
-    options : townOptions,
+    options : [],
     select2 : { width: "100%"}
   }];
 
@@ -52,7 +61,7 @@ $(document).ready(function() {
   myTable = $('#example').DataTable({
     "sPaginationType": "full_numbers",
     ajax: {
-        url : url_ws_mock_get,
+        url : url_ws_mock_prefix + 'mock_svc_load.json',
         // our data is an array of objects, in the root node instead of /data node, so we need 'dataSrc' parameter
         dataSrc : ''
     },
@@ -82,7 +91,7 @@ $(document).ready(function() {
         onAddRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be / with type='PUT'
-                url: url_ws_mock_ok,
+                url: url_ws_mock_ok + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
@@ -92,7 +101,7 @@ $(document).ready(function() {
         onDeleteRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='DELETE'
-                url: url_ws_mock_ok,
+                url: url_ws_mock_ok + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
@@ -102,7 +111,7 @@ $(document).ready(function() {
         onEditRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='POST'
-                url: url_ws_mock_ok,
+                url: url_ws_mock_ok + 'mock_svc_ok.json',
                 type: 'GET',
                 data: rowdata,
                 success: success,
