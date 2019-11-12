@@ -45,7 +45,8 @@ $(document).ready(function() {
     type: "readonly"
   }, {
     title: "Name",
-    type: "text"
+    type: "text",
+    required: true
   }, {
     title: "Position",
     type: "text"

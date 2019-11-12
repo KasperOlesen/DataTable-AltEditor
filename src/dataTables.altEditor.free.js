@@ -404,6 +404,7 @@
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
+                        required: (obj.required ? obj.required : false),
                         msg: (obj.errorMsg ? obj.errorMsg : ''),
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
@@ -476,6 +477,7 @@
                                 + (columnDefs[j].multiple ? ' multiple ' : '')
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
                                 + ">" + options
                                 + "</select>";
                         }
@@ -494,6 +496,7 @@
                                 + "' "
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
                                 + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                             data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
