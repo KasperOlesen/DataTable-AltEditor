@@ -61,7 +61,8 @@ $(document).ready(function() {
   var myTable;
 
   // local URL's are not allowed
-  var url_ws_mock_get = './mock_svc_load.json';
+  var url_ws_mock_get = 'https://raw.githubusercontent.com/luca-vercelli/DataTable-AltEditor/master/example/06_select_datepicker/mock_svc_load.json';
+  // var url_ws_mock_get = './mock_svc_load.json';
   var url_ws_mock_ok = './mock_svc_ok.json';
   
   myTable = $('#example').DataTable({
