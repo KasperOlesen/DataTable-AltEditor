@@ -141,18 +141,37 @@
                 var dt = this.s.dt;
                 var modal_id = 'altEditor-modal-' + ("" + Math.random()).replace(".", "");
                 this.modal_selector = '#' + modal_id;
+                this.language = DataTable.settings.values().next().value.oLanguage.altEditor || {};
+                this.language.modalClose = this.language.modalClose || 'Close';
+                this.language.edit = this.language.edit || {};
+                this.language.edit = { title: this.language.edit.title || 'Edit record',
+                                       button: this.language.edit.button || 'Edit'
+                                     };
+                this.language.delete = this.language.delete || {};
+                this.language.delete = { title: this.language.delete.title || 'Delete record',
+                                         button: this.language.delete.button || 'Delete' };
+                this.language.add = this.language.add || {};
+                this.language.add = { title: this.language.add.title || 'Add record',
+                                      button: this.language.add.button || 'Add'
+                                    };
+                this.language.success = this.language.success || 'Success!';
+                this.language.error = this.language.error || {};
+                this.language.error = { message: this.language.error.message || 'There was an unknown error!',
+                                        label: this.language.error.label || 'Error!',
+                                        responseCode: this.language.error.responseCode | 'Response code: '
+                                      };
                 var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
                     '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '"><span aria-hidden="true">&times;</span></button>' +
                     '</div>' +
                     '<div class="modal-body">' +
                     '<p></p>' +
                     '</div>' +
                     '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' + //FIXME need i18n
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">' + this.language.modalClose + '</button>' +
                     '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>' +
                     '</div>' +
                     '</div>' +
@@ -243,7 +262,7 @@
                 });
                 
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close', 'editRowBtn');
+                var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button, this.language.modalClose, 'editRowBtn');
 
                 var selector = this.modal_selector;
                 
@@ -334,9 +353,9 @@
 
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">Delete</button>';
-                    $(selector).find('.modal-title').html('Delete Record');
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">' + that.language.modalClose + '</button>' +
+                        '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
+                    $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
                 });
@@ -382,7 +401,7 @@
             _openAddModal: function () {
                 var dt = this.s.dt;
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, 'Add Record', 'Add', 'Close', 'addRowBtn');
+                var data = this.createDialog(columnDefs, this.language.add.title, this.language.add.button, this.language.modalClose, 'addRowBtn');
 
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').focus();
@@ -573,7 +592,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>Success!</strong>' +
+                        '<strong>' + this.language.success + '</strong>' +
                         '</div>';
                     $(selector + ' .modal-body').append(message);
 
@@ -600,7 +619,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>Success!</strong>' +
+                        '<strong>' + this.language.success + '</strong>' +
                         '</div>';
                     $(selector + ' .modal-body').append(message);
 
@@ -624,7 +643,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>Success!</strong>' +
+                        '<strong>' + this.language.success + '</strong>' +
                         '</div>';
                     $(selector + ' .modal-body').append(message);
 
@@ -646,7 +665,7 @@
                     var error = response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
-                    var errstr = "There was an unknown error!";
+                    var errstr = this.language.error.message;
                     if (error.responseJSON && error.responseJSON.errors) {
                         errstr = "";
                         for (var key in error.responseJSON.errors) {
@@ -654,7 +673,7 @@
                         }
                     }
                     var message = '<div class="alert alert-danger" role="alert">' +
-                        '<strong>Error!</strong> ' + (error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
+                        '<strong>' + this.language.error.label + '</strong> ' + (error.status == null ? "" : this.language.error.responseCode + error.status) + " " + errstr +
                         '</div>';
 
                     $(selector + ' .modal-body').append(message);
