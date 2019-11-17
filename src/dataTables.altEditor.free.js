@@ -158,7 +158,8 @@
                 this.language.error = this.language.error || {};
                 this.language.error = { message: this.language.error.message || 'There was an unknown error!',
                                         label: this.language.error.label || 'Error!',
-                                        responseCode: this.language.error.responseCode || 'Response code: '
+                                        responseCode: this.language.error.responseCode || 'Response code: ',
+                                        required: this.language.error.required || 'Field is required'
                                       };
                 var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
@@ -423,6 +424,7 @@
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
+                        required: (obj.required ? obj.required : false),
                         msg: (obj.errorMsg ? obj.errorMsg : ''),
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
@@ -495,6 +497,7 @@
                                 + (columnDefs[j].multiple ? ' multiple ' : '')
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
                                 + ">" + options
                                 + "</select>";
                         }
@@ -513,12 +516,12 @@
                                 + "' "
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
                                 + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
-                            data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
-                                + "' class='errorLabel'></label>";
                         }
-
+                        data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
+                                + "' class='errorLabel'></label>";
                         data += "</div><div style='clear:both;'></div></div>";
                     }
                 }
@@ -750,7 +753,7 @@
                             errorcount++;
                         }
                         // now check if its should be unique
-                        else if ($(this).attr("data-unique") == "true") {
+                        if ($(this).attr("data-unique") == "true") {
                             // go through each item in this column
                             var colData = dt.column("th:contains('" + $(this).attr("name") + "')").data();
                             var selectedCellData = null;
@@ -766,6 +769,16 @@
                             }
                         }
                     });
+                $('form[name="altEditor-form"] *').filter(':input').each(
+                    function (i) {
+                        var errorLabel = "#" + $(this).attr("id") + "label";
+                        if ($(this).attr("required") != null && ! $(this).val()) {
+                            $(errorLabel).html(that.language.error.required);
+                            $(errorLabel).show();
+                            errorcount++;
+                        }
+                    }
+                );
 
                 if (errorcount == 0) {
                     isValid = true;
