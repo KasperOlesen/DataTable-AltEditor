@@ -158,7 +158,7 @@
                 this.language.error = this.language.error || {};
                 this.language.error = { message: this.language.error.message || 'There was an unknown error!',
                                         label: this.language.error.label || 'Error!',
-                                        responseCode: this.language.error.responseCode | 'Response code: '
+                                        responseCode: this.language.error.responseCode || 'Response code: '
                                       };
                 var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
