@@ -39,14 +39,12 @@ $(document).ready(function() {
     [36,"Unity Butler", "Marketing Designer", "San Francisco", "5384", "2009/12/09", "$85,675"]
   ];
 
-//TODO add some select...options column as example
   var columnDefs = [{
     title: "Id",
     type: "readonly"
   }, {
     title: "Name",
-    type: "text",
-    required: true
+    type: "text"
   }, {
     title: "Position",
     type: "text"
