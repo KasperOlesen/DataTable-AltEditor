@@ -166,14 +166,13 @@
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
                     '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '"><span aria-hidden="true">&times;</span></button>' +
+                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '">' +
+                    '<span aria-hidden="true">&times;</span></button>' +
                     '</div>' +
                     '<div class="modal-body">' +
                     '<p></p>' +
                     '</div>' +
                     '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-default" data-dismiss="modal">' + this.language.modalClose + '</button>' +
-                    '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -187,13 +186,19 @@
                         that._openEditModal();
                     });
 
-                    $(this.modal_selector).on('click', '#editRowBtn', function (e) {
+                    $(this.modal_selector).on('submit', '#altEditor-edit-form', function (e) {
+                        console.log("EDDDIT");
+                        e.preventDefault();
+                        e.stopPropagation();
+                        that._editRowData();
+                    });
+                    /*$(this.modal_selector).on('click', '#editRowBtn', function (e) {
                         if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
                             that._editRowData();
                         }
-                    });
+                    });*/
                 }
 
                 // add Delete Button
@@ -202,12 +207,17 @@
                         that._openDeleteModal();
                     });
 
-                    $(this.modal_selector).on('click', '#deleteRowBtn', function (e) {
+                    $(this.modal_selector).on('submit', 'altEditor-delete-form', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        that._deleteRow();
+                    });
+                    /*$(this.modal_selector).on('click', '#deleteRowBtn', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         that._deleteRow();
                         $(this).prop('disabled', true);
-                    });
+                    });*/
                 }
 
                 // add Add Button
@@ -216,13 +226,18 @@
                         that._openAddModal();
                     });
 
-                    $(this.modal_selector).on('click', '#addRowBtn', function (e) {
+                    $(this.modal_selector).on('submit', 'altEditor-add-form', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        that._addRowData();
+                    });
+                    /*$(this.modal_selector).on('click', '#addRowBtn', function (e) {
                         if (that._inputValidation()) {
                             e.preventDefault();
                             e.stopPropagation();
                             that._addRowData();
                         }
-                    });
+                    });*/
                 }
 
                 // add Refresh button
@@ -263,7 +278,8 @@
                 });
                 
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button, this.language.modalClose, 'editRowBtn');
+                var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button,
+                    this.language.modalClose, 'editRowBtn', 'altEditor-edit-form');
 
                 var selector = this.modal_selector;
                 
@@ -294,7 +310,7 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
+                $('form[name="altEditor-edit-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -323,12 +339,13 @@
 
                 // TODO
                 // we should use createDialog()
-                // var data = this.createDialog(columnDefs, 'Delete Record', 'Delete', 'Close', 'deleteRowBtn');
+                // var data = this.createDialog(columnDefs, this.language.delete.title, this.language.delete.button,
+                //      this.language.modalClose, 'deleteRowBtn', 'altEditor-delete-form');
                 
                 // Building delete-modal
                 var data = "";
 
-                data += "<form name='altEditor-form' role='form'>";
+                data += "<form name='altEditor-delete-form' role='form'>";
                 for (var j in columnDefs) {
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
@@ -402,7 +419,8 @@
             _openAddModal: function () {
                 var dt = this.s.dt;
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, this.language.add.title, this.language.add.button, this.language.modalClose, 'addRowBtn');
+                var data = this.createDialog(columnDefs, this.language.add.title, this.language.add.button,
+                    this.language.modalClose, 'addRowBtn', 'altEditor-add-form');
 
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').focus();
@@ -446,10 +464,10 @@
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
             */
-            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass) {
+            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
                                 
                 var data = "";
-                data += "<form name='altEditor-form' role='form'>";
+                data += "<form name='" + formName + "' id='" + formName + "' role='form'>";
                 for (var j in columnDefs) {
                     
                     //handle hidden fields
@@ -530,7 +548,7 @@
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
+                        '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
@@ -573,7 +591,7 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
+                $('form[name="altEditor-add-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -734,7 +752,7 @@
              * @returns {boolean}
              * @private
              */
-            _inputValidation: function () {
+            /*_inputValidation: function () {
                 var that = this;
                 var dt = this.s.dt;
                 var isValid = false;
@@ -785,7 +803,7 @@
                 }
 
                 return isValid;
-            },
+            },*/
 
             /**
              * Sanitizes input for use in HTML
