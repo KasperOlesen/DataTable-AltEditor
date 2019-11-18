@@ -159,7 +159,8 @@
                 this.language.error = { message: this.language.error.message || 'There was an unknown error!',
                                         label: this.language.error.label || 'Error!',
                                         responseCode: this.language.error.responseCode || 'Response code: ',
-                                        required: this.language.error.required || 'Field is required'
+                                        required: this.language.error.required || 'Field is required',
+                                        unique: this.language.error.unique || 'Duplicated field'
                                       };
                 var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
@@ -192,13 +193,6 @@
                         e.stopPropagation();
                         that._editRowData();
                     });
-                    /*$(this.modal_selector).on('click', '#editRowBtn', function (e) {
-                        if (that._inputValidation()) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            that._editRowData();
-                        }
-                    });*/
                 }
 
                 // add Delete Button
@@ -212,12 +206,6 @@
                         e.stopPropagation();
                         that._deleteRow();
                     });
-                    /*$(this.modal_selector).on('click', '#deleteRowBtn', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._deleteRow();
-                        $(this).prop('disabled', true);
-                    });*/
                 }
 
                 // add Add Button
@@ -231,15 +219,25 @@
                         e.stopPropagation();
                         that._addRowData();
                     });
-                    /*$(this.modal_selector).on('click', '#addRowBtn', function (e) {
-                        if (that._inputValidation()) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            that._addRowData();
-                        }
-                    });*/
                 }
-
+                
+                // bind 'unique' error messages
+                $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
+                    var target = $(elm.target);
+                    var colData = dt.column("th:contains('" + target.attr("name") + "')").data();
+                    // go through each item in this column
+                    var selectedCellData = null;
+                    if (dt.row({selected: true}).index() != null)
+                        selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + target.attr("name") + "')").index()).data();
+                    elm.target.setCustomValidity('');
+                    for (var j in colData) {
+                        // if the element is in the column and its not the selected one then its not unique
+                        if (target.val() == colData[j] && colData[j] != selectedCellData) {
+                            elm.target.setCustomValidity(that.language.error.unique);
+                        }
+                    }
+                });
+                        
                 // add Refresh button
                 if (this.s.dt.button('refresh:name')) {
                     this.s.dt.button('refresh:name').action(function (e, dt, node, config) {
@@ -443,12 +441,12 @@
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
                         required: (obj.required ? obj.required : false),
-                        msg: (obj.errorMsg ? obj.errorMsg : ''),
+                        msg: (obj.errorMsg ? obj.errorMsg : ''),        // FIXME no more used
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
                         special: (obj.special ? obj.special : ''),
                         unique: (obj.unique ? obj.unique : false),
-                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
+                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),        // FIXME no more used
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false),
@@ -746,64 +744,6 @@
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
             },
-
-            /**
-             * Validates input
-             * @returns {boolean}
-             * @private
-             */
-            /*_inputValidation: function () {
-                var that = this;
-                var dt = this.s.dt;
-                var isValid = false;
-                var errorcount = 0;
-
-                // Looping through all text fields
-                $('form[name="altEditor-form"] *').filter(':text').each(
-                    function (i) {
-                        var errorLabel = "#" + $(this).attr("id") + "label";
-                        // reset error display
-                        $(errorLabel).hide();
-                        $(errorLabel).empty();
-                        if (!$(this).val().match($(this).attr("pattern"))) {
-                            $(errorLabel).html($(this).attr("data-errorMsg"));
-                            $(errorLabel).show();
-                            errorcount++;
-                        }
-                        // now check if its should be unique
-                        if ($(this).attr("data-unique") == "true") {
-                            // go through each item in this column
-                            var colData = dt.column("th:contains('" + $(this).attr("name") + "')").data();
-                            var selectedCellData = null;
-                            if (dt.row({selected: true}).index() != null)
-                                selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + $(this).attr("name") + "')").index()).data();
-                            for (var j in colData) {
-                                // if the element is in the column and its not the selected one then its not unique
-                                if ($(this).val() == colData[j] && colData[j] != selectedCellData) {
-                                    $(errorLabel).html($(this).attr("data-uniqueMsg"));
-                                    $(errorLabel).show();
-                                    errorcount++;
-                                }
-                            }
-                        }
-                    });
-                $('form[name="altEditor-form"] *').filter(':input').each(
-                    function (i) {
-                        var errorLabel = "#" + $(this).attr("id") + "label";
-                        if ($(this).attr("required") != null && ! $(this).val()) {
-                            $(errorLabel).html(that.language.error.required);
-                            $(errorLabel).show();
-                            errorcount++;
-                        }
-                    }
-                );
-
-                if (errorcount == 0) {
-                    isValid = true;
-                }
-
-                return isValid;
-            },*/
 
             /**
              * Sanitizes input for use in HTML
