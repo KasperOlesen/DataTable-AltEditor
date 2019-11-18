@@ -61,6 +61,7 @@ Following column options are supported.
 |    `type`     | `"text" \| "select" \| "hidden" \| ...`   |   Type of HTML input to be shown. The value `readonly` is accepted for backward compatibility, but deprecated. |
 |    `readonly` | `true \| false`   |   Add `readonly` HTML attribute |
 |    `disabled` | `true \| false`   |   Add `disabled` HTML attribute |
+|    `required` | `true \| false`   |   Add `required` HTML attribute |
 |    `hoverMsg` | `"some msg"`      |   The message will appear as a tooltip over the input field.     |
 |    `unique`   | `true \| false`   |   Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this). |
 |   `uniqueMsg` | `"some msg"`      |   An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute. |

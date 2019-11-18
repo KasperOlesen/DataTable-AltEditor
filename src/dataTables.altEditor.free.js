@@ -159,21 +159,21 @@
                 this.language.error = { message: this.language.error.message || 'There was an unknown error!',
                                         label: this.language.error.label || 'Error!',
                                         responseCode: this.language.error.responseCode || 'Response code: ',
-                                        required: this.language.error.required || 'Field is required'
+                                        required: this.language.error.required || 'Field is required',
+                                        unique: this.language.error.unique || 'Duplicated field'
                                       };
                 var modal = '<div class="modal fade" id="' + modal_id + '" tabindex="-1" role="dialog">' +
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
                     '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '"><span aria-hidden="true">&times;</span></button>' +
+                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '">' +
+                    '<span aria-hidden="true">&times;</span></button>' +
                     '</div>' +
                     '<div class="modal-body">' +
                     '<p></p>' +
                     '</div>' +
                     '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-default" data-dismiss="modal">' + this.language.modalClose + '</button>' +
-                    '<input type="submit" form="altEditor-form" class="btn btn-primary"></input>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -187,12 +187,11 @@
                         that._openEditModal();
                     });
 
-                    $(this.modal_selector).on('click', '#editRowBtn', function (e) {
-                        if (that._inputValidation()) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            that._editRowData();
-                        }
+                    $(this.modal_selector).on('submit', '#altEditor-edit-form', function (e) {
+                        console.log("EDDDIT");
+                        e.preventDefault();
+                        e.stopPropagation();
+                        that._editRowData();
                     });
                 }
 
@@ -202,11 +201,10 @@
                         that._openDeleteModal();
                     });
 
-                    $(this.modal_selector).on('click', '#deleteRowBtn', function (e) {
+                    $(this.modal_selector).on('submit', 'altEditor-delete-form', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         that._deleteRow();
-                        $(this).prop('disabled', true);
                     });
                 }
 
@@ -216,15 +214,30 @@
                         that._openAddModal();
                     });
 
-                    $(this.modal_selector).on('click', '#addRowBtn', function (e) {
-                        if (that._inputValidation()) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            that._addRowData();
-                        }
+                    $(this.modal_selector).on('submit', 'altEditor-add-form', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        that._addRowData();
                     });
                 }
-
+                
+                // bind 'unique' error messages
+                $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
+                    var target = $(elm.target);
+                    var colData = dt.column("th:contains('" + target.attr("name") + "')").data();
+                    // go through each item in this column
+                    var selectedCellData = null;
+                    if (dt.row({selected: true}).index() != null)
+                        selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + target.attr("name") + "')").index()).data();
+                    elm.target.setCustomValidity('');
+                    for (var j in colData) {
+                        // if the element is in the column and its not the selected one then its not unique
+                        if (target.val() == colData[j] && colData[j] != selectedCellData) {
+                            elm.target.setCustomValidity(that.language.error.unique);
+                        }
+                    }
+                });
+                        
                 // add Refresh button
                 if (this.s.dt.button('refresh:name')) {
                     this.s.dt.button('refresh:name').action(function (e, dt, node, config) {
@@ -263,7 +276,8 @@
                 });
                 
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button, this.language.modalClose, 'editRowBtn');
+                var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button,
+                    this.language.modalClose, 'editRowBtn', 'altEditor-edit-form');
 
                 var selector = this.modal_selector;
                 
@@ -294,7 +308,7 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
+                $('form[name="altEditor-edit-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -323,12 +337,13 @@
 
                 // TODO
                 // we should use createDialog()
-                // var data = this.createDialog(columnDefs, 'Delete Record', 'Delete', 'Close', 'deleteRowBtn');
+                // var data = this.createDialog(columnDefs, this.language.delete.title, this.language.delete.button,
+                //      this.language.modalClose, 'deleteRowBtn', 'altEditor-delete-form');
                 
                 // Building delete-modal
                 var data = "";
 
-                data += "<form name='altEditor-form' role='form'>";
+                data += "<form name='altEditor-delete-form' role='form'>";
                 for (var j in columnDefs) {
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
@@ -402,7 +417,8 @@
             _openAddModal: function () {
                 var dt = this.s.dt;
                 var columnDefs = this.completeColumnDefs();
-                var data = this.createDialog(columnDefs, this.language.add.title, this.language.add.button, this.language.modalClose, 'addRowBtn');
+                var data = this.createDialog(columnDefs, this.language.add.title, this.language.add.button,
+                    this.language.modalClose, 'addRowBtn', 'altEditor-add-form');
 
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').focus();
@@ -425,12 +441,12 @@
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
                         required: (obj.required ? obj.required : false),
-                        msg: (obj.errorMsg ? obj.errorMsg : ''),
+                        msg: (obj.errorMsg ? obj.errorMsg : ''),        // FIXME no more used
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
                         special: (obj.special ? obj.special : ''),
                         unique: (obj.unique ? obj.unique : false),
-                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),
+                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),        // FIXME no more used
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false),
@@ -446,10 +462,10 @@
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
             */
-            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass) {
+            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
                                 
                 var data = "";
-                data += "<form name='altEditor-form' role='form'>";
+                data += "<form name='" + formName + "' id='" + formName + "' role='form'>";
                 for (var j in columnDefs) {
                     
                     //handle hidden fields
@@ -530,7 +546,7 @@
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
+                        '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
@@ -573,7 +589,7 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
+                $('form[name="altEditor-add-form"] *').filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -727,64 +743,6 @@
                 }
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
-            },
-
-            /**
-             * Validates input
-             * @returns {boolean}
-             * @private
-             */
-            _inputValidation: function () {
-                var that = this;
-                var dt = this.s.dt;
-                var isValid = false;
-                var errorcount = 0;
-
-                // Looping through all text fields
-                $('form[name="altEditor-form"] *').filter(':text').each(
-                    function (i) {
-                        var errorLabel = "#" + $(this).attr("id") + "label";
-                        // reset error display
-                        $(errorLabel).hide();
-                        $(errorLabel).empty();
-                        if (!$(this).val().match($(this).attr("pattern"))) {
-                            $(errorLabel).html($(this).attr("data-errorMsg"));
-                            $(errorLabel).show();
-                            errorcount++;
-                        }
-                        // now check if its should be unique
-                        if ($(this).attr("data-unique") == "true") {
-                            // go through each item in this column
-                            var colData = dt.column("th:contains('" + $(this).attr("name") + "')").data();
-                            var selectedCellData = null;
-                            if (dt.row({selected: true}).index() != null)
-                                selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + $(this).attr("name") + "')").index()).data();
-                            for (var j in colData) {
-                                // if the element is in the column and its not the selected one then its not unique
-                                if ($(this).val() == colData[j] && colData[j] != selectedCellData) {
-                                    $(errorLabel).html($(this).attr("data-uniqueMsg"));
-                                    $(errorLabel).show();
-                                    errorcount++;
-                                }
-                            }
-                        }
-                    });
-                $('form[name="altEditor-form"] *').filter(':input').each(
-                    function (i) {
-                        var errorLabel = "#" + $(this).attr("id") + "label";
-                        if ($(this).attr("required") != null && ! $(this).val()) {
-                            $(errorLabel).html(that.language.error.required);
-                            $(errorLabel).show();
-                            errorcount++;
-                        }
-                    }
-                );
-
-                if (errorcount == 0) {
-                    isValid = true;
-                }
-
-                return isValid;
             },
 
             /**
