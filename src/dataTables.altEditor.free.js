@@ -228,6 +228,9 @@
                 
                 // bind 'unique' error messages
                 $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
+                    if ($(elm.target).attr('data-unique') === 'false') {
+                        return;
+                    }
                     var target = $(elm.target);
                     var colData = dt.column("th:contains('" + target.attr("name") + "')").data();
                     // go through each item in this column
