@@ -185,13 +185,14 @@
                 if (dt.button('edit:name')) {
                     dt.button('edit:name').action(function (e, dt, node, config) {
                         that._openEditModal();
-                    });
 
-                    $(this.modal_selector).on('submit', '#altEditor-edit-form', function (e) {
-                        console.log("EDDDIT");
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._editRowData();
+                        $('#altEditor-edit-form')
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._editRowData();
+                        });
                     });
                 }
 
@@ -199,12 +200,14 @@
                 if (dt.button('delete:name')) {
                     dt.button('delete:name').action(function (e, dt, node, config) {
                         that._openDeleteModal();
-                    });
 
-                    $(this.modal_selector).on('submit', 'altEditor-delete-form', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._deleteRow();
+                        $('#altEditor-delete-form')
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._deleteRow();
+                        });
                     });
                 }
 
@@ -212,12 +215,14 @@
                 if (dt.button('add:name')) {
                     dt.button('add:name').action(function (e, dt, node, config) {
                         that._openAddModal();
-                    });
 
-                    $(this.modal_selector).on('submit', 'altEditor-add-form', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._addRowData();
+                        $('#altEditor-add-form')
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._addRowData();
+                        });
                     });
                 }
                 
@@ -334,6 +339,7 @@
                     selected: true
                 });
                 var columnDefs = this.completeColumnDefs();
+                const formName = 'altEditor-delete-form';
 
                 // TODO
                 // we should use createDialog()
@@ -343,7 +349,6 @@
                 // Building delete-modal
                 var data = "";
 
-                data += "<form name='altEditor-delete-form' role='form'>";
                 for (var j in columnDefs) {
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
@@ -365,15 +370,21 @@
                             + "</input></div>";
                     }
                 }
-                data += "</form>";
 
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">' + that.language.modalClose + '</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
+                        '<button type="submit"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
+                    const modalContent = $(selector).find('.modal-content');
+                    if (modalContent.parent().is('form')) {
+                        modalContent.parent().attr('name', formName);
+                        modalContent.parent().attr('id', formName);
+                    } else {
+                        modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
+                    }
                 });
 
                 $(selector).modal('show');
@@ -465,7 +476,6 @@
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
                                 
                 var data = "";
-                data += "<form name='" + formName + "' id='" + formName + "' role='form'>";
                 for (var j in columnDefs) {
                     
                     //handle hidden fields
@@ -541,7 +551,7 @@
                         data += "</div><div style='clear:both;'></div></div>";
                     }
                 }
-                data += "</form>";
+                // data += "</form>";
                 
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
@@ -550,6 +560,13 @@
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
+                    const modalContent = $(selector).find('.modal-content');
+                    if (modalContent.parent().is('form')) {
+                        modalContent.parent().attr('name', formName);
+                        modalContent.parent().attr('id', formName);
+                    } else {
+                        modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
+                    }
                 });
 
                 $(selector).modal('show');
