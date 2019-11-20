@@ -139,7 +139,8 @@
             _setup: function () {
                 var that = this;
                 var dt = this.s.dt;
-                var modal_id = 'altEditor-modal-' + ("" + Math.random()).replace(".", "");
+                this.random_id = ("" + Math.random()).replace(".", "");
+                var modal_id = `altEditor-modal-${this.random_id}`;
                 this.modal_selector = '#' + modal_id;
                 this.language = DataTable.settings.values().next().value.oLanguage.altEditor || {};
                 this.language.modalClose = this.language.modalClose || 'Close';
@@ -186,7 +187,7 @@
                     dt.button('edit:name').action(function (e, dt, node, config) {
                         that._openEditModal();
 
-                        $('#altEditor-edit-form')
+                        $(`#altEditor-edit-form-${that.random_id}`)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -201,7 +202,7 @@
                     dt.button('delete:name').action(function (e, dt, node, config) {
                         that._openDeleteModal();
 
-                        $('#altEditor-delete-form')
+                        $(`#altEditor-delete-form-${that.random_id}`)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -216,7 +217,7 @@
                     dt.button('add:name').action(function (e, dt, node, config) {
                         that._openAddModal();
 
-                        $('#altEditor-add-form')
+                        $(`#altEditor-add-form-${that.random_id}`)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -316,7 +317,7 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-edit-form"] *').filter(':input').each(function (i) {
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -342,7 +343,7 @@
                     selected: true
                 });
                 var columnDefs = this.completeColumnDefs();
-                const formName = 'altEditor-delete-form';
+                const formName = 'altEditor-delete-form-' + this.random_id;
 
                 // TODO
                 // we should use createDialog()
@@ -477,7 +478,7 @@
             * @param columnDefs as returned by completeColumnDefs()
             */
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
-                                
+                formName = [formName, this.random_id].join('-');
                 var data = "";
                 for (var j in columnDefs) {
                     
@@ -609,7 +610,7 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $('form[name="altEditor-add-form"] *').filter(':input').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
