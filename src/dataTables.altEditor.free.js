@@ -229,7 +229,7 @@
                 
                 // bind 'unique' error messages
                 $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
-                    if ($(elm.target).attr('data-unique') === 'false') {
+                    if ($(elm.target).attr('data-unique') == null || $(elm.target).attr('data-unique') === 'false') {
                         return;
                     }
                     var target = $(elm.target);
