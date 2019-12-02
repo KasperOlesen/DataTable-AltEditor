@@ -1,0 +1,23 @@
+"altEditor" : {
+    "modalClose" : "Chiudi",
+    "edit" : {
+        "title" : "Modifica",
+        "button" : "Modifica"
+    },
+    "add" : {
+        "title" : "Nuovo",
+        "button" : "Crea"
+    },
+    "delete" : {
+        "title" : "Elimina",
+        "button" : "Elimina"
+    },
+    "success" : "Fatto.",
+    "error" : {
+        "message" : "Si è verificato un errore non previsto.",
+        "label" : "Errore",
+        "responseCode" : "Response code:",
+        "required" : "Valore obbligatorio",
+        "unique" : "Valore duplicato"
+    }
+}
