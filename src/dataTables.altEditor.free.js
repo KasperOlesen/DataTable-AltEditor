@@ -320,6 +320,11 @@
                 $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
+		    
+		//Getting the textArea from the modal
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':textarea').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
 
                 console.log(rowDataArray); //DEBUG
 
@@ -452,6 +457,8 @@
                         title: obj.sTitle,
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
+			rows: (obj.rows ? obj.rows : '5'),
+                        cols: (obj.cols ? obj.cols : '30'),
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
@@ -530,6 +537,16 @@
                                 + (columnDefs[j].required ? ' required ' : '')
                                 + ">" + options
                                 + "</select>";
+                        }
+			//Adding Text Area 
+                        else if (columnDefs[j].type.indexOf("textarea") >= 0)
+                        {
+                            data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
+				+ "' name='" + this._quoteattr(columnDefs[j].title)
+				+ "'rows='" + this._quoteattr(columnDefs[j].rows)
+				+ "' cols='"+ this._quoteattr(columnDefs[j].cols)
+				+ "'>"
+				+ "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
@@ -611,6 +628,11 @@
 
                 // Getting the inputs from the modal
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
+		    
+		//Getting the textArea from the modal
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
