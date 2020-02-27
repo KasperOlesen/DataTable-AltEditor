@@ -322,7 +322,7 @@
                 });
 		    
 		//Getting the textArea from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':textarea').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -632,7 +632,7 @@
                 });
 		    
 		//Getting the textArea from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':textarea').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
