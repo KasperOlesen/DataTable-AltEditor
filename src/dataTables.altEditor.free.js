@@ -661,7 +661,7 @@
                     this.s.dt.row({
                         selected : true
                     }).remove();
-                    this.s.dt.draw();
+                    this.s.dt.draw('page');
 
                     // Disabling submit button
                     $("div"+selector).find("button#addRowBtn").prop('disabled', true);
@@ -712,7 +712,7 @@
                     this.s.dt.row({
                         selected : true
                     }).data(data);
-                    this.s.dt.draw();
+                    this.s.dt.draw('page');
 
                     // Disabling submit button
                     $("div" + selector).find("button#addRowBtn").prop('disabled', true);
