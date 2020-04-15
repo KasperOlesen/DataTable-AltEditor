@@ -15,7 +15,10 @@ $(document).ready(function() {
   },
  {
     data: "imagelink",
-    type: "file",
+    render: function(data, type, row, meta) {
+        if (data) return "<img src='" + data + "'></img>";
+    },
+    //type: "file",
     title: "Avatar"
   }];
 
