@@ -139,7 +139,8 @@
             _setup: function () {
                 var that = this;
                 var dt = this.s.dt;
-                var modal_id = 'altEditor-modal-' + ("" + Math.random()).replace(".", "");
+                this.random_id = ("" + Math.random()).replace(".", "");
+                var modal_id = `altEditor-modal-${this.random_id}`;
                 this.modal_selector = '#' + modal_id;
                 this.language = DataTable.settings.values().next().value.oLanguage.altEditor || {};
                 this.language.modalClose = this.language.modalClose || 'Close';
@@ -185,13 +186,14 @@
                 if (dt.button('edit:name')) {
                     dt.button('edit:name').action(function (e, dt, node, config) {
                         that._openEditModal();
-                    });
 
-                    $(this.modal_selector).on('submit', '#altEditor-edit-form', function (e) {
-                        console.log("EDDDIT");
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._editRowData();
+                        $(`#altEditor-edit-form-${that.random_id}`)
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._editRowData();
+                        });
                     });
                 }
 
@@ -199,12 +201,14 @@
                 if (dt.button('delete:name')) {
                     dt.button('delete:name').action(function (e, dt, node, config) {
                         that._openDeleteModal();
-                    });
 
-                    $(this.modal_selector).on('submit', 'altEditor-delete-form', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._deleteRow();
+                        $(`#altEditor-delete-form-${that.random_id}`)
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._deleteRow();
+                        });
                     });
                 }
 
@@ -212,17 +216,22 @@
                 if (dt.button('add:name')) {
                     dt.button('add:name').action(function (e, dt, node, config) {
                         that._openAddModal();
-                    });
 
-                    $(this.modal_selector).on('submit', 'altEditor-add-form', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        that._addRowData();
+                        $(`#altEditor-add-form-${that.random_id}`)
+                        .off('submit')
+                        .on('submit', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            that._addRowData();
+                        });
                     });
                 }
                 
                 // bind 'unique' error messages
                 $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
+                    if ($(elm.target).attr('data-unique') == null || $(elm.target).attr('data-unique') === 'false') {
+                        return;
+                    }
                     var target = $(elm.target);
                     var colData = dt.column("th:contains('" + target.attr("name") + "')").data();
                     // go through each item in this column
@@ -308,7 +317,12 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-edit-form"] *').filter(':input').each(function (i) {
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
+		    
+		//Getting the textArea from the modal
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -334,6 +348,7 @@
                     selected: true
                 });
                 var columnDefs = this.completeColumnDefs();
+                const formName = 'altEditor-delete-form-' + this.random_id;
 
                 // TODO
                 // we should use createDialog()
@@ -343,7 +358,6 @@
                 // Building delete-modal
                 var data = "";
 
-                data += "<form name='altEditor-delete-form' role='form'>";
                 for (var j in columnDefs) {
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
@@ -365,15 +379,21 @@
                             + "</input></div>";
                     }
                 }
-                data += "</form>";
 
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">' + that.language.modalClose + '</button>' +
-                        '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
+                        '<button type="submit"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
+                    const modalContent = $(selector).find('.modal-content');
+                    if (modalContent.parent().is('form')) {
+                        modalContent.parent().attr('name', formName);
+                        modalContent.parent().attr('id', formName);
+                    } else {
+                        modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
+                    }
                 });
 
                 $(selector).modal('show');
@@ -437,6 +457,8 @@
                         title: obj.sTitle,
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
+			rows: (obj.rows ? obj.rows : '5'),
+                        cols: (obj.cols ? obj.cols : '30'),
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
@@ -463,9 +485,8 @@
             * @param columnDefs as returned by completeColumnDefs()
             */
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
-                                
+                formName = [formName, this.random_id].join('-');
                 var data = "";
-                data += "<form name='" + formName + "' id='" + formName + "' role='form'>";
                 for (var j in columnDefs) {
                     
                     //handle hidden fields
@@ -517,6 +538,16 @@
                                 + ">" + options
                                 + "</select>";
                         }
+			//Adding Text Area 
+                        else if (columnDefs[j].type.indexOf("textarea") >= 0)
+                        {
+                            data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
+				+ "' name='" + this._quoteattr(columnDefs[j].title)
+				+ "'rows='" + this._quoteattr(columnDefs[j].rows)
+				+ "' cols='"+ this._quoteattr(columnDefs[j].cols)
+				+ "'>"
+				+ "</textarea>";
+                        }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
                             data += "<input type='" + this._quoteattr(columnDefs[j].type)
@@ -541,7 +572,7 @@
                         data += "</div><div style='clear:both;'></div></div>";
                     }
                 }
-                data += "</form>";
+                // data += "</form>";
                 
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
@@ -550,6 +581,13 @@
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
+                    const modalContent = $(selector).find('.modal-content');
+                    if (modalContent.parent().is('form')) {
+                        modalContent.parent().attr('name', formName);
+                        modalContent.parent().attr('id', formName);
+                    } else {
+                        modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
+                    }
                 });
 
                 $(selector).modal('show');
@@ -589,7 +627,12 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $('form[name="altEditor-add-form"] *').filter(':input').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
+		    
+		//Getting the textArea from the modal
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -618,7 +661,7 @@
                     this.s.dt.row({
                         selected : true
                     }).remove();
-                    this.s.dt.draw();
+                    this.s.dt.draw('page');
 
                     // Disabling submit button
                     $("div"+selector).find("button#addRowBtn").prop('disabled', true);
@@ -669,7 +712,7 @@
                     this.s.dt.row({
                         selected : true
                     }).data(data);
-                    this.s.dt.draw();
+                    this.s.dt.draw('page');
 
                     // Disabling submit button
                     $("div" + selector).find("button#addRowBtn").prop('disabled', true);
