@@ -15,10 +15,18 @@ $(document).ready(function() {
   },
  {
     data: "imagelink",
+    title: "Avatar (direct link)",
     render: function(data, type, row, meta) {
         if (data) return "<img src='" + data + "'></img>";
     },
-    //type: "file",
+    disabled: true
+  },
+ {
+    data: "image",
+    render: function(data, type, row, meta) {
+        return "My file";
+    },
+    type: "file",
     title: "Avatar"
   }];
 

@@ -317,15 +317,25 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = $(this).val();
-                });
-		    
-                //Getting the textArea from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
+                //Getting the textArea from the modal
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
+
+                //Getting Files from the modal
+                console.log("HERE", $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="file"]'));
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                    console.log("File Found!");
+                    that.getBase64($(this), function(filecontent) {
+                    	rowDataArray[$(this).attr('id')] = filecontent;
+                    });
+                    //FIXME MUST WAIT...
+                });
+                
                 console.log(rowDataArray); //DEBUG
 
                 that.onEditRow(that,
@@ -538,15 +548,15 @@
                                 + ">" + options
                                 + "</select>";
                         }
-			//Adding Text Area 
+                        //Adding Text Area 
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
                             data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
-				+ "' name='" + this._quoteattr(columnDefs[j].title)
-				+ "'rows='" + this._quoteattr(columnDefs[j].rows)
-				+ "' cols='"+ this._quoteattr(columnDefs[j].cols)
-				+ "'>"
-				+ "</textarea>";
+                                + "' name='" + this._quoteattr(columnDefs[j].title)
+                                + "'rows='" + this._quoteattr(columnDefs[j].rows)
+                                + "' cols='"+ this._quoteattr(columnDefs[j].cols)
+                                + "'>"
+                                + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
@@ -786,6 +796,23 @@
                 }
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
+            },
+            
+            /**
+             * Convert file to Base 64 form
+             * @see https://stackoverflow.com/questions/36280818
+             */
+            getBase64: function(file, onSuccess, onError) {
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+	                console.log(reader.result);
+	                if (onSuccess) onSuccess(reader.result);
+                };
+                reader.onerror = function (error) {
+	                console.log('Error: ', error);
+	                if (onError) onError(error);
+                };
             },
 
             /**
