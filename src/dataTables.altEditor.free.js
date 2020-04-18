@@ -317,22 +317,43 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = $(this).val();
-                });
-		    
-		//Getting the textArea from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
+                //Getting the textArea from the modal
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = $(this).val();
+                });
+
+                //Getting Files from the modal
+                var numFilesQueued = 0;
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                    if ($(this).prop('files')[0]) {
+                        ++numFilesQueued;
+                        that.getBase64($(this).prop('files')[0], function(filecontent) {
+                            rowDataArray[$(this).attr('id')] = filecontent;
+                            --numFilesQueued;
+                        });
+                    }
+                });
+                
                 console.log(rowDataArray); //DEBUG
 
-                that.onEditRow(that,
-                    rowDataArray,
-                    function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-                    function(data){ that._errorCallback(data);
-                });
+                var checkFilesQueued = function() {
+                    if (numFilesQueued == 0) {
+                        that.onEditRow(that,
+                            rowDataArray,
+                            function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
+                            function(data){ that._errorCallback(data);
+                        });
+                    } else {
+                        console.log("Waiting for file base64-decoding...");
+                        setTimeout(checkFilesQueued, 1000);
+                    }
+                };
+                
+                checkFilesQueued();
             },
 
             /**
@@ -362,7 +383,7 @@
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
-                    else {
+                    else if (columnDefs[j].type.indexOf("file") < 0) {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
@@ -538,15 +559,15 @@
                                 + ">" + options
                                 + "</select>";
                         }
-			//Adding Text Area 
+                        //Adding Text Area 
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
                             data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
-				+ "' name='" + this._quoteattr(columnDefs[j].title)
-				+ "'rows='" + this._quoteattr(columnDefs[j].rows)
-				+ "' cols='"+ this._quoteattr(columnDefs[j].cols)
-				+ "'>"
-				+ "</textarea>";
+                                + "' name='" + this._quoteattr(columnDefs[j].title)
+                                + "'rows='" + this._quoteattr(columnDefs[j].rows)
+                                + "' cols='"+ this._quoteattr(columnDefs[j].cols)
+                                + "'>"
+                                + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
@@ -627,22 +648,42 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 		    
-		//Getting the textArea from the modal
+                //Getting the textArea from the modal
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-//console.log(rowDataArray); //DEBUG
-
-                that.onAddRow(that,
-                    rowDataArray,
-                    function(data){ that._addRowCallback(data); },
-                    function(data){ that._errorCallback(data);
+                //Getting Files from the modal
+                var numFilesQueued = 0;
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                    if ($(this).prop('files')[0]) {
+                        ++numFilesQueued;
+                        that.getBase64($(this).prop('files')[0], function(filecontent) {
+                            rowDataArray[$(this).attr('id')] = filecontent;
+                            --numFilesQueued;
+                        });
+                    }
                 });
+                
+                console.log(rowDataArray); //DEBUG
+
+                var checkFilesQueued = function() {
+                    if (numFilesQueued == 0) {
+                        that.onAddRow(that,
+                            rowDataArray,
+                            function(data){ that._addRowCallback(data); },
+                            function(data){ that._errorCallback(data);
+                        });
+                    } else {
+                        console.log("Waiting for file base64-decoding...");
+                        setTimeout(checkFilesQueued, 1000);
+                    }
+                };
+
 
             },
 
@@ -786,6 +827,23 @@
                 }
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
+            },
+            
+            /**
+             * Convert file to Base 64 form
+             * @see https://stackoverflow.com/questions/36280818
+             */
+            getBase64: function(file, onSuccess, onError) {
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+	                console.log(reader.result);
+	                if (onSuccess) onSuccess(reader.result);
+                };
+                reader.onerror = function (error) {
+	                console.log('Error: ', error);
+	                if (onError) onError(error);
+                };
             },
 
             /**
