@@ -329,11 +329,13 @@
                 //Getting Files from the modal
                 var numFilesQueued = 0;
                 $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
-                    ++numFilesQueued;
-                    that.getBase64($(this).prop('files')[0], function(filecontent) {
-                    	rowDataArray[$(this).attr('id')] = filecontent;
-                    	--numFilesQueued;
-                    });
+                    if ($(this).prop('files')[0]) {
+                        ++numFilesQueued;
+                        that.getBase64($(this).prop('files')[0], function(filecontent) {
+                            rowDataArray[$(this).attr('id')] = filecontent;
+                            --numFilesQueued;
+                        });
+                    }
                 });
                 
                 console.log(rowDataArray); //DEBUG
@@ -381,7 +383,7 @@
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
-                    else {
+                    else if (columnDefs[j].type.indexOf("file") < 0) {
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
@@ -646,22 +648,42 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input').each(function (i) {
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 		    
-		//Getting the textArea from the modal
+                //Getting the textArea from the modal
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
-//console.log(rowDataArray); //DEBUG
-
-                that.onAddRow(that,
-                    rowDataArray,
-                    function(data){ that._addRowCallback(data); },
-                    function(data){ that._errorCallback(data);
+                //Getting Files from the modal
+                var numFilesQueued = 0;
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                    if ($(this).prop('files')[0]) {
+                        ++numFilesQueued;
+                        that.getBase64($(this).prop('files')[0], function(filecontent) {
+                            rowDataArray[$(this).attr('id')] = filecontent;
+                            --numFilesQueued;
+                        });
+                    }
                 });
+                
+                console.log(rowDataArray); //DEBUG
+
+                var checkFilesQueued = function() {
+                    if (numFilesQueued == 0) {
+                        that.onAddRow(that,
+                            rowDataArray,
+                            function(data){ that._addRowCallback(data); },
+                            function(data){ that._errorCallback(data);
+                        });
+                    } else {
+                        console.log("Waiting for file base64-decoding...");
+                        setTimeout(checkFilesQueued, 1000);
+                    }
+                };
+
 
             },
 

@@ -17,7 +17,7 @@ $(document).ready(function() {
     data: "imagelink",
     title: "Avatar (direct link)",
     render: function(data, type, row, meta) {
-        if (data) return `<img src='${data}'></img> or <button onclick='window.open("${data}")'>Download</button>`;
+        if (data) return `<img style='max-width:300px;max-height:300px' src='${data}'></img> or <button onclick='window.open("${data}")'>Download</button>`;
     },
     disabled: true
   },
