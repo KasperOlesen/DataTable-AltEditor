@@ -27,13 +27,13 @@ $(document).ready(function() {
         return "My file";
     },
     type: "file",
-    title: "Avatar"
+    title: "Avatar (base64 upload)"
   }];
 
   var myTable;
 
   // local URL's are not allowed
-  var url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/09_file_upload/mock_svc_load.json'; //'./mock_svc_load.json';
+  var url_ws_mock_get = './mock_svc_load.json';
   var url_ws_mock_ok = './mock_svc_ok.json';
   
   myTable = $('#example').DataTable({

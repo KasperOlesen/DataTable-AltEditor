@@ -327,22 +327,31 @@
                 });
 
                 //Getting Files from the modal
-                console.log("HERE", $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="file"]'));
+                var numFilesQueued = 0;
                 $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
-                    console.log("File Found!");
-                    that.getBase64($(this), function(filecontent) {
+                    ++numFilesQueued;
+                    that.getBase64($(this).prop('files')[0], function(filecontent) {
                     	rowDataArray[$(this).attr('id')] = filecontent;
+                    	--numFilesQueued;
                     });
-                    //FIXME MUST WAIT...
                 });
                 
                 console.log(rowDataArray); //DEBUG
 
-                that.onEditRow(that,
-                    rowDataArray,
-                    function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-                    function(data){ that._errorCallback(data);
-                });
+                var checkFilesQueued = function() {
+                    if (numFilesQueued == 0) {
+                        that.onEditRow(that,
+                            rowDataArray,
+                            function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
+                            function(data){ that._errorCallback(data);
+                        });
+                    } else {
+                        console.log("Waiting for file base64-decoding...");
+                        setTimeout(checkFilesQueued, 1000);
+                    }
+                };
+                
+                checkFilesQueued();
             },
 
             /**
