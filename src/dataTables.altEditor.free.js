@@ -684,6 +684,7 @@
                     }
                 };
 
+                checkFilesQueued();
 
             },
 
