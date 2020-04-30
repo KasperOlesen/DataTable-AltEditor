@@ -478,7 +478,7 @@
                         title: obj.sTitle,
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
-			rows: (obj.rows ? obj.rows : '5'),
+                        rows: (obj.rows ? obj.rows : '5'),
                         cols: (obj.cols ? obj.cols : '30'),
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
@@ -667,7 +667,7 @@
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
-		    
+                    
                 //Getting the textArea from the modal
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
@@ -854,12 +854,12 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function () {
-	                console.log(reader.result);
-	                if (onSuccess) onSuccess(reader.result);
+                        console.log(reader.result);
+                        if (onSuccess) onSuccess(reader.result);
                 };
                 reader.onerror = function (error) {
-	                console.log('Error: ', error);
-	                if (onError) onError(error);
+                        console.log('Error: ', error);
+                        if (onError) onError(error);
                 };
             },
 
@@ -877,7 +877,7 @@
                 if (Array.isArray(s)) {
                     // for MULTIPLE SELECT
                     var newArray = [];
-		    var x;
+                    var x;
                     for (x in s) newArray.push(s[x]);
                     return newArray;
                 }
