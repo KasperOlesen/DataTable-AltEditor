@@ -551,11 +551,17 @@
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title) + "' "
-                                + (columnDefs[j].multiple ? ' multiple ' : '')
+                                + "' name='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='" + columnDefs[j].unique
+                                + "' "
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].required ? ' required ' : '')
+                                + (columnDefs[j].multiple ? ' multiple ' : '')
                                 + ">" + options
                                 + "</select>";
                         }
@@ -564,9 +570,19 @@
                         {
                             data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "'rows='" + this._quoteattr(columnDefs[j].rows)
+                                + "' rows='" + this._quoteattr(columnDefs[j].rows)
                                 + "' cols='"+ this._quoteattr(columnDefs[j].cols)
-                                + "'>"
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='" + columnDefs[j].unique
+                                + "' "
+                                + (columnDefs[j].readonly ? ' readonly ' : '')
+                                + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
+                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
+                                + ">"
                                 + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
