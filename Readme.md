@@ -69,16 +69,20 @@ Following column options are supported.
 |`editorOnChange`| function         |   Custom onchange function. It will take as arguments the jquery event and the altEditor object. |
 | | |
 | **Options for columns with type `"text"`:**                |                                   | |
-|    `pattern` | `r.e.`             |   The typed text will be matched against given regular expression, before submit. |
-|    `msg`     | `"some msg"`       |   An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute. |
-|  `maxLength` | `integer`          |   Set HTML `"maxlength"` attribute. |
-| `datepicker` | `{}`               |   Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the object. |
-| `datetimepicker` | `{}`               |   Enable a datetimepicker component. jQuery datetimepicker plugin must be linked. More datetimepicker configuration options may be passed within the object. |
+|    `pattern`  | `r.e.`            |   The typed text will be matched against given regular expression, before submit. |
+|    `msg`      | `"some msg"`      |   An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute. |
+|  `maxLength`  | `integer`         |   Set HTML `"maxlength"` attribute. |
+| `datepicker`  | `{}`              |   Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the object. |
+| `datetimepicker` | `{}`           |   Enable a datetimepicker component. jQuery datetimepicker plugin must be linked. More datetimepicker configuration options may be passed within the object. |
 | | |
 | **Options for columns with type `"select"`:**                |                                   | |
-|    `options` | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
-|    `select2` | `{}`               |   Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object. |
-|   `multiple` | `true \| false`    |   Set HTML `"multiple"` attribute. |
+|    `options`  | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
+|    `select2`  | `{}`              |   Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object. |
+|   `multiple`  | `true \| false`   |   Set HTML `"multiple"` attribute. |
+| | |
+| **Options for columns with type `"textarea"`:**              |                                   | |
+|    `rows`     | `integer`         |   Set HTML `"rows"` attribute. |
+|    `cols`     | `integer`         |   Set HTML `"cols"` attribute. |
 
 
 
