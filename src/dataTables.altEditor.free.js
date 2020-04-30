@@ -478,7 +478,7 @@
                         title: obj.sTitle,
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
-			rows: (obj.rows ? obj.rows : '5'),
+                        rows: (obj.rows ? obj.rows : '5'),
                         cols: (obj.cols ? obj.cols : '30'),
                         options: (obj.options ? obj.options : []),
                         readonly: (obj.readonly ? obj.readonly : false),
@@ -551,11 +551,17 @@
                             }
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title) + "' "
-                                + (columnDefs[j].multiple ? ' multiple ' : '')
+                                + "' name='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='" + columnDefs[j].unique
+                                + "' "
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].required ? ' required ' : '')
+                                + (columnDefs[j].multiple ? ' multiple ' : '')
                                 + ">" + options
                                 + "</select>";
                         }
@@ -564,9 +570,19 @@
                         {
                             data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "'rows='" + this._quoteattr(columnDefs[j].rows)
+                                + "' rows='" + this._quoteattr(columnDefs[j].rows)
                                 + "' cols='"+ this._quoteattr(columnDefs[j].cols)
-                                + "'>"
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                + "' data-unique='" + columnDefs[j].unique
+                                + "' "
+                                + (columnDefs[j].readonly ? ' readonly ' : '')
+                                + (columnDefs[j].disabled ? ' disabled ' : '')
+                                + (columnDefs[j].required ? ' required ' : '')
+                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
+                                + ">"
                                 + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
@@ -651,7 +667,7 @@
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
-		    
+                    
                 //Getting the textArea from the modal
                 $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
@@ -838,12 +854,12 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function () {
-	                console.log(reader.result);
-	                if (onSuccess) onSuccess(reader.result);
+                        console.log(reader.result);
+                        if (onSuccess) onSuccess(reader.result);
                 };
                 reader.onerror = function (error) {
-	                console.log('Error: ', error);
-	                if (onError) onError(error);
+                        console.log('Error: ', error);
+                        if (onError) onError(error);
                 };
             },
 
@@ -861,7 +877,7 @@
                 if (Array.isArray(s)) {
                     // for MULTIPLE SELECT
                     var newArray = [];
-		    var x;
+                    var x;
                     for (x in s) newArray.push(s[x]);
                     return newArray;
                 }
