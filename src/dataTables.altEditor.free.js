@@ -291,11 +291,13 @@
                 var selector = this.modal_selector;
                 
                 for (var j in columnDefs) {
-                    var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
-                    var selectedValue = eval("adata.data()[0]" + arrIndex);
-                    var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
-                    $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
-                    $(selector).find(jquerySelector).trigger("change"); // required by select2
+                    if (columnDefs[j].name != null) {
+                        var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
+                        var selectedValue = eval("adata.data()[0]" + arrIndex);
+                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+                        $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
+                        $(selector).find(jquerySelector).trigger("change"); // required by select2
+                    }
                 }
                 
                 $(selector + ' input[0]').focus();
