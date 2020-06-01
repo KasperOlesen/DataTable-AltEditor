@@ -648,8 +648,9 @@
                     }
                     // custom onchange triggers
                     if (columnDefs[j].editorOnChange) {
-                        var f = columnDefs[j].editorOnChange; // FIXME what if more than 1 editorOnChange ?
+                        $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
                         $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
+                            let f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);
                         });
                     }
