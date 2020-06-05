@@ -619,7 +619,7 @@
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].required ? ' required ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='border:1px solid #ced4da;font-family:Segoe UI,sans-serif;font-size:16px;padding:0.25rem 0.5rem;'>"
+                                + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
                                 + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
