@@ -66,6 +66,7 @@ Following column options are supported.
 |    `unique`   | `true \| false`   |   Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this). |
 |   `uniqueMsg` | `"some msg"`      |   An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute. |
 |    `special`  | `"any string"`    |   Set HTML `"data-special"` attribute (don't know what's that needed for). |
+|    `style`    | `"any string"`    |   Set HTML `"style"` attribute. |
 |`editorOnChange`| function         |   Custom onchange function. It will take as arguments the jquery event and the altEditor object. |
 | | |
 | **Options for columns with type `"text"`:**                |                                   | |
@@ -79,10 +80,13 @@ Following column options are supported.
 |    `options`  | `["a", "b", "c"]`  or `{"a":"A", "b":"B", "c":"C"}` |   The options that shall be presented. |
 |    `select2`  | `{}`              |   Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object. |
 |   `multiple`  | `true \| false`   |   Set HTML `"multiple"` attribute. |
+|`optionsSortByLabel`|`true \| false`|  Allows select to be sorted by label field. |
 | | |
 | **Options for columns with type `"textarea"`:**              |                                   | |
 |    `rows`     | `integer`         |   Set HTML `"rows"` attribute. |
 |    `cols`     | `integer`         |   Set HTML `"cols"` attribute. |
+| **Options for columns with type `"date"`:**              |                                   | |
+| `dateFormat`  | `"YYYY-MM-DD"`    |   Set date format. Require moment.js library linked. |
 
 
 

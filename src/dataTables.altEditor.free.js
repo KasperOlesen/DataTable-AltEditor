@@ -297,6 +297,21 @@
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
                         $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
                         $(selector).find(jquerySelector).trigger("change"); // required by select2
+                         //added checkbox
+                        if (columnDefs[j].type.indexOf("checkbox") >= 0) {
+                            if (this._quoteattr(selectedValue) === "true") {
+                                $(selector).find(jquerySelector).prop("checked", this._quoteattr(selectedValue)); // required by checkbox
+                            }
+                        }
+                        //added date
+                        if (columnDefs[j].type.indexOf("date") >= 0) {
+                            if (columnDefs[j].dateFormat !== "") {
+                                var mDate = moment(this._quoteattr(selectedValue));
+                                if (mDate && mDate.isValid()) {
+                                    $(selector).find(jquerySelector).val(mDate.format(columnDefs[j].dateFormat));
+                                }
+                            }
+                        }
                     }
                 }
                 
@@ -338,6 +353,11 @@
                             --numFilesQueued;
                         });
                     }
+                });
+                
+                // Getting the checkbox from the modal
+                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="checkbox"]').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = this.checked;
                 });
                 
                 console.log(rowDataArray); //DEBUG
@@ -386,6 +406,18 @@
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
+                        var fvalue = adata.data()[0][columnDefs[j].name];
+
+                        //added dateFormat
+                        if (columnDefs[j].type.indexOf("date") >= 0) {
+                            if (columnDefs[j].dateFormat !== "") {
+                                var mDate = moment(adata.data()[0][columnDefs[j].name]);
+                                if (mDate && mDate.isValid()) {
+                                    fvalue = mDate.format(columnDefs[j].dateFormat);
+                                }
+                            }
+                        }
+                        
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
@@ -397,8 +429,8 @@
                             + "' placeholder='"
                             + that._quoteattr(columnDefs[j].title)
                             + "' style='overflow:hidden'  class='form-control' value='"
-                            + that._quoteattr(adata.data()[0][columnDefs[j].name]) + "' >"
-                            + adata.data()[0][columnDefs[j].name]
+                            + that._quoteattr(fvalue) + "' >"
+                            + fvalue
                             + "</input></div>";
                     }
                 }
@@ -497,7 +529,10 @@
                         select2: (obj.select2 ? obj.select2 : false),
                         datepicker: (obj.datepicker ? obj.datepicker : false),
                         datetimepicker: (obj.datetimepicker ? obj.datetimepicker : false),
-                        editorOnChange: (obj.editorOnChange ? obj.editorOnChange : null)
+                        editorOnChange: (obj.editorOnChange ? obj.editorOnChange : null),
+                        style: (obj.style ? obj.style : ''),
+                        dateFormat: (obj.dateFormat ? obj.dateFormat : ''),
+                        optionsSortByLabel: (obj.optionsSortByLabel ? obj.optionsSortByLabel : false)
                     }
                 }
                 return columnDefs;
@@ -570,7 +605,7 @@
                         //Adding Text Area 
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
-                            data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
+                            data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
                                 + "' rows='" + this._quoteattr(columnDefs[j].rows)
                                 + "' cols='"+ this._quoteattr(columnDefs[j].cols)
@@ -584,12 +619,12 @@
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].required ? ' required ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + ">"
+                                + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
                                 + "</textarea>";
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
-                            data += "<input type='" + this._quoteattr(columnDefs[j].type)
+                            data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
                                 + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
                                 + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
@@ -604,7 +639,8 @@
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].required ? ' required ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
+                                + " style='overflow:hidden;" + this._quoteattr(columnDefs[j].style)
+                                + "' class='form-control  form-control-sm' value=''>";
                         }
                         data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
                                 + "' class='errorLabel'></label>";
@@ -654,6 +690,16 @@
                             f(elm, that);
                         });
                     }
+                    //added select sort
+                    if (columnDefs[j].type.indexOf("select") >= 0) {
+                        if (columnDefs[j].optionsSortByLabel) {
+                            var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+                            var opts_list = $(selector).find(jquerySelector).find('option');
+                            opts_list.sort(function (a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+                            $(selector).find(jquerySelector).html('').append(opts_list);
+                            $(selector).find(jquerySelector).val($(jquerySelector + " option:first").val());
+                        }
+                    }
                 }
             },
             
@@ -686,6 +732,11 @@
                             --numFilesQueued;
                         });
                     }
+                });
+                
+                // Getting the checkbox from the modal
+                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="checkbox"]').each(function (i) {
+                    rowDataArray[$(this).attr('id')] = this.checked;
                 });
                 
                 console.log(rowDataArray); //DEBUG

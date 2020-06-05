@@ -47,7 +47,7 @@ $(document).ready(function() {
     type: "text"
   }, {
     title: "Position",
-    type: "text"
+    type: "textarea"
   }, {
     title: "Office"
     //no type = text
