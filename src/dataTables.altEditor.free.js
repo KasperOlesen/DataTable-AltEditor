@@ -605,7 +605,7 @@
                         //Adding Text Area 
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
-                            data += "<textarea id='" + this._quoteattr(columnDefs[j].name)
+                            data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
                                 + "' rows='" + this._quoteattr(columnDefs[j].rows)
                                 + "' cols='"+ this._quoteattr(columnDefs[j].cols)
@@ -624,7 +624,7 @@
                         }
                         // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
-                            data += "<input type='" + this._quoteattr(columnDefs[j].type)
+                            data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
                                 + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
                                 + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
