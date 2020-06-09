@@ -140,7 +140,7 @@
                 var that = this;
                 var dt = this.s.dt;
                 this.random_id = ("" + Math.random()).replace(".", "");
-                var modal_id = `altEditor-modal-${this.random_id}`;
+                var modal_id = 'altEditor-modal-' + this.random_id;
                 this.modal_selector = '#' + modal_id;
                 this.language = DataTable.settings.values().next().value.oLanguage.altEditor || {};
                 this.language.modalClose = this.language.modalClose || 'Close';
@@ -187,7 +187,7 @@
                     dt.button('edit:name').action(function (e, dt, node, config) {
                         that._openEditModal();
 
-                        $(`#altEditor-edit-form-${that.random_id}`)
+                        $('#altEditor-edit-form-' + that.random_id)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -202,7 +202,7 @@
                     dt.button('delete:name').action(function (e, dt, node, config) {
                         that._openDeleteModal();
 
-                        $(`#altEditor-delete-form-${that.random_id}`)
+                        $('#altEditor-delete-form-' + that.random_id)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -217,7 +217,7 @@
                     dt.button('add:name').action(function (e, dt, node, config) {
                         that._openAddModal();
 
-                        $(`#altEditor-add-form-${that.random_id}`)
+                        $('#altEditor-add-form-' + that.random_id)
                         .off('submit')
                         .on('submit', function (e) {
                             e.preventDefault();
@@ -334,18 +334,18 @@
                 });
 
                 // Getting the inputs from the edit-modal
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
                 //Getting the textArea from the modal
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
                 //Getting Files from the modal
                 var numFilesQueued = 0;
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
                     if ($(this).prop('files')[0]) {
                         ++numFilesQueued;
                         that.getBase64($(this).prop('files')[0], function(filecontent) {
@@ -356,7 +356,7 @@
                 });
                 
                 // Getting the checkbox from the modal
-                $(`form[name="altEditor-edit-form-${this.random_id}"] *`).filter(':input[type="checkbox"]').each(function (i) {
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
                 
@@ -713,18 +713,18 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type!="file"]').each(function (i) {
+                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
                     
                 //Getting the textArea from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter('textarea').each(function (i) {
+                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
                 //Getting Files from the modal
                 var numFilesQueued = 0;
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="file"]').each(function (i) {
+                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
                     if ($(this).prop('files')[0]) {
                         ++numFilesQueued;
                         that.getBase64($(this).prop('files')[0], function(filecontent) {
@@ -735,7 +735,7 @@
                 });
                 
                 // Getting the checkbox from the modal
-                $(`form[name="altEditor-add-form-${this.random_id}"] *`).filter(':input[type="checkbox"]').each(function (i) {
+                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
                 
