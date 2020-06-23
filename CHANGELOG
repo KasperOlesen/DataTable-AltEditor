@@ -1,6 +1,18 @@
+2020-06 mjbernot
+    * support for checkboxes and date input fields
+    * IE compatibility support
+
+2020-04 luca-vercelli
+    * support for file uploads
+
+2020-02 goalgui10
+    * support for textareas
 
 2019-07 luca-vercelli
     * better support for readonly and disabled fields, see issue #35
+
+2019-11 seunets
+    * i18n support
 
 2019-05 luca-vercelli
     * better documentation
