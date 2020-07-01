@@ -295,7 +295,7 @@
                         var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
                         var selectedValue = eval("adata.data()[0]" + arrIndex);
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
-                        $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
+                        $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
                         $(selector).find(jquerySelector).trigger("change"); // required by select2
                          //added checkbox
                         if (columnDefs[j].type.indexOf("checkbox") >= 0) {
