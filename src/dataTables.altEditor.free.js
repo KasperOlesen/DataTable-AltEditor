@@ -292,8 +292,11 @@
                 
                 for (var j in columnDefs) {
                     if (columnDefs[j].name != null) {
-                        var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
-                        var selectedValue = eval("adata.data()[0]" + arrIndex);
+                        var arrIndex = columnDefs[j].name.toString().split(".");
+                        var selectedValue = adata.data()[0];
+                        for (let index = 0; index < arrIndex.length; index++) {
+                            selectedValue = selectedValue[arrIndex[index]];
+                        }
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
                         $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
                         $(selector).find(jquerySelector).trigger("change"); // required by select2
@@ -406,7 +409,11 @@
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
-                        var fvalue = adata.data()[0][columnDefs[j].name];
+                        var arrIndex = columnDefs[j].name.toString().split(".")
+                        var fvalue = adata.data()[0];
+                        for (let index = 0; index < arrIndex.length; index++) {
+                            fvalue = fvalue[arrIndex[index]];
+                        }
 
                         //added dateFormat
                         if (columnDefs[j].type.indexOf("date") >= 0) {
