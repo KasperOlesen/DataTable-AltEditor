@@ -294,7 +294,7 @@
                     if (columnDefs[j].name != null) {
                         var arrIndex = columnDefs[j].name.toString().split(".");
                         var selectedValue = adata.data()[0];
-                        for (let index = 0; index < arrIndex.length; index++) {
+                        for (var index = 0; index < arrIndex.length; index++) {
                             selectedValue = selectedValue[arrIndex[index]];
                         }
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
@@ -411,7 +411,7 @@
                     else if (columnDefs[j].type.indexOf("file") < 0) {
                         var arrIndex = columnDefs[j].name.toString().split(".")
                         var fvalue = adata.data()[0];
-                        for (let index = 0; index < arrIndex.length; index++) {
+                        for (var index = 0; index < arrIndex.length; index++) {
                             fvalue = fvalue[arrIndex[index]];
                         }
 
