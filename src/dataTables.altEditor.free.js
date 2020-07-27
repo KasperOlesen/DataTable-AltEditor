@@ -292,8 +292,11 @@
                 
                 for (var j in columnDefs) {
                     if (columnDefs[j].name != null) {
-                        var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
-                        var selectedValue = eval("adata.data()[0]" + arrIndex);
+                        var arrIndex = columnDefs[j].name.toString().split(".");
+                        var selectedValue = adata.data()[0];
+                        for (var index = 0; index < arrIndex.length; index++) {
+                            selectedValue = selectedValue[arrIndex[index]];
+                        }
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
                         $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
                         $(selector).find(jquerySelector).trigger("change"); // required by select2
@@ -391,7 +394,7 @@
                     selected: true
                 });
                 var columnDefs = this.completeColumnDefs();
-                const formName = 'altEditor-delete-form-' + this.random_id;
+                var formName = 'altEditor-delete-form-' + this.random_id;
 
                 // TODO
                 // we should use createDialog()
@@ -406,7 +409,11 @@
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
-                        var fvalue = adata.data()[0][columnDefs[j].name];
+                        var arrIndex = columnDefs[j].name.toString().split(".")
+                        var fvalue = adata.data()[0];
+                        for (var index = 0; index < arrIndex.length; index++) {
+                            fvalue = fvalue[arrIndex[index]];
+                        }
 
                         //added dateFormat
                         if (columnDefs[j].type.indexOf("date") >= 0) {
@@ -442,7 +449,7 @@
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
-                    const modalContent = $(selector).find('.modal-content');
+                    var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
@@ -656,7 +663,7 @@
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
-                    const modalContent = $(selector).find('.modal-content');
+                    var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
@@ -686,7 +693,7 @@
                     if (columnDefs[j].editorOnChange) {
                         $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
                         $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
-                            let f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
+                            var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);
                         });
                     }
