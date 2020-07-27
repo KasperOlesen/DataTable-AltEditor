@@ -394,7 +394,7 @@
                     selected: true
                 });
                 var columnDefs = this.completeColumnDefs();
-                const formName = 'altEditor-delete-form-' + this.random_id;
+                var formName = 'altEditor-delete-form-' + this.random_id;
 
                 // TODO
                 // we should use createDialog()
@@ -449,7 +449,7 @@
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
-                    const modalContent = $(selector).find('.modal-content');
+                    var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
@@ -663,7 +663,7 @@
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
-                    const modalContent = $(selector).find('.modal-content');
+                    var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
@@ -693,7 +693,7 @@
                     if (columnDefs[j].editorOnChange) {
                         $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
                         $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
-                            let f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
+                            var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);
                         });
                     }
