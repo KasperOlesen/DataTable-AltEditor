@@ -1,0 +1,30 @@
+
+{
+  "author": {
+    "name": "KasperOlesen",
+    "url": "https://github.com/KasperOlesen/DataTable-AltEditor"
+  },
+  "contributors": [{
+    "name": "KasperOlesen"
+  } , { 
+    "name": "luca-vercelli"
+  } , {
+    "name": "zack-hable"
+  } , {
+    "name": "zadarkside"
+  }],
+  "description": "DataTables Editor Updated",
+  "keywords": [
+    "DataTables",
+    "Editor",
+    "Free"
+  ],
+  "license": "MIT",
+  "main": "src/dataTables.altEditor.free.js",
+  "name": "datatables.net-editor-updated",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KasperOlesen/DataTable-AltEditor.git"
+  },
+  "version": "2.0.0"
+}
