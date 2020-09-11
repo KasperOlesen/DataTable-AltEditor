@@ -691,7 +691,8 @@
                     }
                     // custom onchange triggers
                     if (columnDefs[j].editorOnChange) {
-                        $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
+                        // FIXME upgrade jquery to 3.x and use $.escapeSelector(columnDefs[j].name)
+                        $(selector).find("#" + columnDefs[j].name).attr('alt-editor-id', this._quoteattr(j));
                         $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
                             var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);

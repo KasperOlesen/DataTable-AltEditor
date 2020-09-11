@@ -4,96 +4,99 @@ var degreesOptions = { "0" : "None", "1" : "Degree", "2" : "High school" };
 
 $(document).ready(function() {
 
-  var columnDefs = [{
-    data: "id",
-    title: "Id",
-    type: "readonly"
-  },
-  {
-    data: "name",
-    title: "Name"
-  },
- {
-    data: "position",
-    title: "Position",
-    type : "select",
-    options : employeeOptions,
-    select2 : { width: "100%"},
-    render: function (data, type, row, meta) {
-        if (data == null || !(data in employeeOptions)) return null;
-        return employeeOptions[data];
-    }
-  },
- {
-    data: "startDate",
-    title: "Start date",
-    datetimepicker: { timepicker: false, format : "Y/m/d"}
-  },
- {
-    data: "creationTimestamp",
-    title: "Creation timestamp",
-    datetimepicker: { timepicker: true, format : "Y/m/d H:i"}
-  },
- {
-    data: "friends",
-    title: "Friends",
-    type: "select",
-    options: friendsOptions,
-    multiple : true,
-    select2 : { width: "100%"},
-    render : function (data, type, row, meta) {
-        if (data == null || row == null || row.degree == null) return null;
-        return data.map(function(x) {return friendsOptions[x];});
-    }
-  },
-  {
-    data: "degree.id",
-    title: "Degree (nested obj.)",
-    type: "select",
-    options: degreesOptions,
-    select2 : { width: "100%"},
-    render : function (data, type, row, meta) {
-        if (data == null || row == null || row.degree == null) return null;
-        return row.degree.caption;
-    }
-  }];
+    var columnDefs = [{
+            data: "id",
+            title: "Id",
+            type: "readonly"
+        },
+        {
+            data: "name",
+            title: "Name"
+        },
+        {
+            data: "position",
+            title: "Position",
+            type : "select",
+            options : employeeOptions,
+            select2 : { width: "100%"},
+            render: function (data, type, row, meta) {
+                if (data == null || !(data in employeeOptions)) return null;
+                return employeeOptions[data];
+            }
+        },
+        {
+            data: "startDate",
+            title: "Start date",
+            datetimepicker: { timepicker: false, format : "Y/m/d"}
+        },
+        {
+            data: "creationTimestamp",
+            title: "Creation timestamp",
+            datetimepicker: { timepicker: true, format : "Y/m/d H:i"}
+        },
+        {
+            data: "friends",
+            title: "Friends",
+            type: "select",
+            options: friendsOptions,
+            multiple : true,
+            select2 : { width: "100%"},
+            render : function (data, type, row, meta) {
+                if (data == null || row == null || row.degree == null) return null;
+                return data.map(function(x) {return friendsOptions[x];});
+            }
+        },
+        {
+            data: "degree.id",
+            title: "Degree (nested obj.)",
+            type: "select",
+            options: degreesOptions,
+            select2 : { width: "100%"},
+            render : function (data, type, row, meta) {
+                if (data == null || row == null || row.degree == null) return null;
+                return row.degree.caption;
+            }
+        }];
 
-  var myTable;
+    var myTable;
 
-  // local URL's are not allowed
-  var url_ws_mock_get = 'https://raw.githubusercontent.com/luca-vercelli/DataTable-AltEditor/master/example/06_select_datepicker/mock_svc_load.json';
-  // var url_ws_mock_get = './mock_svc_load.json';
-  var url_ws_mock_ok = './mock_svc_ok.json';
-  
-  myTable = $('#example').DataTable({
-    "sPaginationType": "full_numbers",
-    ajax: {
-        url : url_ws_mock_get,
-        // our data is an array of objects, in the root node instead of /data node, so we need 'dataSrc' parameter
-        dataSrc : ''
-    },
-    columns: columnDefs,
-	    dom: 'Bfrtip',        // Needs button container
+    var url_ws_mock_get = './mock_svc_load.json';
+    var url_ws_mock_ok = './mock_svc_ok.json';
+    if (location.href.startsWith("file://")) {
+        // local URL's are not allowed
+        url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/06_select_datepicker/mock_svc_load.json';
+        url_ws_mock_ok = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/06_select_datepicker/mock_svc_ok.json';
+    }
+
+    myTable = $('#example').DataTable({
+        "sPaginationType": "full_numbers",
+        ajax: {
+            url : url_ws_mock_get,
+            // our data is an array of objects, in the root node instead of /data node, so we need 'dataSrc' parameter
+            dataSrc : ''
+        },
+        columns: columnDefs,
+        dom: 'Bfrtip',        // Needs button container
         select: 'single',
         responsive: true,
         altEditor: true,     // Enable altEditor
         buttons: [{
-            text: 'Add',
-            name: 'add'        // do not change name
-        },
-        {
-            extend: 'selected', // Bind to Selected row
-            text: 'Edit',
-            name: 'edit'        // do not change name
-        },
-        {
-            extend: 'selected', // Bind to Selected row
-            text: 'Delete',
-            name: 'delete'      // do not change name
-        },
-        {
-            text: 'Refresh',
-            name: 'refresh'      // do not change name
+                text: 'Add',
+                name: 'add'        // do not change name
+            },
+            {
+                extend: 'selected', // Bind to Selected row
+                text: 'Edit',
+                name: 'edit'        // do not change name
+            },
+            {
+                extend: 'selected', // Bind to Selected row
+                text: 'Delete',
+                name: 'delete'      // do not change name
+            },
+            {
+                text: 'Refresh',
+                name: 'refresh'      // do not change name
         }],
         onAddRow: function(datatable, rowdata, success, error) {
             $.ajax({
@@ -125,7 +128,7 @@ $(document).ready(function() {
                 error: error
             });
         }
-  });
+    });
 
 
 });

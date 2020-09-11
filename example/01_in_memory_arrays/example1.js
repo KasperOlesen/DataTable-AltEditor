@@ -68,24 +68,26 @@ $(document).ready(function() {
     "sPaginationType": "full_numbers",
     data: dataSet,
     columns: columnDefs,
-		dom: 'Bfrtip',        // Needs button container
-          select: 'single',
-          responsive: true,
-          altEditor: true,     // Enable altEditor
-          buttons: [{
-            text: 'Add',
-            name: 'add'        // do not change name
-          },
-          {
-            extend: 'selected', // Bind to Selected row
-            text: 'Edit',
-            name: 'edit'        // do not change name
-          },
-          {
-            extend: 'selected', // Bind to Selected row
-            text: 'Delete',
-            name: 'delete'      // do not change name
-         }]
+    dom: 'Bfrtip',        // Needs button container
+    select: 'single',
+    responsive: true,
+    altEditor: true,     // Enable altEditor
+    buttons: [
+        {
+        text: 'Add',
+        name: 'add'        // do not change name
+        },
+        {
+        extend: 'selected', // Bind to Selected row
+        text: 'Edit',
+        name: 'edit'        // do not change name
+        },
+        {
+        extend: 'selected', // Bind to Selected row
+        text: 'Delete',
+        name: 'delete'      // do not change name
+        }
+    ]
   });
 
 

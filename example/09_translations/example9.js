@@ -68,24 +68,24 @@ $(document).ready(function() {
     "sPaginationType": "full_numbers",
     data: dataSet,
     columns: columnDefs,
-		dom: 'Bfrtip',        // Needs button container
-          select: 'single',
-          responsive: true,
-          altEditor: true,     // Enable altEditor
-          buttons: [{
-            text: 'Aggiungi',
-            name: 'add'        // do not change name
-          },
-          {
-            extend: 'selected', // Bind to Selected row
-            text: 'Modifica',
-            name: 'edit'        // do not change name
-          },
-          {
-            extend: 'selected', // Bind to Selected row
-            text: 'Elimina',
-            name: 'delete'      // do not change name
-         }],
+    dom: 'Bfrtip',        // Needs button container
+    select: 'single',
+    responsive: true,
+    altEditor: true,     // Enable altEditor
+    buttons: [{
+        text: 'Aggiungi',
+        name: 'add'        // do not change name
+        },
+        {
+        extend: 'selected', // Bind to Selected row
+        text: 'Modifica',
+        name: 'edit'        // do not change name
+        },
+        {
+        extend: 'selected', // Bind to Selected row
+        text: 'Elimina',
+        name: 'delete'      // do not change name
+        }],
     language: {
         
         // see https://datatables.net/plug-ins/i18n/Italian

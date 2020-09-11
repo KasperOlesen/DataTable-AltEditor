@@ -1,7 +1,10 @@
-// local URL's are not allowed
 
 var url_ws_mock_prefix = './';
-//var url_ws_mock_prefix = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/';
+if (location.href.startsWith("file://")) {
+    // local URL's are not allowed
+    url_ws_mock_prefix = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/07_dependent_select/';
+
+}
 
 var countryOptions = ['Italy', 'France', 'Germany'];
 var allTownsOptions = [ "Torino", "Roma", "Milano", "Napoli", "Paris", "Lyon", "Toulose" ];
@@ -17,7 +20,7 @@ $(document).ready(function() {
     data: "name",
     title: "Name"
   },
- {
+  {
     data: "country",
     title: "Country",
     type : "select",
@@ -57,7 +60,7 @@ $(document).ready(function() {
         }
     }
   },
- {
+  {
     data: "town",
     title: "Town",
     type : "select",
@@ -74,11 +77,11 @@ $(document).ready(function() {
         dataSrc : ''
     },
     columns: columnDefs,
-	    dom: 'Bfrtip',        // Needs button container
-        select: 'single',
-        responsive: true,
-        altEditor: true,     // Enable altEditor
-        buttons: [{
+    dom: 'Bfrtip',        // Needs button container
+    select: 'single',
+    responsive: true,
+    altEditor: true,     // Enable altEditor
+    buttons: [{
             text: 'Add',
             name: 'add'        // do not change name
         },
@@ -96,36 +99,36 @@ $(document).ready(function() {
             text: 'Refresh',
             name: 'refresh'      // do not change name
         }],
-        onAddRow: function(datatable, rowdata, success, error) {
-            $.ajax({
-                // a tipycal url would be / with type='PUT'
-                url: url_ws_mock_prefix + 'mock_svc_ok.json',
-                type: 'GET',
-                data: rowdata,
-                success: success,
-                error: error
-            });
-        },
-        onDeleteRow: function(datatable, rowdata, success, error) {
-            $.ajax({
-                // a tipycal url would be /{id} with type='DELETE'
-                url: url_ws_mock_prefix + 'mock_svc_ok.json',
-                type: 'GET',
-                data: rowdata,
-                success: success,
-                error: error
-            });
-        },
-        onEditRow: function(datatable, rowdata, success, error) {
-            $.ajax({
-                // a tipycal url would be /{id} with type='POST'
-                url: url_ws_mock_prefix + 'mock_svc_ok.json',
-                type: 'GET',
-                data: rowdata,
-                success: success,
-                error: error
-            });
-        }
+    onAddRow: function(datatable, rowdata, success, error) {
+        $.ajax({
+            // a tipycal url would be / with type='PUT'
+            url: url_ws_mock_prefix + 'mock_svc_ok.json',
+            type: 'GET',
+            data: rowdata,
+            success: success,
+            error: error
+        });
+    },
+    onDeleteRow: function(datatable, rowdata, success, error) {
+        $.ajax({
+            // a tipycal url would be /{id} with type='DELETE'
+            url: url_ws_mock_prefix + 'mock_svc_ok.json',
+            type: 'GET',
+            data: rowdata,
+            success: success,
+            error: error
+        });
+    },
+    onEditRow: function(datatable, rowdata, success, error) {
+        $.ajax({
+            // a tipycal url would be /{id} with type='POST'
+            url: url_ws_mock_prefix + 'mock_svc_ok.json',
+            type: 'GET',
+            data: rowdata,
+            success: success,
+            error: error
+        });
+    }
   });
 
 
