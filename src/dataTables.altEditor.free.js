@@ -318,7 +318,7 @@
                     }
                 }
                 
-                $(selector + ' input[0]').focus();
+                $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:edit_dialog_opened");
             },
 
@@ -459,7 +459,7 @@
                 });
 
                 $(selector).modal('show');
-                $(selector + ' input[0]').focus();
+                $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:delete_dialog_opened");
             },
 
@@ -503,7 +503,7 @@
                     this.language.modalClose, 'addRowBtn', 'altEditor-add-form');
 
                 var selector = this.modal_selector;
-                $(selector + ' input[0]').focus();
+                $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
             },
             
@@ -673,7 +673,7 @@
                 });
 
                 $(selector).modal('show');
-                $(selector + ' input[0]').focus();
+                $(selector + ' input[0]').trigger('focus');
                 
                 var that = this;
 
@@ -691,8 +691,8 @@
                     }
                     // custom onchange triggers
                     if (columnDefs[j].editorOnChange) {
-                        // FIXME upgrade jquery to 3.x and use $.escapeSelector(columnDefs[j].name)
-                        $(selector).find("#" + columnDefs[j].name).attr('alt-editor-id', this._quoteattr(j));
+                        // $.escapeSelector requires jQuery 3.x
+                        $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
                         $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
                             var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);

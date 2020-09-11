@@ -22,7 +22,8 @@ $(document).ready(function() {
     disabled: true
   },
  {
-    data: "image",
+    name: "image",
+    data: null,
     render: function(data, type, row, meta) {
         return "My file";
     },

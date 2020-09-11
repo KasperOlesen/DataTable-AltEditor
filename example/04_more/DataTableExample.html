@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DataTable-AltEditor - Example #4</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.2/css/select.dataTables.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.5/css/responsive.dataTables.css" />
 </head>
 
 <body>
@@ -52,12 +52,13 @@ This is the original example, not sure everything works yet.
     <span id='messages'>&nbsp;</span>
   </div>
 
-<script src="https://code.jquery.com/jquery-1.12.4.js" ></script>
-<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js" ></script>
-<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.js" ></script>
-<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.js" ></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js" ></script>
-<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.js" ></script>
+<script src="https://code.jquery.com/jquery-3.0.0.js" ></script>
+<script src="https://code.jquery.com/jquery-migrate-3.3.0.js" ></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js" ></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.js" ></script>
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.js" ></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js" ></script>
+<script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.js" ></script>
 <script src="../../src/dataTables.altEditor.free.js" ></script>
 
   <script>
@@ -139,10 +140,17 @@ var columnDefs = [{
       type: "readonly"
     }]
 
+
+var url_ws_mock_get = './example4.json';
+if (location.href.startsWith("file://")) {
+        // local URL's are not allowed
+        url_ws_mock_get = 'https://luca-vercelli.github.io/DataTable-AltEditor/example/04_more/example4.json';
+}
+    
 //Table creation
 var myTable = $('#testTableData').dataTable({
   dom: 'Bfrltip',                   //Element order: Button container(B) is essential.
-  ajax: "./example4.json",   //Receiving data from this source. 
+  ajax: url_ws_mock_get,   //Receiving data from this source. 
     columns: columnDefs,            //Columns defined above.
     select: 'single',               //Only single column selection is implemented.
     altEditor: true,                //Enable altEditor.
