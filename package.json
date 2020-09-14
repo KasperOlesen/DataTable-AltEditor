@@ -21,7 +21,7 @@
   ],
   "license": "MIT",
   "main": "src/dataTables.altEditor.free.js",
-  "name": "datatables.net-editor-updated",
+  "name": "datatables.net-alteditor-updated",
   "repository": {
     "type": "git",
     "url": "https://github.com/KasperOlesen/DataTable-AltEditor.git"
