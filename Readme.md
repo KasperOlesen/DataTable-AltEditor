@@ -88,7 +88,17 @@ Following column options are supported.
 | **Options for columns with type `"date"`:**              |                                   | |
 | `dateFormat`  | `"YYYY-MM-DD"`    |   Set date format. Require moment.js library linked. |
 
+# Global modifiers
 
+Following DataTable options are supported.
+
+| DataTable option    | Accepted values  | Description                    |
+|---------------------|------------------|--------------------------------|
+|`altEditor`          | `true \| false`  |  Enable editor. Default false. |
+|`onAddRow`           | function         |  On-add callback function. |
+|`onEditRow`          | function         |  On-edit callback function. |
+|`onDeleteRow`        | function         |  On-delete callback function. |
+|`closeModalOnSuccess`| `true \| false`  |  Close modal after successful edit/add/delete. Default true. |
 
 ### Credits
 See LICENSE and CHANGELOG for various credits.

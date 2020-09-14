@@ -116,6 +116,11 @@
                     that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
                 if (dt.settings()[0].oInit.onEditRow)
                     that.onEditRow = dt.settings()[0].oInit.onEditRow;
+                
+                that.closeModalOnSuccess = dt.settings()[0].oInit.closeModalOnSuccess;
+                if (that.closeModalOnSuccess === undefined) {
+                    that.closeModalOnSuccess = true;
+                }
 
                 this._setup();
 
@@ -773,11 +778,15 @@
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
 
-                    var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>' + this.language.success + '</strong>' +
-                        '</div>';
-                    $(selector + ' .modal-body').append(message);
-
+                    if (this.closeModalOnSuccess) {
+                        $(selector).modal('hide');
+                    } else {
+                        var message = '<div class="alert alert-success" role="alert">' +
+                            '<strong>' + this.language.success + '</strong>' +
+                            '</div>';
+                        $(selector + ' .modal-body').append(message);
+                    }
+                    
                     this.s.dt.row({
                         selected : true
                     }).remove();
@@ -800,10 +809,14 @@
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
 
-                    var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>' + this.language.success + '</strong>' +
-                        '</div>';
-                    $(selector + ' .modal-body').append(message);
+                    if (this.closeModalOnSuccess) {
+                        $(selector).modal('hide');
+                    } else {
+                        var message = '<div class="alert alert-success" role="alert">' +
+                            '<strong>' + this.language.success + '</strong>' +
+                            '</div>';
+                        $(selector + ' .modal-body').append(message);                    
+                    }
 
                     this.s.dt.row.add(data).draw(false);
 
@@ -824,10 +837,14 @@
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
 
-                    var message = '<div class="alert alert-success" role="alert">' +
-                        '<strong>' + this.language.success + '</strong>' +
-                        '</div>';
-                    $(selector + ' .modal-body').append(message);
+                    if (this.closeModalOnSuccess) {
+                        $(selector).modal('hide');
+                    } else {
+                        var message = '<div class="alert alert-success" role="alert">' +
+                            '<strong>' + this.language.success + '</strong>' +
+                            '</div>';
+                        $(selector + ' .modal-body').append(message);
+                    }
 
                     this.s.dt.row({
                         selected : true
