@@ -296,7 +296,7 @@
                 var selector = this.modal_selector;
 
                 for (var j in columnDefs) {
-                    if (columnDefs[j].name != null) {
+                    if (columnDefs[j].name != null && columnDefs[j].altEditor !== false) {
                         var arrIndex = columnDefs[j].name.toString().split(".");
                         var selectedValue = adata.data()[0];
                         for (var index = 0; index < arrIndex.length; index++) {
@@ -523,6 +523,7 @@
                     columnDefs[i] = {
                         title: obj.sTitle,
                         name: (obj.data ? obj.data : obj.mData),
+                        altEditor: (obj.hasOwnProperty('altEditor') ? obj.altEditor : true),
                         type: (obj.type ? obj.type : 'text'),
                         rows: (obj.rows ? obj.rows : '5'),
                         cols: (obj.cols ? obj.cols : '30'),
@@ -558,105 +559,106 @@
                 formName = [formName, this.random_id].join('-');
                 var data = "";
                 for (var j in columnDefs) {
-
-                    //handle hidden fields
-                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
-                    }
-                    else {
-                        // handle fields that are visible to the user
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
-                        data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
-                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
-                        data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
-
-                        // Adding readonly-fields
-                        if (columnDefs[j].type.indexOf("readonly") >= 0) {
-                            // type=readonly is deprecated, kept for backward compatibility
-                            data += "<input type='text' readonly  id='"
-                                + this._quoteattr(columnDefs[j].name)
-                                + "' name='"
-                                + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='"
-                                + this._quoteattr(columnDefs[j].title)
-                                + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
+                    if (columnDefs[j].altEditor !== false) {
+                        //handle hidden fields
+                        if (columnDefs[j].type.indexOf("hidden") >= 0) {
+                            data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
                         }
-                        // Adding select-fields
-                        else if (columnDefs[j].type.indexOf("select") >= 0) {
-                            var options = "";
-                            var optionsArray = columnDefs[j].options;
-                            if (optionsArray.length > 0) {
-                                // array-style select or select2
-                                for (var i = 0; i < optionsArray.length; i++) {
-                                    options += "<option value='" + this._quoteattr(optionsArray[i])
-                                        + "'>" + optionsArray[i] + "</option>";
-                                }
-                            } else {
-                                // object-style select or select2
-                                for (var x in optionsArray) {
-                                    options += "<option value='" + this._quoteattr(x) + "' >"
-                                        + optionsArray[x] + "</option>";
-                                }
-                            }
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
-                                + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].multiple ? ' multiple ' : '')
-                                + ">" + options
-                                + "</select>";
-                        }
-                        //Adding Text Area
-                        else if (columnDefs[j].type.indexOf("textarea") >= 0)
-                        {
-                            data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' rows='" + this._quoteattr(columnDefs[j].rows)
-                                + "' cols='"+ this._quoteattr(columnDefs[j].cols)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
-                                + "</textarea>";
-                        }
-                        // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
                         else {
-                            data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
-                                + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
-                                + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden;" + this._quoteattr(columnDefs[j].style)
-                                + "' class='form-control  form-control-sm' value=''>";
-                        }
-                        data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
+                            // handle fields that are visible to the user
+                            data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
+                            data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                            data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                            data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
+
+                            // Adding readonly-fields
+                            if (columnDefs[j].type.indexOf("readonly") >= 0) {
+                                // type=readonly is deprecated, kept for backward compatibility
+                                data += "<input type='text' readonly  id='"
+                                    + this._quoteattr(columnDefs[j].name)
+                                    + "' name='"
+                                    + this._quoteattr(columnDefs[j].title)
+                                    + "' placeholder='"
+                                    + this._quoteattr(columnDefs[j].title)
+                                    + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
+                            }
+                            // Adding select-fields
+                            else if (columnDefs[j].type.indexOf("select") >= 0) {
+                                var options = "";
+                                var optionsArray = columnDefs[j].options;
+                                if (optionsArray.length > 0) {
+                                    // array-style select or select2
+                                    for (var i = 0; i < optionsArray.length; i++) {
+                                        options += "<option value='" + this._quoteattr(optionsArray[i])
+                                            + "'>" + optionsArray[i] + "</option>";
+                                    }
+                                } else {
+                                    // object-style select or select2
+                                    for (var x in optionsArray) {
+                                        options += "<option value='" + this._quoteattr(x) + "' >"
+                                            + optionsArray[x] + "</option>";
+                                    }
+                                }
+                                data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
+                                    + "' id='" + this._quoteattr(columnDefs[j].name)
+                                    + "' name='" + this._quoteattr(columnDefs[j].title)
+                                    + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                    + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                    + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                    + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                    + "' data-unique='" + columnDefs[j].unique
+                                    + "' "
+                                    + (columnDefs[j].readonly ? ' readonly ' : '')
+                                    + (columnDefs[j].disabled ? ' disabled ' : '')
+                                    + (columnDefs[j].required ? ' required ' : '')
+                                    + (columnDefs[j].multiple ? ' multiple ' : '')
+                                    + ">" + options
+                                    + "</select>";
+                            }
+                            //Adding Text Area
+                            else if (columnDefs[j].type.indexOf("textarea") >= 0)
+                            {
+                                data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
+                                    + "' name='" + this._quoteattr(columnDefs[j].title)
+                                    + "' rows='" + this._quoteattr(columnDefs[j].rows)
+                                    + "' cols='"+ this._quoteattr(columnDefs[j].cols)
+                                    + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                    + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                    + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                    + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                    + "' data-unique='" + columnDefs[j].unique
+                                    + "' "
+                                    + (columnDefs[j].readonly ? ' readonly ' : '')
+                                    + (columnDefs[j].disabled ? ' disabled ' : '')
+                                    + (columnDefs[j].required ? ' required ' : '')
+                                    + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
+                                    + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
+                                    + "</textarea>";
+                            }
+                            // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
+                            else {
+                                data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
+                                    + "' id='" + this._quoteattr(columnDefs[j].name)
+                                    + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
+                                    + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
+                                    + "' name='" + this._quoteattr(columnDefs[j].title)
+                                    + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                    + "' data-special='" + this._quoteattr(columnDefs[j].special)
+                                    + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
+                                    + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
+                                    + "' data-unique='" + columnDefs[j].unique
+                                    + "' "
+                                    + (columnDefs[j].readonly ? ' readonly ' : '')
+                                    + (columnDefs[j].disabled ? ' disabled ' : '')
+                                    + (columnDefs[j].required ? ' required ' : '')
+                                    + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
+                                    + " style='overflow:hidden;" + this._quoteattr(columnDefs[j].style)
+                                    + "' class='form-control  form-control-sm' value=''>";
+                            }
+                            data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
                                 + "' class='errorLabel'></label>";
-                        data += "</div><div style='clear:both;'></div></div>";
+                            data += "</div><div style='clear:both;'></div></div>";
+                        }
                     }
                 }
                 // data += "</form>";
