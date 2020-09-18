@@ -410,6 +410,7 @@
                 var data = "";
 
                 for (var j in columnDefs) {
+                    if (columnDefs[j].name == null) continue;
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
