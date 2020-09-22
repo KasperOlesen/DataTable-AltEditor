@@ -168,12 +168,13 @@
                                         required: this.language.error.required || 'Field is required',
                                         unique: this.language.error.unique || 'Duplicated field'
                                       };
-                var modal = '<div class="modal fade altEditor-modal" id="' + modal_id + '" tabindex="-1" role="dialog">' +
+
+                var modal = '<div class="modal fade altEditor-modal reveal" id="' + modal_id + '" tabindex="-1" role="dialog" data-reveal>' +
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
                     '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="' + this.language.modalClose + '">' +
+                    '<button style="margin: initial;" type="button" class="close close-button" data-dismiss="modal" data-close aria-label="' + this.language.modalClose + '">' +
                     '<span aria-hidden="true">&times;</span></button>' +
                     '</div>' +
                     '<div class="modal-body">' +
@@ -410,6 +411,7 @@
                 var data = "";
 
                 for (var j in columnDefs) {
+                    if (columnDefs[j].name == null) continue;
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
@@ -448,9 +450,9 @@
                 }
 
                 var selector = this.modal_selector;
-                $(selector).on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">' + that.language.modalClose + '</button>' +
-                        '<button type="submit"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">' + that.language.delete.button + '</button>';
+                var fill = function () {
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-close data-dismiss="modal">' + that.language.modalClose + '</button>' +
+                        '<button type="submit"  data-content="remove" class="btn btn-danger button" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
@@ -461,9 +463,9 @@
                     } else {
                         modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
                     }
-                });
+                };
 
-                $(selector).modal('show');
+                this.internalOpenDialog(selector, fill);
                 $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:delete_dialog_opened");
             },
@@ -662,9 +664,9 @@
                 // data += "</form>";
 
                 var selector = this.modal_selector;
-                $(selector).on('show.bs.modal', function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
-                        '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary" id="'+buttonClass+'">'+buttonCaption+'</button>';
+                var fill = function () {
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>'+closeCaption+'</button>' +
+                        '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary button" id="'+buttonClass+'">'+buttonCaption+'</button>';
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
@@ -675,9 +677,9 @@
                     } else {
                         modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
                     }
-                });
+                };
 
-                $(selector).modal('show');
+                this.internalOpenDialog(selector, fill);
                 $(selector + ' input[0]').trigger('focus');
 
                 var that = this;
@@ -779,7 +781,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     if (this.closeModalOnSuccess) {
-                        $(selector).modal('hide');
+                        this.internalCloseDialog(selector);
                     } else {
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
@@ -810,7 +812,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     if (this.closeModalOnSuccess) {
-                        $(selector).modal('hide');
+                        this.internalCloseDialog(selector);
                     } else {
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
@@ -838,7 +840,7 @@
                     $(selector + ' .modal-body .alert').remove();
 
                     if (this.closeModalOnSuccess) {
-                        $(selector).modal('hide');
+                        this.internalCloseDialog(selector);
                     } else {
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
@@ -900,6 +902,50 @@
             onDeleteRow: function(dt, rowdata, success, error) {
                 console.log("Missing AJAX configuration for DELETE");
                 success(rowdata);
+            },
+
+            /**
+             * Open a dialog using available framework
+             */
+            internalOpenDialog(selector, onopen) {
+                var $sel = $(selector);
+                if ($sel.modal) {
+                    // Bootstrap
+                    $sel.on('show.bs.modal', onopen);
+                    $sel.modal('show');
+
+                } else if ($sel.foundation){
+                    // Foundation
+                    $sel.on('open.zf.reveal', onopen);
+                    $sel.on('closed.zf.reveal', function() { $('.reveal-overlay').hide(); });
+                    var popup = new Foundation.Reveal($sel);
+                    popup.open();
+
+                } else {
+                    console.error('You must load Bootstrap or Foundation in order to open modal dialogs');
+                    return;
+                }
+            },
+            
+            /**
+             * Close a dialog using available framework
+             */
+            internalCloseDialog(selector) {
+                var $sel = $(selector);
+                if ($sel.modal) {
+                    // Bootstrap
+                    $sel.modal('hide');
+
+                } else if ($sel.foundation){
+                    // Foundation
+                    var popup = new Foundation.Reveal($sel);
+                    popup.close();
+                    $('.reveal-overlay').hide();
+
+                } else {
+                    console.error('You must load Bootstrap or Foundation in order to open modal dialogs');
+                    return;
+                }
             },
 
             /**

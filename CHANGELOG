@@ -1,3 +1,10 @@
+2020-09 luca-vercelli
+    * basic support for Foundation
+    * "close modal on success" feature
+
+2020-09 viicslen
+    * basic npm support
+
 2020-06 mjbernot
     * support for checkboxes and date input fields
     * IE compatibility support
