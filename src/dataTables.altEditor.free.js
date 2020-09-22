@@ -116,7 +116,7 @@
                     that.onDeleteRow = dt.settings()[0].oInit.onDeleteRow;
                 if (dt.settings()[0].oInit.onEditRow)
                     that.onEditRow = dt.settings()[0].oInit.onEditRow;
-                
+
                 that.closeModalOnSuccess = dt.settings()[0].oInit.closeModalOnSuccess;
                 if (that.closeModalOnSuccess === undefined) {
                     that.closeModalOnSuccess = true;
@@ -168,7 +168,8 @@
                                         required: this.language.error.required || 'Field is required',
                                         unique: this.language.error.unique || 'Duplicated field'
                                       };
-                var modal = '<div class="modal fade reveal" id="' + modal_id + '" tabindex="-1" role="dialog" data-reveal>' +
+
+                var modal = '<div class="modal fade altEditor-modal reveal" id="' + modal_id + '" tabindex="-1" role="dialog" data-reveal>' +
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
@@ -231,7 +232,7 @@
                         });
                     });
                 }
-                
+
                 // bind 'unique' error messages
                 $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
                     if ($(elm.target).attr('data-unique') == null || $(elm.target).attr('data-unique') === 'false') {
@@ -251,7 +252,7 @@
                         }
                     }
                 });
-                        
+
                 // add Refresh button
                 if (this.s.dt.button('refresh:name')) {
                     this.s.dt.button('refresh:name').action(function (e, dt, node, config) {
@@ -283,18 +284,18 @@
              * @private
              */
             _openEditModal: function () {
-                
+
                 var dt = this.s.dt;
                 var adata = dt.rows({
                     selected: true
                 });
-                
+
                 var columnDefs = this.completeColumnDefs();
                 var data = this.createDialog(columnDefs, this.language.edit.title, this.language.edit.button,
                     this.language.modalClose, 'editRowBtn', 'altEditor-edit-form');
 
                 var selector = this.modal_selector;
-                
+
                 for (var j in columnDefs) {
                     if (columnDefs[j].name != null) {
                         var arrIndex = columnDefs[j].name.toString().split(".");
@@ -322,7 +323,7 @@
                         }
                     }
                 }
-                
+
                 $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:edit_dialog_opened");
             },
@@ -362,12 +363,12 @@
                         });
                     }
                 });
-                
+
                 // Getting the checkbox from the modal
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
-                
+
                 console.log(rowDataArray); //DEBUG
 
                 var checkFilesQueued = function() {
@@ -382,7 +383,7 @@
                         setTimeout(checkFilesQueued, 1000);
                     }
                 };
-                
+
                 checkFilesQueued();
             },
 
@@ -392,7 +393,7 @@
              * @private
              */
             _openDeleteModal: function () {
-                
+
                 var that = this;
                 var dt = this.s.dt;
                 var adata = dt.rows({
@@ -405,7 +406,7 @@
                 // we should use createDialog()
                 // var data = this.createDialog(columnDefs, this.language.delete.title, this.language.delete.button,
                 //      this.language.modalClose, 'deleteRowBtn', 'altEditor-delete-form');
-                
+
                 // Building delete-modal
                 var data = "";
 
@@ -430,7 +431,7 @@
                                 }
                             }
                         }
-                        
+
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
@@ -484,7 +485,7 @@
 
                 // Getting the IDs and Values of the tablerow
                 for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    // .data is the attribute name, if any; .idx is the column index, so it should always exists 
+                    // .data is the attribute name, if any; .idx is the column index, so it should always exists
                     var name = dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data :
                             dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData :
                             dt.context[0].aoColumns[i].idx;
@@ -512,7 +513,7 @@
                 $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
             },
-            
+
             /**
             * Complete DataTable.context[0].aoColumns with default values
             */
@@ -550,7 +551,7 @@
                 }
                 return columnDefs;
             },
-            
+
             /**
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
@@ -559,7 +560,7 @@
                 formName = [formName, this.random_id].join('-');
                 var data = "";
                 for (var j in columnDefs) {
-                    
+
                     //handle hidden fields
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
@@ -615,7 +616,7 @@
                                 + ">" + options
                                 + "</select>";
                         }
-                        //Adding Text Area 
+                        //Adding Text Area
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
                             data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
@@ -661,7 +662,7 @@
                     }
                 }
                 // data += "</form>";
-                
+
                 var selector = this.modal_selector;
                 var fill = function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>'+closeCaption+'</button>' +
@@ -680,7 +681,7 @@
 
                 this.internalOpenDialog(selector, fill);
                 $(selector + ' input[0]').trigger('focus');
-                
+
                 var that = this;
 
                 // enable select 2 items, datepicker, datetimepickerm
@@ -716,7 +717,7 @@
                     }
                 }
             },
-            
+
             /**
              * Callback for "Add" button
              */
@@ -730,7 +731,7 @@
                 $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
-                    
+
                 //Getting the textArea from the modal
                 $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
@@ -747,12 +748,12 @@
                         });
                     }
                 });
-                
+
                 // Getting the checkbox from the modal
                 $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
-                
+
                 console.log(rowDataArray); //DEBUG
 
                 var checkFilesQueued = function() {
@@ -787,7 +788,7 @@
                             '</div>';
                         $(selector + ' .modal-body').append(message);
                     }
-                    
+
                     this.s.dt.row({
                         selected : true
                     }).remove();
@@ -803,9 +804,9 @@
              * Called after a row has been inserted on server
              */
             _addRowCallback: function (response, status, more) {
-                
+
                     //TODO should honor dt.ajax().dataSrc
-                    
+
                     var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
@@ -816,7 +817,7 @@
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
                             '</div>';
-                        $(selector + ' .modal-body').append(message);                    
+                        $(selector + ' .modal-body').append(message);
                     }
 
                     this.s.dt.row.add(data).draw(false);
@@ -833,7 +834,7 @@
             _editRowCallback: function (response, status, more) {
 
                     //TODO should honor dt.ajax().dataSrc
-                    
+
                     var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
@@ -878,7 +879,7 @@
 
                     $(selector + ' .modal-body').append(message);
             },
-            
+
             /**
              * Default callback for insertion: mock webservice, always success.
              */
@@ -902,7 +903,7 @@
                 console.log("Missing AJAX configuration for DELETE");
                 success(rowdata);
             },
-            
+
             /**
              * Open a dialog using available framework
              */
@@ -969,7 +970,7 @@
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
             },
-            
+
             /**
              * Convert file to Base 64 form
              * @see https://stackoverflow.com/questions/36280818
