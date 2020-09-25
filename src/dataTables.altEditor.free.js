@@ -417,12 +417,12 @@
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
                         var arrIndex = columnDefs[j].name.toString().split(".")
-                        var fvalue = adata.data()[0];
+                        var fvalue = adata.data()[0];  //fvalue is the value that will appear to user
                         for (var index = 0; index < arrIndex.length; index++) {
                             fvalue = fvalue[arrIndex[index]];
                         }
 
-                        //added dateFormat
+                        // fix dateFormat
                         if (columnDefs[j].type.indexOf("date") >= 0) {
                             if (columnDefs[j].dateFormat !== "") {
                                 var mDate = moment(adata.data()[0][columnDefs[j].name]);
@@ -432,6 +432,24 @@
                             }
                         }
 
+                        // fix select
+                        if (columnDefs[j].type.indexOf("select") >= 0) {
+                            var options = columnDefs[j].options;
+                            if (fvalue instanceof Array) {
+                                // multiselect
+                                var mapped = fvalue.map(
+                                    function (x) {
+                                        return x in options ? options[x] : null;
+                                    })
+                                    .filter(function (x) {
+                                        return x != null;
+                                    });
+                                fvalue = mapped.join(', ');
+                            } else {
+                                fvalue = options[fvalue];
+                            }
+                        }
+                        
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
