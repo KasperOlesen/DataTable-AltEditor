@@ -301,7 +301,7 @@
                         var arrIndex = columnDefs[j].name.toString().split(".");
                         var selectedValue = adata.data()[0];
                         for (var index = 0; index < arrIndex.length; index++) {
-                            selectedValue = selectedValue[arrIndex[index]];
+                            if (selectedValue) selectedValue = selectedValue[arrIndex[index]];
                         }
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
                         $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
@@ -419,7 +419,7 @@
                         var arrIndex = columnDefs[j].name.toString().split(".")
                         var fvalue = adata.data()[0];  //fvalue is the value that will appear to user
                         for (var index = 0; index < arrIndex.length; index++) {
-                            fvalue = fvalue[arrIndex[index]];
+                            if (fvalue) fvalue = fvalue[arrIndex[index]];
                         }
 
                         // fix dateFormat
