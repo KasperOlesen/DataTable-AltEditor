@@ -142,7 +142,8 @@
                 this.random_id = ("" + Math.random()).replace(".", "");
                 var modal_id = 'altEditor-modal-' + this.random_id;
                 this.modal_selector = '#' + modal_id;
-                this.language = DataTable.settings.values().next().value.oLanguage.altEditor || {};
+                this.language = dt.settings()[0].oLanguage.altEditor || {};
+                
                 this.language.modalClose = this.language.modalClose || 'Close';
                 this.language.edit = this.language.edit || {};
                 this.language.edit = { title: this.language.edit.title || 'Edit record',
