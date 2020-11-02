@@ -435,18 +435,27 @@
                         // fix select
                         if (columnDefs[j].type.indexOf("select") >= 0) {
                             var options = columnDefs[j].options;
+
+                            var mapper = function(x) {
+                                if (options.length === undefined) {
+                                    // options is a map
+                                    return x in options ? options[x] : null;
+                                } else {
+                                    // options is an array
+                                    return x;
+                                }
+                            }
+
                             if (fvalue instanceof Array) {
                                 // multiselect
-                                var mapped = fvalue.map(
-                                    function (x) {
-                                        return x in options ? options[x] : null;
-                                    })
+                                var mapped = fvalue.map(mapper)
                                     .filter(function (x) {
                                         return x != null;
                                     });
                                 fvalue = mapped.join(', ');
                             } else {
-                                fvalue = options[fvalue];
+                                // usual select
+                                fvalue = mapper(fvalue);
                             }
                         }
                         
