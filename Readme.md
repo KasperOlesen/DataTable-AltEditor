@@ -60,12 +60,12 @@ Following column options are supported.
 
 Column option                                   | Accepted values                                    | Description
 ----------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------
-`type`                                          | `"text" \                                          | "select" \                                                                                                                                                 | "hidden" \ | ...` | Type of HTML input to be shown. The value `readonly` is accepted for backward compatibility, but deprecated.
-`readonly`                                      | `true \                                            | false`                                                                                                                                                     | Add `readonly` HTML attribute
-`disabled`                                      | `true \                                            | false`                                                                                                                                                     | Add `disabled` HTML attribute
-`required`                                      | `true \                                            | false`                                                                                                                                                     | Add `required` HTML attribute
+`type`                                          | `"text" \| "select" \| "hidden" \| ...`            | Type of HTML input to be shown. The value `readonly` is accepted for backward compatibility, but deprecated.
+`readonly`                                      | `true \| false`                                    | Add `readonly` HTML attribute
+`disabled`                                      | `true \| false`                                    | Add `disabled` HTML attribute
+`required`                                      | `true \| false`                                    | Add `required` HTML attribute
 `hoverMsg`                                      | `"some msg"`                                       | The message will appear as a tooltip over the input field.
-`unique`                                        | `true \                                            | false`                                                                                                                                                     | Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this).
+`unique`                                        | `true \| false`                                    | Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this).
 `uniqueMsg`                                     | `"some msg"`                                       | An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute.
 `special`                                       | `"any string"`                                     | Set HTML `"data-special"` attribute (don't know what's that needed for).
 `style`                                         | `"any string"`                                     | Set HTML `"style"` attribute.
@@ -81,8 +81,8 @@ Column option                                   | Accepted values               
 **Options for columns with type `"select"`:**   |                                                    |
 `options`                                       | `["a", "b", "c"]` or `{"a":"A", "b":"B", "c":"C"}` | The options that shall be presented.
 `select2`                                       | `{}`                                               | Enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the object.
-`multiple`                                      | `true \                                            | false`                                                                                                                                                     | Set HTML `"multiple"` attribute.
-`optionsSortByLabel`                            | `true \                                            | false`                                                                                                                                                     | Allows select to be sorted by label field.
+`multiple`                                      | `true \| false`                                    | Set HTML `"multiple"` attribute.
+`optionsSortByLabel`                            | `true \| false`                                    | Allows select to be sorted by label field.
                                                 |
 **Options for columns with type `"textarea"`:** |                                                    |
 `rows`                                          | `integer`                                          | Set HTML `"rows"` attribute.
@@ -96,11 +96,11 @@ Following DataTable options are supported.
 
 DataTable option      | Accepted values | Description
 --------------------- | --------------- | ----------------------------
-`altEditor`           | `true \         | false`                       | Enable editor. Default false.
+`altEditor`           | `true \| false` | Enable editor. Default false.
 `onAddRow`            | function        | On-add callback function.
 `onEditRow`           | function        | On-edit callback function.
 `onDeleteRow`         | function        | On-delete callback function.
-`closeModalOnSuccess` | `true \         | false`                       | Close modal after successful edit/add/delete. Default true.
+`closeModalOnSuccess` | `true \| false` | Close modal after successful edit/add/delete. Default true.
 
 ## Credits
 
