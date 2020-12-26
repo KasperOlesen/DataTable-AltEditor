@@ -98,6 +98,7 @@ DataTable option      | Accepted values | Description
 `onEditRow`           | function        | On-edit callback function.
 `onDeleteRow`         | function        | On-delete callback function.
 `closeModalOnSuccess` | `true \| false` | Close modal after successful edit/add/delete. Default true.
+`encodeFiles` | `true \| false` | Encode files to Base64 format. Default true.
 
 ## Credits
 

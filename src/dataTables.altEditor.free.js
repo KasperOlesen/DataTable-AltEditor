@@ -122,6 +122,11 @@
                     that.closeModalOnSuccess = true;
                 }
 
+                that.encodeFiles = dt.settings()[0].oInit.encodeFiles;
+                if (that.encodeFiles === undefined) {
+                    that.encodeFiles = true;
+                }
+
                 this._setup();
 
                 dt.on('destroy.altEditor', function () {
@@ -148,7 +153,7 @@
                 var modal_id = 'altEditor-modal-' + this.random_id;
                 this.modal_selector = '#' + modal_id;
                 this.language = dt.settings()[0].oLanguage.altEditor || {};
-                
+
                 this.language.modalClose = this.language.modalClose || 'Close';
                 this.language.edit = this.language.edit || {};
                 this.language.edit = { title: this.language.edit.title || 'Edit record',
@@ -357,11 +362,15 @@
                 var numFilesQueued = 0;
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
                     if ($(this).prop('files')[0]) {
-                        ++numFilesQueued;
-                        that.getBase64($(this).prop('files')[0], function(filecontent) {
-                            rowDataArray[$(this).attr('id')] = filecontent;
-                            --numFilesQueued;
-                        });
+                        if (that.encodeFiles) {
+                            ++numFilesQueued;
+                            that.getBase64($(this).prop('files')[0], function (filecontent) {
+                                rowDataArray[$(this).attr('id')] = filecontent;
+                                --numFilesQueued;
+                            });
+                        } else {
+                            rowDataArray[$(this).attr('id')] = $(this).prop('files')[0];
+                        }
                     }
                 });
 
@@ -459,7 +468,7 @@
                                 fvalue = mapper(fvalue);
                             }
                         }
-                        
+
                         data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
                             + that._quoteattr(columnDefs[j].name)
                             + "'>"
@@ -769,11 +778,15 @@
                 var numFilesQueued = 0;
                 $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
                     if ($(this).prop('files')[0]) {
-                        ++numFilesQueued;
-                        that.getBase64($(this).prop('files')[0], function(filecontent) {
-                            rowDataArray[$(this).attr('id')] = filecontent;
-                            --numFilesQueued;
-                        });
+                        if (that.encodeFiles) {
+                            ++numFilesQueued;
+                            that.getBase64($(this).prop('files')[0], function (filecontent) {
+                                rowDataArray[$(this).attr('id')] = filecontent;
+                                --numFilesQueued;
+                            });
+                        } else {
+                            rowDataArray[$(this).attr('id')] = $(this).prop('files')[0];
+                        }
                     }
                 });
 
@@ -954,7 +967,7 @@
                     return;
                 }
             },
-            
+
             /**
              * Close a dialog using available framework
              */
