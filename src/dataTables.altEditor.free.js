@@ -561,6 +561,7 @@
                     var obj = dt.context[0].aoColumns[i];
                     columnDefs[i] = {
                         title: obj.sTitle,
+                        placeholder: (obj.placeholder ? obj.placeholder : obj.title), //added placeholder
                         name: (obj.data ? obj.data : obj.mData),
                         type: (obj.type ? obj.type : 'text'),
                         rows: (obj.rows ? obj.rows : '5'),
@@ -617,7 +618,7 @@
                                 + "' name='"
                                 + this._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
-                                + this._quoteattr(columnDefs[j].title)
+                                + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
                                 + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
                         }
                         // Adding select-fields
@@ -640,7 +641,7 @@
                             data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
                                 + "' data-special='" + this._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
                                 + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
@@ -660,7 +661,7 @@
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
                                 + "' rows='" + this._quoteattr(columnDefs[j].rows)
                                 + "' cols='"+ this._quoteattr(columnDefs[j].cols)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
                                 + "' data-special='" + this._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
                                 + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
@@ -680,7 +681,7 @@
                                 + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
                                 + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].title)
+                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
                                 + "' data-special='" + this._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
                                 + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
