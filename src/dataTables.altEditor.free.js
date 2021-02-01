@@ -584,7 +584,8 @@
                         editorOnChange: (obj.editorOnChange ? obj.editorOnChange : null),
                         style: (obj.style ? obj.style : ''),
                         dateFormat: (obj.dateFormat ? obj.dateFormat : ''),
-                        optionsSortByLabel: (obj.optionsSortByLabel ? obj.optionsSortByLabel : false)
+                        optionsSortByLabel: (obj.optionsSortByLabel ? obj.optionsSortByLabel : false),
+                        inline: (obj.inline ? obj.inline : false ) // Added for inline columns
                     }
                 }
                 return columnDefs;
@@ -596,20 +597,31 @@
             */
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
                 formName = [formName, this.random_id].join('-');
-                var data = "";
+                var data = "", count=0;
                 for (var j in columnDefs) {
-
                     //handle hidden fields
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
                     }
                     else {
                         // handle fields that are visible to the user
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
-                        data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
-                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
-                        data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
-
+                        if(columnDefs[j].inline){ //to add upto 4 inline columns
+                            if(count==0) {
+                                count++;
+                                data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) + "'>";
+                                data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                                data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                                data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
+                            }
+                            else
+                                data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
+                        }
+                        else{
+                            data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
+                            data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                            data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                            data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
+                        }
                         // Adding readonly-fields
                         if (columnDefs[j].type.indexOf("readonly") >= 0) {
                             // type=readonly is deprecated, kept for backward compatibility
@@ -674,7 +686,7 @@
                                 + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
                                 + "</textarea>";
                         }
-                        // Adding text-inputs and errorlabels, but also new HTML5 typees (email, color, ...)
+                        // Adding text-inputs and error labels, but also new HTML5 types (email, color, ...)
                         else {
                             data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
                                 + "' id='" + this._quoteattr(columnDefs[j].name)
@@ -696,7 +708,11 @@
                         }
                         data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
                                 + "' class='errorLabel'></label>";
-                        data += "</div><div style='clear:both;'></div></div>";
+                        if(!columnDefs[j].inline || (+j+1 < columnDefs.length && !columnDefs[+j+1].inline)) {
+                            data += "</div><div style='clear:both;'></div></div>";
+                        }
+                        else
+                            data += "</div>";
                     }
                 }
                 // data += "</form>";
