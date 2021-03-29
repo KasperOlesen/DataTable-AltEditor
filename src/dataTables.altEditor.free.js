@@ -754,7 +754,7 @@
                     if (columnDefs[j].editorOnChange) {
                         // $.escapeSelector requires jQuery 3.x
                         $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
-                        $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
+                        $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).on('change', function(elm) {
                             var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);
                         });
