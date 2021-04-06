@@ -344,13 +344,13 @@
                 // Complete new row data
                 var rowDataArray = {};
                 
-                // Original row data
-                var orginalRowDataArray = adata.data()[0];
-                
                 var adata = dt.rows({
                     selected: true
                 });
 
+                // Original row data
+                var orginalRowDataArray = adata.data()[0];
+                
                 // Getting the inputs from the edit-modal
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
@@ -391,7 +391,6 @@
                                 function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
                                 function(data){ that._errorCallback(data);},
                                 orginalRowDataArray);
-                        });
                     } else {
                         console.log("Waiting for file base64-decoding...");
                         setTimeout(checkFilesQueued, 1000);
