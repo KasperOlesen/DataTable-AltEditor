@@ -343,7 +343,10 @@
 
                 // Complete new row data
                 var rowDataArray = {};
-
+                
+                // Original row data
+                var orginalRowDataArray = adata.data()[0];
+                
                 var adata = dt.rows({
                     selected: true
                 });
@@ -383,10 +386,11 @@
 
                 var checkFilesQueued = function() {
                     if (numFilesQueued == 0) {
-                        that.onEditRow(that,
-                            rowDataArray,
-                            function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-                            function(data){ that._errorCallback(data);
+                         that.onEditRow(that,
+                                rowDataArray,
+                                function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
+                                function(data){ that._errorCallback(data);},
+                                orginalRowDataArray);
                         });
                     } else {
                         console.log("Waiting for file base64-decoding...");
