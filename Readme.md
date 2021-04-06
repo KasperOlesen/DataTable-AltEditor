@@ -36,7 +36,7 @@ The datatable accepts the following callback functions as arguments:
 
 ```
 onAddRow(alteditor, rowdata, success, error)
-onEditRow(alteditor, rowdata, success, error)
+onEditRow(alteditor, rowdata, success, error, originalrowdata)
 onDeleteRow(alteditor, rowdata, success, error)
 ```
 
