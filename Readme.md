@@ -70,6 +70,7 @@ Column option                                   | Accepted values               
 `special`                                       | `"any string"`                                     | Set HTML `"data-special"` attribute (don't know what's that needed for).
 `style`                                         | `"any string"`                                     | Set HTML `"style"` attribute.
 `editorOnChange`                                | function                                           | Custom onchange function. It will take as arguments the jquery event and the altEditor object.
+`value`											| `"some value"`									 | Set default value for add modal. Actual value used for edit modal
 **Options for columns with type `"text"`:**     |                                                    |
 `pattern`                                       | `r.e.`                                             | The typed text will be matched against given regular expression, before submit.
 `msg`                                           | `"some msg"`                                       | An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute.
@@ -86,6 +87,10 @@ Column option                                   | Accepted values               
 `cols`                                          | `integer`                                          | Set HTML `"cols"` attribute.
 **Options for columns with type `"date"`:**     |                                                    |
 `dateFormat`                                    | `"YYYY-MM-DD"`                                     | Set date format. Require moment.js library linked.
+**Options for columns with type `"number"`**		|													 |	
+`step`											| `integer`											 | Set HTML `"step"` attribute
+`min`											| `integer`											 | Set HTML `"min"` attribute
+`max`											| `integer`											 | Set HTML `"max"` attribute
 
 # Global Modifiers
 
