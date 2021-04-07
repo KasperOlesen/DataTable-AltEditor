@@ -343,11 +343,14 @@
 
                 // Complete new row data
                 var rowDataArray = {};
-
+                
                 var adata = dt.rows({
                     selected: true
                 });
 
+                // Original row data
+                var orginalRowDataArray = adata.data()[0];
+                
                 // Getting the inputs from the edit-modal
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
@@ -383,11 +386,11 @@
 
                 var checkFilesQueued = function() {
                     if (numFilesQueued == 0) {
-                        that.onEditRow(that,
-                            rowDataArray,
-                            function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-                            function(data){ that._errorCallback(data);
-                        });
+                         that.onEditRow(that,
+                                rowDataArray,
+                                function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
+                                function(data){ that._errorCallback(data);},
+                                orginalRowDataArray);
                     } else {
                         console.log("Waiting for file base64-decoding...");
                         setTimeout(checkFilesQueued, 1000);
@@ -754,7 +757,7 @@
                     if (columnDefs[j].editorOnChange) {
                         // $.escapeSelector requires jQuery 3.x
                         $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).attr('alt-editor-id', this._quoteattr(j));
-                        $(selector).find("#" + columnDefs[j].name).on('change', function(elm) {
+                        $(selector).find("#" + $.escapeSelector(columnDefs[j].name)).on('change', function(elm) {
                             var f = columnDefs[$(this).attr('alt-editor-id')].editorOnChange;
                             f(elm, that);
                         });
