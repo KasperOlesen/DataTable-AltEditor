@@ -1,3 +1,10 @@
+2021-04 thetechnician94
+	*Added more modifiers for number columns
+	*Checkboxes will now be checked when the value of a column is 1
+	*Dropdowns sometimes got extra spaces around their values, fixed
+	*Added the `value` modifier: lets you specify a value for the add dialog
+	*Disabled fields are no longer sent to the endpoint. HTTP POST never sends these, maintaining that convention
+
 2020-09 luca-vercelli
     * basic support for Foundation
     * "close modal on success" feature
