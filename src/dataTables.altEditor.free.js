@@ -310,11 +310,11 @@
                             if (selectedValue) selectedValue = selectedValue[arrIndex[index]];
                         }
                         var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
-                        $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
+                        $(selector).find(jquerySelector).val(selectedValue!=null?selectedValue.toString().trim():null);    //Values in dropdowns were getting extra spaces, need to trim if not null // this._quoteattr or not? see #121
                         $(selector).find(jquerySelector).trigger("change"); // required by select2
                          //added checkbox
                         if (columnDefs[j].type.indexOf("checkbox") >= 0) {
-                            if (this._quoteattr(selectedValue) === "true") {
+                            if (this._quoteattr(selectedValue) === "true" || this._quoteattr(selectedValue) == "1") { //MS SQL Databases use bits for booleans. 1 is equivlent to true, 0 is false
                                 $(selector).find(jquerySelector).prop("checked", this._quoteattr(selectedValue)); // required by checkbox
                             }
                         }
@@ -352,7 +352,7 @@
                 var orginalRowDataArray = adata.data()[0];
                 
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').filter(':enabled').each(function (i) { //Do not include disabled fields. 
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
@@ -429,7 +429,7 @@
                         data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
-                        var arrIndex = columnDefs[j].name.toString().split(".")
+                        var arrIndex = columnDefs[j].name.toString().split(".");
                         var fvalue = adata.data()[0];  //fvalue is the value that will appear to user
                         for (var index = 0; index < arrIndex.length; index++) {
                             if (fvalue) fvalue = fvalue[arrIndex[index]];
@@ -588,7 +588,11 @@
                         style: (obj.style ? obj.style : ''),
                         dateFormat: (obj.dateFormat ? obj.dateFormat : ''),
                         optionsSortByLabel: (obj.optionsSortByLabel ? obj.optionsSortByLabel : false),
-                        inline: (obj.inline ? obj.inline : false ) // Added for inline columns
+                        inline: (obj.inline ? obj.inline : false ), // Added for inline columns
+						step: (obj.step ? obj.step : null), //number fields
+						min: (obj.min ? obj.min : null), //number fields
+						max: (obj.max ? obj.max : null), //number fields
+						value: (obj.value ? obj.value : '') //allow a default value
                     }
                 }
                 return columnDefs;
@@ -696,6 +700,10 @@
                                 + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
                                 + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
                                 + "' name='" + this._quoteattr(columnDefs[j].title)
+								+ "' step='" + this._quoteattr(columnDefs[j].step)
+								+ "' min='" + this._quoteattr(columnDefs[j].min)
+								+ "' max='" + this._quoteattr(columnDefs[j].max)
+								+ "' value='" + this._quoteattr(columnDefs[j].value)
                                 + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
                                 + "' data-special='" + this._quoteattr(columnDefs[j].special)
                                 + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
@@ -785,7 +793,7 @@
                 var rowDataArray = {};
 
                 // Getting the inputs from the modal
-                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
+                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type!="file"]').filter(':enabled').each(function (i) { //Dont send disabled fields
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
