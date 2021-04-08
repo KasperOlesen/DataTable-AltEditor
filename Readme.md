@@ -89,8 +89,8 @@ Column option                                   | Accepted values               
 `dateFormat`                                    | `"YYYY-MM-DD"`                                     | Set date format. Require moment.js library linked.
 **Options for columns with type `"number"`**		|													 |	
 `step`											| `float`											 | Set HTML `"step"` attribute
-`min`											| `integer`											 | Set HTML `"min"` attribute
-`max`											| `integer`											 | Set HTML `"max"` attribute
+`min`											| `float`											 | Set HTML `"min"` attribute
+`max`											| `float`											 | Set HTML `"max"` attribute
 
 # Global Modifiers
 
