@@ -341,24 +341,24 @@
                 var that = this;
                 var dt = this.s.dt;
 
-                // Complete new row data
-                var rowDataArray = {};
-                
                 var adata = dt.rows({
                     selected: true
                 });
 
                 // Original row data
-                var orginalRowDataArray = adata.data()[0];
-                
+                var originalRowDataArray = adata.data()[0];
+
+                // Complete new row data from original data
+                var newRowDataArray = {...originalRowDataArray};
+
                 // Getting the inputs from the edit-modal
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').filter(':enabled').each(function (i) { //Do not include disabled fields. 
-                    rowDataArray[$(this).attr('id')] = $(this).val();
+                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').filter(':enabled').each(function (i) { //Do not include disabled fields.
+                    Object.SetByString(newRowDataArray, $(this).attr('id'), $(this).val())
                 });
 
                 //Getting the textArea from the modal
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = $(this).val();
+                    Object.SetByString(newRowDataArray, $(this).attr('id'), $(this).val())
                 });
 
                 //Getting Files from the modal
@@ -368,29 +368,29 @@
                         if (that.encodeFiles) {
                             ++numFilesQueued;
                             that.getBase64($(this).prop('files')[0], function (filecontent) {
-                                rowDataArray[$(this).attr('id')] = filecontent;
+                                Object.SetbyString(newRowDataArray, $(this).attr('id'), filecontent)
                                 --numFilesQueued;
                             });
                         } else {
-                            rowDataArray[$(this).attr('id')] = $(this).prop('files')[0];
+                            Object.SetbyString(newRowDataArray, $(this).attr('id'), $(this).prop('files')[0])
                         }
                     }
                 });
 
                 // Getting the checkbox from the modal
                 $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = this.checked;
+                    Object.SetbyString(newRowDataArray, $(this).attr('id'), this.checked)
                 });
 
-                console.log(rowDataArray); //DEBUG
+                console.log(newRowDataArray); //DEBUG
 
                 var checkFilesQueued = function() {
                     if (numFilesQueued == 0) {
                          that.onEditRow(that,
-                                rowDataArray,
+                                newRowDataArray,
                                 function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
                                 function(data){ that._errorCallback(data);},
-                                orginalRowDataArray);
+                                originalRowDataArray);
                     } else {
                         console.log("Waiting for file base64-decoding...");
                         setTimeout(checkFilesQueued, 1000);
@@ -1158,3 +1158,26 @@
     DataTable.altEditor = altEditor;
     return altEditor;
 });
+
+
+//Sets value in nested object by string path
+Object.SetByString = function(object, pathString, value) {
+    if (pathString === undefined) {
+        return;
+    }
+
+    pathString = pathString.replace(/\[(\w+)\]/g, '.$1');
+    pathString = pathString.replace(/^\./, '');
+    var keyList = pathString.split('.');
+
+    var schema = object;
+    var len = keyList.length;
+    for(var i = 0; i < len-1; i++) {
+        var elem = keyList[i];
+        if( !schema[elem] ) schema[elem] = {}
+        schema = schema[elem];
+    }
+    schema[keyList[len-1]] = value;
+
+    return;
+}
