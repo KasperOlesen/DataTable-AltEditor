@@ -18,7 +18,7 @@
  *
  *
  */
-(function (factory) {
+ (function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
         define(['jquery', 'datatables.net'], function ($) {
@@ -344,27 +344,28 @@
 
                 for (var j in columnDefs) {
                     if (columnDefs[j].name != null) {
+                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+
                         var arrIndex = columnDefs[j].name.toString().split(".");
                         var selectedValue = adata.data()[0];
                         for (var index = 0; index < arrIndex.length; index++) {
-                            if (selectedValue) selectedValue = selectedValue[arrIndex[index]];
+                            if (selectedValue) {
+                                selectedValue = selectedValue[arrIndex[index]];
+                            }
                         }
 
-                        /*
-                        var jsonValue = undefined;
-                        try { jsonValue = JSON.parse(selectedValue); } catch (e) { }
-                        if (typeof jsonValue === 'object') { selectedValue = jsonValue; }
-                        */
+                        if (typeof selectedValue !== 'object' && selectedValue !== null) {
+                            selectedValue = selectedValue.toString().trim();
+                        }
 
-                        if (selectedValue !== null) selectedValue = selectedValue.toString().trim();
-
-                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
-                        $(selector).find(jquerySelector)
-                                    .filter(':input[type!="file"]').val(selectedValue) // this._quoteattr or not? see #121
-                                                                    .trigger("change"); // required by select2
-
+                        // Added Select2
+                        if (columnDefs[j].type.indexOf("select") >= 0 && columnDefs[j].select2) {
+                            var jsonValue = undefined;
+                            try { jsonValue = JSON.parse(selectedValue); } catch (e) { }
+                            if (typeof jsonValue === 'object') { selectedValue = jsonValue; }
+                        }
                         // Added checkbox
-                        if (columnDefs[j].type.indexOf("checkbox") >= 0) {
+                        else if (columnDefs[j].type.indexOf("checkbox") >= 0) {
                             if (this._quoteattr(selectedValue) === "true" || this._quoteattr(selectedValue) == "1") { // MS SQL Databases use bits for booleans. 1 is equivlent to true, 0 is false
                                 $(selector).find(jquerySelector).prop("checked", this._quoteattr(selectedValue)); // required by checkbox
                             }
@@ -378,6 +379,10 @@
                                 }
                             }
                         }
+
+                        $(selector).find(jquerySelector)
+                                    .filter(':input[type!="file"]').val(selectedValue) // this._quoteattr or not? see #121
+                                                                    .trigger("change"); // required by select2
                     }
                 }
 
