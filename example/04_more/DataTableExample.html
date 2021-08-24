@@ -103,16 +103,15 @@ special   - Only working setting is "portRange". This is in relation to input va
 var columnDefs = [{
     id: "DT_RowId",
     data: "DT_RowId",
-    "visible": false,
-    "searchable": false
+    type: "hidden"
   },{
       title: "Select example",
       id: "status",
       data: "status",
       type: "select",
       "options": [
-      "on",
-      "off"
+        "on",
+        "off"
       ]
     }, {
       title: "Text example",
