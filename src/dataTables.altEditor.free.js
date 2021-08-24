@@ -18,7 +18,7 @@
  *
  *
  */
-(function (factory) {
+ (function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
         define(['jquery', 'datatables.net'], function ($) {
@@ -127,7 +127,32 @@
                     that.encodeFiles = true;
                 }
 
-                this._setup();
+                var lang = this.s.dt.settings()[0].oLanguage;
+                if (lang.altEditor) {
+                    this.language = lang.altEditor;
+                    this._setup();
+                }
+                // Load from URL
+                else if (typeof lang.altEditorUrl === 'string' && lang.altEditorUrl != '') {
+                    $.ajax( {
+                        dataType: 'json',
+                        url: lang.altEditorUrl,
+                        success: function ( json ) {
+                            that.language = json;
+                            that._setup();
+                        },
+                        error: function () {
+                            // Error occurred loading language file, continue on as best we can
+                            that.language = {};
+                            that._setup();
+                        }
+                    } );
+                }
+                // Default
+                else {
+                    this.language = {};
+                    this._setup();
+                }
 
                 dt.on('destroy.altEditor', function () {
                     dt.off('.altEditor');
@@ -149,31 +174,13 @@
             _setup: function () {
                 var that = this;
                 var dt = this.s.dt;
+
                 this.random_id = ("" + Math.random()).replace(".", "");
+
                 var modal_id = 'altEditor-modal-' + this.random_id;
                 this.modal_selector = '#' + modal_id;
-                this.language = dt.settings()[0].oLanguage.altEditor || {};
 
-                this.language.modalClose = this.language.modalClose || 'Close';
-                this.language.edit = this.language.edit || {};
-                this.language.edit = { title: this.language.edit.title || 'Edit record',
-                                       button: this.language.edit.button || 'Edit'
-                                     };
-                this.language.delete = this.language.delete || {};
-                this.language.delete = { title: this.language.delete.title || 'Delete record',
-                                         button: this.language.delete.button || 'Delete' };
-                this.language.add = this.language.add || {};
-                this.language.add = { title: this.language.add.title || 'Add record',
-                                      button: this.language.add.button || 'Add'
-                                    };
-                this.language.success = this.language.success || 'Success!';
-                this.language.error = this.language.error || {};
-                this.language.error = { message: this.language.error.message || 'There was an unknown error!',
-                                        label: this.language.error.label || 'Error!',
-                                        responseCode: this.language.error.responseCode || 'Response code: ',
-                                        required: this.language.error.required || 'Field is required',
-                                        unique: this.language.error.unique || 'Duplicated field'
-                                      };
+                this._initLanguage();
 
                 var modal = '<div class="modal fade altEditor-modal reveal" id="' + modal_id + '" tabindex="-1" role="dialog" data-reveal>' +
                     '<div class="modal-dialog">' +
@@ -191,10 +198,10 @@
                     '</div>' +
                     '</div>' +
                     '</div>';
-                // add modal
+                // Add modal
                 $('body').append(modal);
 
-                // add Edit Button
+                // Add Edit Button
                 if (dt.button('edit:name')) {
                     dt.button('edit:name').action(function (e, dt, node, config) {
                         that._openEditModal();
@@ -209,7 +216,7 @@
                     });
                 }
 
-                // add Delete Button
+                // Add Delete Button
                 if (dt.button('delete:name')) {
                     dt.button('delete:name').action(function (e, dt, node, config) {
                         that._openDeleteModal();
@@ -224,7 +231,7 @@
                     });
                 }
 
-                // add Add Button
+                // Add Add Button
                 if (dt.button('add:name')) {
                     dt.button('add:name').action(function (e, dt, node, config) {
                         that._openAddModal();
@@ -239,8 +246,8 @@
                     });
                 }
 
-                // bind 'unique' error messages
-                $(this.modal_selector).bind('input', '[data-unique]', function(elm) {
+                // Bind 'unique' error messages
+                $(this.modal_selector).on('input', '[data-unique]', function(elm) {
                     if ($(elm.target).attr('data-unique') == null || $(elm.target).attr('data-unique') === 'false') {
                         return;
                     }
@@ -259,7 +266,7 @@
                     }
                 });
 
-                // add Refresh button
+                // Add Refresh button
                 if (this.s.dt.button('refresh:name')) {
                     this.s.dt.button('refresh:name').action(function (e, dt, node, config) {
                         if (dt.ajax && dt.ajax.url()) {
@@ -267,6 +274,39 @@
                         }
                     });
                 }
+            },
+
+            /**
+             * Init translate
+             * 
+             * @private
+             */
+            _initLanguage: function () {
+                this.language.modalClose = this.language.modalClose || 'Close';
+                this.language.edit = this.language.edit || {};
+                this.language.edit = { 
+                    title: this.language.edit.title || 'Edit record',
+                    button: this.language.edit.button || 'Edit'
+                };
+                this.language.delete = this.language.delete || {};
+                this.language.delete = { 
+                    title: this.language.delete.title || 'Delete record',
+                    button: this.language.delete.button || 'Delete' 
+                };
+                this.language.add = this.language.add || {};
+                this.language.add = { 
+                    title: this.language.add.title || 'Add record',
+                    button: this.language.add.button || 'Add'
+                };
+                this.language.success = this.language.success || 'Success!';
+                this.language.error = this.language.error || {};
+                this.language.error = { 
+                    message: this.language.error.message || 'There was an unknown error!',
+                    label: this.language.error.label || 'Error!',
+                    responseCode: this.language.error.responseCode || 'Response code: ',
+                    required: this.language.error.required || 'Field is required',
+                    unique: this.language.error.unique || 'Duplicated field'
+                };
             },
 
             /**
@@ -304,22 +344,34 @@
 
                 for (var j in columnDefs) {
                     if (columnDefs[j].name != null) {
+                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+
                         var arrIndex = columnDefs[j].name.toString().split(".");
                         var selectedValue = adata.data()[0];
                         for (var index = 0; index < arrIndex.length; index++) {
-                            if (selectedValue) selectedValue = selectedValue[arrIndex[index]];
+                            if (selectedValue) {
+                                selectedValue = selectedValue[arrIndex[index]];
+                            }
                         }
-                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
-                        $(selector).find(jquerySelector).val(selectedValue);    // this._quoteattr or not? see #121
-                        $(selector).find(jquerySelector).trigger("change"); // required by select2
-                         //added checkbox
-                        if (columnDefs[j].type.indexOf("checkbox") >= 0) {
-                            if (this._quoteattr(selectedValue) === "true") {
+
+                        if (typeof selectedValue !== 'object' && selectedValue !== null) {
+                            selectedValue = selectedValue.toString().trim();
+                        }
+
+                        // Added Select2
+                        if (columnDefs[j].type.indexOf("select") >= 0 && columnDefs[j].select2) {
+                            var jsonValue = undefined;
+                            try { jsonValue = JSON.parse(selectedValue); } catch (e) { }
+                            if (typeof jsonValue === 'object') { selectedValue = jsonValue; }
+                        }
+                        // Added checkbox
+                        else if (columnDefs[j].type.indexOf("checkbox") >= 0) {
+                            if (this._quoteattr(selectedValue) === "true" || this._quoteattr(selectedValue) == "1") { // MS SQL Databases use bits for booleans. 1 is equivlent to true, 0 is false
                                 $(selector).find(jquerySelector).prop("checked", this._quoteattr(selectedValue)); // required by checkbox
                             }
                         }
-                        //added date
-                        if (columnDefs[j].type.indexOf("date") >= 0) {
+                        // Added date
+                        else if (columnDefs[j].type.indexOf("date") >= 0) {
                             if (columnDefs[j].dateFormat !== "") {
                                 var mDate = moment(this._quoteattr(selectedValue));
                                 if (mDate && mDate.isValid()) {
@@ -327,6 +379,10 @@
                                 }
                             }
                         }
+
+                        $(selector).find(jquerySelector)
+                                    .filter(':input[type!="file"]').val(selectedValue) // this._quoteattr or not? see #121
+                                                                    .trigger("change"); // required by select2
                     }
                 }
 
@@ -340,35 +396,30 @@
             _editRowData: function () {
                 var that = this;
                 var dt = this.s.dt;
-
-                // Complete new row data
-                var rowDataArray = {};
-                
                 var adata = dt.rows({
                     selected: true
                 });
 
-                // Original row data
-                var orginalRowDataArray = adata.data()[0];
-                
-                // Getting the inputs from the edit-modal
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = $(this).val();
-                });
+                var rowDataArray = {}; // Complete new row data
+                var originalRowDataArray = adata.data()[0]; // Original row data
 
-                //Getting the textArea from the modal
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
+                var $inputs = $('form[name="altEditor-edit-form-' + this.random_id + '"]').find( 'select, textarea, input' );
+
+                // Getting the inputs from the edit-modal
+                $inputs.filter(':input[type!="file"], :input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
                 //Getting Files from the modal
                 var numFilesQueued = 0;
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
+                $inputs.filter(':input[type="file"]').each(function (i) {
                     if ($(this).prop('files')[0]) {
+                        var context = this;
+
                         if (that.encodeFiles) {
                             ++numFilesQueued;
                             that.getBase64($(this).prop('files')[0], function (filecontent) {
-                                rowDataArray[$(this).attr('id')] = filecontent;
+                                rowDataArray[$(context).attr('id')] = filecontent;
                                 --numFilesQueued;
                             });
                         } else {
@@ -378,19 +429,17 @@
                 });
 
                 // Getting the checkbox from the modal
-                $('form[name="altEditor-edit-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
+                $inputs.filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
 
-                console.log(rowDataArray); //DEBUG
-
                 var checkFilesQueued = function() {
                     if (numFilesQueued == 0) {
-                         that.onEditRow(that,
-                                rowDataArray,
-                                function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-                                function(data){ that._errorCallback(data);},
-                                orginalRowDataArray);
+                        that.onEditRow(that,
+                            rowDataArray,
+                            function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
+                            function(data){ that._errorCallback(data); },
+                            originalRowDataArray);
                     } else {
                         console.log("Waiting for file base64-decoding...");
                         setTimeout(checkFilesQueued, 1000);
@@ -424,12 +473,14 @@
                 var data = "";
 
                 for (var j in columnDefs) {
+                    var title = columnDefs[j].title.replace(/(<([^>]+)>)/gi, "").trim();
+
                     if (columnDefs[j].name == null) continue;
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        data += "<input type='hidden' id='" + columnDefs[j].title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
+                        data += "<input type='hidden' id='" + title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
                     }
                     else if (columnDefs[j].type.indexOf("file") < 0) {
-                        var arrIndex = columnDefs[j].name.toString().split(".")
+                        var arrIndex = columnDefs[j].name.toString().split(".");
                         var fvalue = adata.data()[0];  //fvalue is the value that will appear to user
                         for (var index = 0; index < arrIndex.length; index++) {
                             if (fvalue) fvalue = fvalue[arrIndex[index]];
@@ -472,19 +523,15 @@
                             }
                         }
 
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'><label for='"
-                            + that._quoteattr(columnDefs[j].name)
-                            + "'>"
-                            + columnDefs[j].title
-                            + ":&nbsp</label> <input  type='hidden'  id='"
-                            + that._quoteattr(columnDefs[j].title)
-                            + "' name='"
-                            + that._quoteattr(columnDefs[j].title)
-                            + "' placeholder='"
-                            + that._quoteattr(columnDefs[j].title)
-                            + "' style='overflow:hidden'  class='form-control' value='"
-                            + that._quoteattr(fvalue) + "' >"
-                            + fvalue
+                        data += "<div style='margin-left: initial; margin-right: initial;' class='form-group row'>"
+                            + "<label for='" + that._quoteattr(columnDefs[j].name) + "'>" + title + ":&nbsp</label>"
+                            + "<input type='hidden' "
+                                + "id='" + that._quoteattr(title) + "' "
+                                + "name='" + that._quoteattr(title) + "' "
+                                + "placeholder='" + that._quoteattr(title) + "' "
+                                + "style='overflow: hidden;' class='form-control' "
+                                + "value='" + that._quoteattr(fvalue) + "' >"
+                                + fvalue
                             + "</input></div>";
                     }
                 }
@@ -500,7 +547,8 @@
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
-                    } else {
+                    }
+                    else {
                         modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
                     }
                 };
@@ -534,8 +582,8 @@
                 that.onDeleteRow(that,
                     jsonDataArray,
                     function(data){ that._deleteRowCallback(data); },
-                    function(data){ that._errorCallback(data);
-                });
+                    function(data){ that._errorCallback(data); }
+                );
             },
 
             /**
@@ -573,12 +621,11 @@
                         readonly: (obj.readonly ? obj.readonly : false),
                         disabled: (obj.disabled ? obj.disabled : false),
                         required: (obj.required ? obj.required : false),
-                        msg: (obj.errorMsg ? obj.errorMsg : ''),        // FIXME no more used
                         hoverMsg: (obj.hoverMsg ? obj.hoverMsg : ''),
                         pattern: (obj.pattern ? obj.pattern : '.*'),
+                        accept: (obj.accept ? obj.accept : ''),
                         special: (obj.special ? obj.special : ''),
                         unique: (obj.unique ? obj.unique : false),
-                        uniqueMsg: (obj.uniqueMsg ? obj.uniqueMsg : ''),        // FIXME no more used
                         maxLength: (obj.maxLength ? obj.maxLength : false),
                         multiple: (obj.multiple ? obj.multiple : false),
                         select2: (obj.select2 ? obj.select2 : false),
@@ -588,7 +635,11 @@
                         style: (obj.style ? obj.style : ''),
                         dateFormat: (obj.dateFormat ? obj.dateFormat : ''),
                         optionsSortByLabel: (obj.optionsSortByLabel ? obj.optionsSortByLabel : false),
-                        inline: (obj.inline ? obj.inline : false ) // Added for inline columns
+                        inline: (obj.inline ? obj.inline : false), // Added for inline columns
+                        step: (obj.step ? obj.step : null), // Number fields
+						min: (obj.min ? obj.min : null), // Number fields
+						max: (obj.max ? obj.max : null), // Number fields
+						value: (obj.value ? obj.value : '') // Allow a default value
                     }
                 }
                 return columnDefs;
@@ -600,46 +651,58 @@
             */
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
                 formName = [formName, this.random_id].join('-');
-                var data = "", count=0;
+                var that = this,
+                    data = "", 
+                    count = 0;
+
+                var fillAttrs = function (obj, attrs)
+                {
+                    var attrsStr = '';
+                    for (var i in attrs) {
+                        var attr = attrs[i];
+                        if (!obj[attr]) continue;
+
+                        attrsStr += " " + attr + "='" + that._quoteattr(obj[attr]) + "'";
+                    }
+
+                    return attrsStr + " ";
+                };
+                
                 for (var j in columnDefs) {
+                    var title = columnDefs[j].title.replace(/(<([^>]+)>)/gi, "").trim();
+
                     //handle hidden fields
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
+                        data += "<input type='hidden' "
+                            + "id='" + this._quoteattr(columnDefs[j].name) + "' "
+                            + fillAttrs(columnDefs[j], ['name', 'value'])
+                            + "></input>";
                     }
                     else {
                         // handle fields that are visible to the user
-                        if(columnDefs[j].inline){ //to add upto 4 inline columns
-                            if(count==0) {
+                        if (columnDefs[j].inline) { //to add upto 4 inline columns
+                            if(count == 0) {
                                 count++;
                                 data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) + "'>";
                                 data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
-                                data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                                data += "<label for='" + this._quoteattr(columnDefs[j].name) + "'>" + title + ":</label></div>";
                                 data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
                             }
-                            else
+                            else {
                                 data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
+                            }
                         }
-                        else{
+                        else {
                             data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
                             data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
-                            data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
+                            data += "<label for='" + this._quoteattr(columnDefs[j].name) + "'>" + title + ":</label></div>";
                             data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
                         }
-                        // Adding readonly-fields
-                        if (columnDefs[j].type.indexOf("readonly") >= 0) {
-                            // type=readonly is deprecated, kept for backward compatibility
-                            data += "<input type='text' readonly  id='"
-                                + this._quoteattr(columnDefs[j].name)
-                                + "' name='"
-                                + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='"
-                                + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
-                                + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
-                        }
+
                         // Adding select-fields
-                        else if (columnDefs[j].type.indexOf("select") >= 0) {
-                            var options = "";
-                            var optionsArray = columnDefs[j].options;
+                        if (columnDefs[j].type.indexOf("select") >= 0) {
+                            var options = "",
+                                optionsArray = columnDefs[j].options;
                             if (optionsArray.length > 0) {
                                 // array-style select or select2
                                 for (var i = 0; i < optionsArray.length; i++) {
@@ -653,85 +716,71 @@
                                         + optionsArray[x] + "</option>";
                                 }
                             }
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '')
-                                + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].multiple ? ' multiple ' : '')
+
+                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' "
+                                + fillAttrs(columnDefs[j], ['name', 'style', 'readonly', 'disabled', 'required', 'multiple'])
+                                + "id='" + this._quoteattr(columnDefs[j].name) + "' "
+                                + "placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : title) + "' "
+                                + "data-special='" + this._quoteattr(columnDefs[j].special) + "' "
+                                + "data-unique='" + columnDefs[j].unique + "' "
                                 + ">" + options
                                 + "</select>";
                         }
-                        //Adding Text Area
+                        // Adding Text Area
                         else if (columnDefs[j].type.indexOf("textarea") >= 0)
                         {
-                            data += "<textarea class='form-control' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' rows='" + this._quoteattr(columnDefs[j].rows)
-                                + "' cols='"+ this._quoteattr(columnDefs[j].cols)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='" + this._quoteattr(columnDefs[j].style) + "'>"
+                            data += "<textarea class='form-control' "
+                                + "id='" + this._quoteattr(columnDefs[j].name) + "' "
+                                + fillAttrs(columnDefs[j], ['name', 'style', 'rows', 'cols', 'maxlength', 'readonly', 'disabled', 'required'])
+                                + "placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : title) + "' "
+                                + "data-special='" + this._quoteattr(columnDefs[j].special) + "' "
+                                + "data-unique='" + columnDefs[j].unique + "'>"
+                                    + (columnDefs[j].value ? columnDefs[j].value : '')
                                 + "</textarea>";
                         }
                         // Adding text-inputs and error labels, but also new HTML5 types (email, color, ...)
                         else {
-                            data += "<input class='form-control' type='" + this._quoteattr(columnDefs[j].type)
-                                + "' id='" + this._quoteattr(columnDefs[j].name)
-                                + "' pattern='" + this._quoteattr(columnDefs[j].pattern)
-                                + "' title='" + this._quoteattr(columnDefs[j].hoverMsg)
-                                + "' name='" + this._quoteattr(columnDefs[j].title)
-                                + "' placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : columnDefs[j].title)
-                                + "' data-special='" + this._quoteattr(columnDefs[j].special)
-                                + "' data-errorMsg='" + this._quoteattr(columnDefs[j].msg)
-                                + "' data-uniqueMsg='" + this._quoteattr(columnDefs[j].uniqueMsg)
-                                + "' data-unique='" + columnDefs[j].unique
-                                + "' "
-                                + (columnDefs[j].readonly ? ' readonly ' : '')
-                                + (columnDefs[j].disabled ? ' disabled ' : '')
-                                + (columnDefs[j].required ? ' required ' : '')
-                                + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden;" + this._quoteattr(columnDefs[j].style)
-                                + "' class='form-control  form-control-sm' value=''>";
+                            data += "<input class='form-control' "
+                                + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxlength', 'value', 'readonly', 'disabled', 'required'])
+                                + /* ???? */ (columnDefs[j].type.indexOf("readonly") >= 0 ? "readonly " : "") 
+                                + "id='" + this._quoteattr(columnDefs[j].name) + "' "
+                                + "title='" + this._quoteattr(columnDefs[j].hoverMsg) + "' "
+                                + "placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : title) + "' "
+                                + "data-special='" + this._quoteattr(columnDefs[j].special) + "' "
+                                + "data-unique='" + columnDefs[j].unique + "' "
+                                + "style='overflow: hidden; " + this._quoteattr(columnDefs[j].style) + "' "
+                                + "class='form-control form-control-sm'>";
                         }
-                        data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
+
+                        data += "<label id='" + this._quoteattr(columnDefs[j].name) + "-label"
                                 + "' class='errorLabel'></label>";
+
                         if(!columnDefs[j].inline || (+j+1 < columnDefs.length && !columnDefs[+j+1].inline)) {
                             data += "</div><div style='clear:both;'></div></div>";
                         }
-                        else
+                        else {
                             data += "</div>";
+                        }
                     }
                 }
                 // data += "</form>";
 
                 var selector = this.modal_selector;
-                var fill = function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>'+closeCaption+'</button>' +
-                        '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary button" id="'+buttonClass+'">'+buttonCaption+'</button>';
+                var fill = function () 
+                {
+                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>' + closeCaption + '</button>' 
+                        + '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary button" id="' + buttonClass + '">' + buttonCaption + '</button>';
+
                     $(selector).find('.modal-title').html(title);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
+
                     var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
                         modalContent.parent().attr('name', formName);
                         modalContent.parent().attr('id', formName);
-                    } else {
+                    } 
+                    else {
                         modalContent.wrap("<form name='" + formName + "' id='" + formName + "' role='form'></form>");
                     }
                 };
@@ -746,13 +795,16 @@
                     if (columnDefs[j].select2) {
                         // Require select2 plugin
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
-                    } else if (columnDefs[j].datepicker) {
+                    } 
+                    else if (columnDefs[j].datepicker) {
                         // Require jquery-ui
                         $(selector).find("#" + columnDefs[j].name).datepicker(columnDefs[j].datepicker);
-                    } else if (columnDefs[j].datetimepicker) {
+                    } 
+                    else if (columnDefs[j].datetimepicker) {
                         // Require datetimepicker plugin
                         $(selector).find("#" + columnDefs[j].name).datetimepicker(columnDefs[j].datetimepicker);
                     }
+
                     // custom onchange triggers
                     if (columnDefs[j].editorOnChange) {
                         // $.escapeSelector requires jQuery 3.x
@@ -762,6 +814,7 @@
                             f(elm, that);
                         });
                     }
+
                     //added select sort
                     if (columnDefs[j].type.indexOf("select") >= 0) {
                         if (columnDefs[j].optionsSortByLabel) {
@@ -780,28 +833,25 @@
              */
             _addRowData: function () {
                 var that = this;
-                var dt = this.s.dt;
 
                 var rowDataArray = {};
+                var $inputs = $('form[name="altEditor-add-form-' + this.random_id + '"]').find( 'select, textarea, input' );
 
-                // Getting the inputs from the modal
-                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type!="file"]').each(function (i) {
-                    rowDataArray[$(this).attr('id')] = $(this).val();
-                });
-
-                //Getting the textArea from the modal
-                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter('textarea').each(function (i) {
+                // Getting the inputs from the edit-modal
+                $inputs.filter(':input[type!="file"], :input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = $(this).val();
                 });
 
                 //Getting Files from the modal
                 var numFilesQueued = 0;
-                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="file"]').each(function (i) {
+                $inputs.filter(':input[type="file"]').each(function (i) {
+                    var context = this;
+
                     if ($(this).prop('files')[0]) {
                         if (that.encodeFiles) {
                             ++numFilesQueued;
                             that.getBase64($(this).prop('files')[0], function (filecontent) {
-                                rowDataArray[$(this).attr('id')] = filecontent;
+                                rowDataArray[$(context).attr('id')] = filecontent;
                                 --numFilesQueued;
                             });
                         } else {
@@ -811,11 +861,9 @@
                 });
 
                 // Getting the checkbox from the modal
-                $('form[name="altEditor-add-form-' + this.random_id + '"] *').filter(':input[type="checkbox"]').each(function (i) {
+                $inputs.filter(':input[type="checkbox"]').each(function (i) {
                     rowDataArray[$(this).attr('id')] = this.checked;
                 });
-
-                console.log(rowDataArray); //DEBUG
 
                 var checkFilesQueued = function() {
                     if (numFilesQueued == 0) {
@@ -831,7 +879,6 @@
                 };
 
                 checkFilesQueued();
-
             },
 
             /**
@@ -874,7 +921,8 @@
 
                     if (this.closeModalOnSuccess) {
                         this.internalCloseDialog(selector);
-                    } else {
+                    } 
+                    else {
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
                             '</div>';
@@ -902,16 +950,15 @@
 
                     if (this.closeModalOnSuccess) {
                         this.internalCloseDialog(selector);
-                    } else {
+                    } 
+                    else {
                         var message = '<div class="alert alert-success" role="alert">' +
                             '<strong>' + this.language.success + '</strong>' +
                             '</div>';
                         $(selector + ' .modal-body').append(message);
                     }
 
-                    this.s.dt.row({
-                        selected : true
-                    }).data(data);
+                    this.s.dt.row({selected: true}).data(data);
                     this.s.dt.draw('page');
 
                     // Disabling submit button
@@ -927,15 +974,26 @@
                     var error = response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
+
                     var errstr = this.language.error.message;
-                    if (error.responseJSON && error.responseJSON.errors) {
-                        errstr = "";
-                        for (var key in error.responseJSON.errors) {
-                            errstr += error.responseJSON.errors[key][0];
+                    if (error.responseJSON) {
+                        if (error.responseJSON.errors) {
+                            errstr = "";
+                            for (var key in error.responseJSON.errors) {
+                                errstr += error.responseJSON.errors[key][0];
+                            }
                         }
                     }
+                    else if (error.responseText) {
+                        errstr = error.responseText;
+                    }
+                    else {
+                        errstr = (error.status == null) ? "" : this.language.error.responseCode + error.status;
+                    }
+
                     var message = '<div class="alert alert-danger" role="alert">' +
-                        '<strong>' + this.language.error.label + '</strong> ' + (error.status == null ? "" : this.language.error.responseCode + error.status) + " " + errstr +
+                        '<strong>' + this.language.error.label + '</strong>' 
+                        + (errstr ? '<br />' + errstr : '') +
                         '</div>';
 
                     $(selector + ' .modal-body').append(message);
@@ -974,15 +1032,16 @@
                     // Bootstrap
                     $sel.on('show.bs.modal', onopen);
                     $sel.modal('show');
-
-                } else if ($sel.foundation){
+                } 
+                else if ($sel.foundation){
                     // Foundation
                     $sel.on('open.zf.reveal', onopen);
                     $sel.on('closed.zf.reveal', function() { $('.reveal-overlay').hide(); });
                     var popup = new Foundation.Reveal($sel);
                     popup.open();
 
-                } else {
+                } 
+                else {
                     console.error('You must load Bootstrap or Foundation in order to open modal dialogs');
                     return;
                 }
@@ -1021,13 +1080,15 @@
                       $select.append($("<option></option>")
                          .attr("value", value).text(value));
                     });
-                } else {
+                } 
+                else {
                     // object-style select or select2
                     $.each(options, function(key, value) {
                       $select.append($("<option></option>")
                          .attr("value", value).text(key));
                     });
                 }
+
                 $select.val(oldValue); // if still present, of course
                 $select.trigger('change');
             },
@@ -1040,7 +1101,6 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function () {
-                        console.log(reader.result);
                         if (onSuccess) onSuccess(reader.result);
                 };
                 reader.onerror = function (error) {
@@ -1057,9 +1117,12 @@
              * @private
              */
             _quoteattr: function (s, preserveCR) {
-                if (s == null)
+                if (s == null) {
                     return "";
+                }
+
                 preserveCR = preserveCR ? '&#13;' : '\n';
+
                 if (Array.isArray(s)) {
                     // for MULTIPLE SELECT
                     var newArray = [];
@@ -1067,6 +1130,7 @@
                     for (x in s) newArray.push(s[x]);
                     return newArray;
                 }
+
                 return ('' + s) /* Forces the conversion to string. */
                     .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
                     .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
