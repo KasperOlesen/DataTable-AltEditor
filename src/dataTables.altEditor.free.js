@@ -127,6 +127,9 @@
                     that.encodeFiles = true;
                 }
 
+                // Register datatable selection listener
+                this.selectionListener()
+
                 var lang = this.s.dt.settings()[0].oLanguage;
                 if (lang.altEditor) {
                     this.language = lang.altEditor;
@@ -600,6 +603,27 @@
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
+            },
+
+            selectionListener: function() {
+
+                var dt = this.s.dt
+
+                dt.on('select', function (e, dt, type, indexes) {
+                    // when multiple rows selected then disable edit & delete buttons
+                    if (dt.rows({selected: true}).count() > 1) {
+                        dt.buttons('edit:name').disable()
+                        dt.buttons('delete:name').disable()
+                    }
+                })
+
+                dt.on('deselect', function (e, dt, type, indexes) {
+                    // when multiple rows selected then disable edit & delete buttons
+                    if (dt.rows({selected: true}).count() > 1) {
+                        dt.buttons('edit:name').disable()
+                        dt.buttons('delete:name').disable()
+                    }
+                })
             },
 
             /**
