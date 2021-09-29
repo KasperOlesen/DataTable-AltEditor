@@ -610,18 +610,16 @@
                 var dt = this.s.dt
 
                 dt.on('select', function (e, dt, type, indexes) {
-                    // when multiple rows selected then disable edit & delete buttons
+                    // when multiple rows selected then disable edit button
                     if (dt.rows({selected: true}).count() > 1) {
                         dt.buttons('edit:name').disable()
-                        dt.buttons('delete:name').disable()
                     }
                 })
 
                 dt.on('deselect', function (e, dt, type, indexes) {
-                    // when multiple rows selected then disable edit & delete buttons
+                    // when multiple rows selected then disable edit button
                     if (dt.rows({selected: true}).count() > 1) {
                         dt.buttons('edit:name').disable()
-                        dt.buttons('delete:name').disable()
                     }
                 })
             },
