@@ -835,7 +835,7 @@
                         $(selector + ' .modal-body').append(message);
                     }
 
-                    this.s.dt.row({
+                    this.s.dt.rows({
                         selected : true
                     }).remove();
                     this.s.dt.draw('page');
