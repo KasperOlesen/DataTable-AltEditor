@@ -464,87 +464,13 @@
                 var adata = dt.rows({
                     selected: true
                 });
-                var columnDefs = this.completeColumnDefs();
                 var formName = 'altEditor-delete-form-' + this.random_id;
-
-                // TODO
-                // we should use createDialog()
-                // var data = this.createDialog(columnDefs, this.language.delete.title, this.language.delete.button,
-                //      this.language.modalClose, 'deleteRowBtn', 'altEditor-delete-form');
-
-                // Building delete-modal
-                var data = "";
-
-                for (var j in columnDefs) {
-                    var title = columnDefs[j].title.replace(/(<([^>]+)>)/gi, "").trim();
-
-                    if (columnDefs[j].name == null) continue;
-                    if (columnDefs[j].type.indexOf("hidden") >= 0) {
-                        data += "<input type='hidden' id='" + title + "' value='" + adata.data()[0][columnDefs[j].name] + "'></input>";
-                    }
-                    else if (columnDefs[j].type.indexOf("file") < 0) {
-                        var arrIndex = columnDefs[j].name.toString().split(".");
-                        var fvalue = adata.data()[0];  //fvalue is the value that will appear to user
-                        for (var index = 0; index < arrIndex.length; index++) {
-                            if (fvalue) fvalue = fvalue[arrIndex[index]];
-                        }
-
-                        // fix dateFormat
-                        if (columnDefs[j].type.indexOf("date") >= 0) {
-                            if (columnDefs[j].dateFormat !== "") {
-                                var mDate = moment(adata.data()[0][columnDefs[j].name]);
-                                if (mDate && mDate.isValid()) {
-                                    fvalue = mDate.format(columnDefs[j].dateFormat);
-                                }
-                            }
-                        }
-
-                        // fix select
-                        if (columnDefs[j].type.indexOf("select") >= 0) {
-                            var options = columnDefs[j].options;
-
-                            var mapper = function(x) {
-                                if (options.length === undefined) {
-                                    // options is a map
-                                    return x in options ? options[x] : null;
-                                } else {
-                                    // options is an array
-                                    return x;
-                                }
-                            }
-
-                            if (fvalue instanceof Array) {
-                                // multiselect
-                                var mapped = fvalue.map(mapper)
-                                    .filter(function (x) {
-                                        return x != null;
-                                    });
-                                fvalue = mapped.join(', ');
-                            } else {
-                                // usual select
-                                fvalue = mapper(fvalue);
-                            }
-                        }
-
-                        data += "<div style='margin-left: initial; margin-right: initial;' class='form-group row'>"
-                            + "<label for='" + that._quoteattr(columnDefs[j].name) + "'>" + title + ":&nbsp</label>"
-                            + "<input type='hidden' "
-                                + "id='" + that._quoteattr(title) + "' "
-                                + "name='" + that._quoteattr(title) + "' "
-                                + "placeholder='" + that._quoteattr(title) + "' "
-                                + "style='overflow: hidden;' class='form-control' "
-                                + "value='" + that._quoteattr(fvalue) + "' >"
-                                + fvalue
-                            + "</input></div>";
-                    }
-                }
-
                 var selector = this.modal_selector;
                 var fill = function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-close data-dismiss="modal">' + that.language.modalClose + '</button>' +
                         '<button type="submit"  data-content="remove" class="btn btn-danger button" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
-                    $(selector).find('.modal-body').html(data);
+                    $(selector).find('.modal-body').html(that.language.deleteMessage || `<h5>Are you sure you wish to delete ${adata.count()} rows?</h5>`);
                     $(selector).find('.modal-footer').html(btns);
                     var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
@@ -568,22 +494,12 @@
                 var that = this;
                 var dt = this.s.dt;
 
-                var jsonDataArray = {};
-
                 var adata = dt.rows({
                     selected: true
                 });
 
-                // Getting the IDs and Values of the tablerow
-                for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    // .data is the attribute name, if any; .idx is the column index, so it should always exists
-                    var name = dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data :
-                            dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData :
-                            dt.context[0].aoColumns[i].idx;
-                    jsonDataArray[name] = adata.data()[0][name];
-                }
                 that.onDeleteRow(that,
-                    jsonDataArray,
+                    adata,
                     function(data){ that._deleteRowCallback(data); },
                     function(data){ that._errorCallback(data); }
                 );
@@ -1040,9 +956,11 @@
             /**
              * Default callback for deletion: mock webservice, always success.
              */
-            onDeleteRow: function(dt, rowdata, success, error) {
+            onDeleteRow: function(dt, selectedRows, success, error) {
                 console.log("Missing AJAX configuration for DELETE");
-                success(rowdata);
+                selectedRows.every(function (rowIdx, tableLoop, rowLoop) {
+                    success(this.data())
+                })
             },
 
             /**
