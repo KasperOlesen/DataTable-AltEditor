@@ -671,7 +671,7 @@
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
             */
-            createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass, formName) {
+            createDialog: function(columnDefs, modalTitle, buttonCaption, closeCaption, buttonClass, formName) {
                 formName = [formName, this.random_id].join('-');
                 var that = this,
                     data = "", 
@@ -793,7 +793,7 @@
                     var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>' + closeCaption + '</button>' 
                         + '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary button" id="' + buttonClass + '">' + buttonCaption + '</button>';
 
-                    $(selector).find('.modal-title').html(title);
+                    $(selector).find('.modal-title').html(modalTitle);
                     $(selector).find('.modal-body').html(data);
                     $(selector).find('.modal-footer').html(btns);
 
