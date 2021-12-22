@@ -669,7 +669,7 @@
                         {
                             data += "<textarea class='form-control' "
                                 + "id='" + this._quoteattr(columnDefs[j].name) + "' "
-                                + fillAttrs(columnDefs[j], ['name', 'style', 'rows', 'cols', 'maxlength', 'readonly', 'disabled', 'required'])
+                                + fillAttrs(columnDefs[j], ['name', 'style', 'rows', 'cols', 'maxLength', 'readonly', 'disabled', 'required'])
                                 + "placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : title) + "' "
                                 + "data-special='" + this._quoteattr(columnDefs[j].special) + "' "
                                 + "data-unique='" + columnDefs[j].unique + "'>"
@@ -679,7 +679,7 @@
                         // Adding text-inputs and error labels, but also new HTML5 types (email, color, ...)
                         else {
                             data += "<input class='form-control' "
-                                + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxlength', 'value', 'readonly', 'disabled', 'required'])
+                                + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxLength', 'value', 'readonly', 'disabled', 'required'])
                                 + /* ???? */ (columnDefs[j].type.indexOf("readonly") >= 0 ? "readonly " : "") 
                                 + "id='" + this._quoteattr(columnDefs[j].name) + "' "
                                 + "title='" + this._quoteattr(columnDefs[j].hoverMsg) + "' "
