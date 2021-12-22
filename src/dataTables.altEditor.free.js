@@ -496,7 +496,7 @@
 
                 var adata = dt.rows({
                     selected: true
-                });
+                }).data().toArray();
 
                 that.onDeleteRow(that,
                     adata,
@@ -956,10 +956,10 @@
             /**
              * Default callback for deletion: mock webservice, always success.
              */
-            onDeleteRow: function(dt, selectedRows, success, error) {
+            onDeleteRow: function(dt, rowdata, success, error) {
                 console.log("Missing AJAX configuration for DELETE");
-                selectedRows.every(function (rowIdx, tableLoop, rowLoop) {
-                    success(this.data())
+                rowdata.every(function (rowIdx, tableLoop, rowLoop) {
+                    success(rowdata[rowIdx])
                 })
             },
 
