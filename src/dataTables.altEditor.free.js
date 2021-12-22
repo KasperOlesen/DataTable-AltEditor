@@ -523,19 +523,19 @@
 
             selectionListener: function() {
 
-                var dt = this.s.dt
+                var _dt = this.s.dt
 
-                dt.on('select', function (e, dt, type, indexes) {
+                _dt.on('select', function (e, dt, type, indexes) {
                     // when multiple rows selected then disable edit button
-                    if (dt.rows({selected: true}).count() > 1) {
-                        dt.buttons('edit:name').disable()
+                    if (_dt.rows({selected: true}).count() > 1) {
+                        _dt.buttons('edit:name').disable()
                     }
                 })
 
-                dt.on('deselect', function (e, dt, type, indexes) {
+                _dt.on('deselect', function (e, dt, type, indexes) {
                     // when multiple rows selected then disable edit button
-                    if (dt.rows({selected: true}).count() > 1) {
-                        dt.buttons('edit:name').disable()
+                    if (_dt.rows({selected: true}).count() > 1) {
+                        _dt.buttons('edit:name').disable()
                     }
                 })
             },
