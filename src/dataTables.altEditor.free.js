@@ -496,7 +496,7 @@
 
                 var adata = dt.rows({
                     selected: true
-                });
+                }).data().toArray();
 
                 that.onDeleteRow(that,
                     adata,
@@ -523,19 +523,19 @@
 
             selectionListener: function() {
 
-                var dt = this.s.dt
+                var _dt = this.s.dt
 
-                dt.on('select', function (e, dt, type, indexes) {
+                _dt.on('select', function (e, dt, type, indexes) {
                     // when multiple rows selected then disable edit button
-                    if (dt.rows({selected: true}).count() > 1) {
-                        dt.buttons('edit:name').disable()
+                    if (_dt.rows({selected: true}).count() > 1) {
+                        _dt.buttons('edit:name').disable()
                     }
                 })
 
-                dt.on('deselect', function (e, dt, type, indexes) {
+                _dt.on('deselect', function (e, dt, type, indexes) {
                     // when multiple rows selected then disable edit button
-                    if (dt.rows({selected: true}).count() > 1) {
-                        dt.buttons('edit:name').disable()
+                    if (_dt.rows({selected: true}).count() > 1) {
+                        _dt.buttons('edit:name').disable()
                     }
                 })
             },
@@ -956,10 +956,10 @@
             /**
              * Default callback for deletion: mock webservice, always success.
              */
-            onDeleteRow: function(dt, selectedRows, success, error) {
+            onDeleteRow: function(dt, rowdata, success, error) {
                 console.log("Missing AJAX configuration for DELETE");
-                selectedRows.every(function (rowIdx, tableLoop, rowLoop) {
-                    success(this.data())
+                rowdata.every(function (rowIdx, tableLoop, rowLoop) {
+                    success(rowdata[rowIdx])
                 })
             },
 
