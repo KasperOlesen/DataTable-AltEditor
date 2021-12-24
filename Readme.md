@@ -73,7 +73,7 @@ Column option                                   | Accepted values               
 `value`											| `"some value"`									 | Set default value for add modal. Actual value used for edit modal
 **Options for columns with type `"text"`:**     |                                                    |
 `pattern`                                       | `r.e.`                                             | The typed text will be matched against given regular expression, before submit.
-`msg`                                           | `"some msg"`                                       | An error message that is displayed in case pattern is not matched. Set HTML `"data-errorMsg"` attribute.
+`hoverMsg`                                      | `"some msg"`                                       | An error message is displayed in case `"pattern"` is not matched. It will be the same tooltip message.
 `maxLength`                                     | `integer`                                          | Set HTML `"maxlength"` attribute.
 `datepicker`                                    | `{}`                                               | Enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the object.
 `datetimepicker`                                | `{}`                                               | Enable a datetimepicker component. jQuery datetimepicker plugin must be linked. More datetimepicker configuration options may be passed within the object.
