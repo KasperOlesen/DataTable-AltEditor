@@ -1,0 +1,24 @@
+{ 
+    "modalClose" : "Sluiten",
+    "edit" : {
+        "title" : "Wijzigen",
+        "button" : "Wijzig"
+    },
+    "add" : {
+        "title" : "Nieuw",
+        "button" : "Aanmaken"
+    },
+    "delete" : {
+        "title" : "Verwijderen",
+        "button" : "Verwijder"
+    },
+    "success" : "Gelukt.",
+    "error" : {
+        "message" : "Er is een onverwachte fout opgetreden.",
+        "label" : "Fout",
+        "responseCode" : "Reactiecode:",
+        "required" : "Verplichte waarde",
+        "unique" : "Dubbele waarde"
+    }, 
+	"deleteMessage": "Ben je zeker dat je deze rij(en) wilt verwijderen?"
+}
