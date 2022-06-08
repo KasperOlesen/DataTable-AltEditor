@@ -251,23 +251,47 @@
 
                 // Bind 'unique' error messages
                 $(this.modal_selector).on('input', '[data-unique]', function(elm) {
+                    checkUnique(elm);
+                });
+
+                $(this.modal_selector).on('change', 'select[data-unique]', function (elm) {
+                    checkUnique(elm);
+                });
+
+                function checkUnique(elm) {
+                    console.log(elm);
                     if ($(elm.target).attr('data-unique') == null || $(elm.target).attr('data-unique') === 'false') {
                         return;
                     }
-                    var target = $(elm.target);
-                    var colData = dt.column("th:contains('" + target.attr("name") + "')").data();
+                    const target = $(elm.target);
+                    const name = target.attr('name');
+                    const index = getColumnNumberByName(name, dt);
+                    const colData = dt.column(index).data().toArray() ?? [];
                     // go through each item in this column
-                    var selectedCellData = null;
+                    let selectedCellData = null;
                     if (dt.row({selected: true}).index() != null)
-                        selectedCellData = dt.cell(dt.row({selected: true}).index(), dt.column("th:contains('" + target.attr("name") + "')").index()).data();
+                        selectedCellData = dt.cell(dt.row({ selected: true }).index(), index).data();
                     elm.target.setCustomValidity('');
-                    for (var j in colData) {
+                    for (let j in colData) {
                         // if the element is in the column and its not the selected one then its not unique
                         if (target.val() == colData[j] && colData[j] != selectedCellData) {
                             elm.target.setCustomValidity(that.language.error.unique);
+                            break;
                         }
                     }
-                });
+                }
+
+                function getColumnNumberByName(name, dt) {
+                    let index = null;
+                    dt.columns().every(function (i) {
+                        let $th = dt.columns(`:eq(${i})`).header().to$();
+                        if ($th.attr('name') && $th.attr('name') == name) {
+                            index = i;
+                            return true;
+                        }
+                    })
+                    return index;
+                }
 
                 // Add Refresh button
                 if (this.s.dt.button('refresh:name')) {

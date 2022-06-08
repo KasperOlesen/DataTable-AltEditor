@@ -65,7 +65,7 @@ Column option                                   | Accepted values               
 `disabled`                                      | `true \| false`                                    | Add `disabled` HTML attribute
 `required`                                      | `true \| false`                                    | Add `required` HTML attribute
 `hoverMsg`                                      | `"some msg"`                                       | The message will appear as a tooltip over the input field.
-`unique`                                        | `true \| false`                                    | Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute. (Probably there's some issue with this).
+`unique`                                        | `true \| false`                                    | Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML `"data-unique"` attribute.
 `uniqueMsg`                                     | `"some msg"`                                       | An error message that is displayed when the unique constraint is not respected. Set HTML `"data-uniqueMsg"` attribute.
 `special`                                       | `"any string"`                                     | Set HTML `"data-special"` attribute (don't know what's that needed for).
 `style`                                         | `"any string"`                                     | Set HTML `"style"` attribute.
