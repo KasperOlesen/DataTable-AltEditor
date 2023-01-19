@@ -301,6 +301,9 @@
                     title: this.language.add.title || 'Add record',
                     button: this.language.add.button || 'Add'
                 };
+                this.language.deleteMessage =
+                  this.language.deleteMessage ||
+                  "Are you sure you wish to delete this row?";
                 this.language.success = this.language.success || 'Success!';
                 this.language.error = this.language.error || {};
                 this.language.error = { 
@@ -470,7 +473,7 @@
                     var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-close data-dismiss="modal">' + that.language.modalClose + '</button>' +
                         '<button type="submit"  data-content="remove" class="btn btn-danger button" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
-                    $(selector).find('.modal-body').html(that.language.deleteMessage || `<h5>Are you sure you wish to delete ${adata.count()} rows?</h5>`);
+                    $(selector).find('.modal-body').html(that.language.deleteMessage);
                     $(selector).find('.modal-footer').html(btns);
                     var modalContent = $(selector).find('.modal-content');
                     if (modalContent.parent().is('form')) {
