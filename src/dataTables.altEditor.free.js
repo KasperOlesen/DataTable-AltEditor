@@ -189,11 +189,12 @@
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
-                    '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close close-button" data-dismiss="modal" data-close aria-label="' + this.language.modalClose + '">' +
-                    '<span aria-hidden="true">&times;</span></button>' +
+                    '<h4 style="padding-left: 1rem;" class="modal-title"></h4>' +
+                    '<button style="margin: initial;" type="button" class="btn-close" data-bs-dismiss="modal" data-close aria-label="' + this.language.modalClose + '">' +
+                    //'<span aria-hidden="true">&times;</span></button>' +
+                    '</button>' +
                     '</div>' +
-                    '<div class="modal-body">' +
+                    '<div class="modal-body" style="">' +
                     '<p></p>' +
                     '</div>' +
                     '<div class="modal-footer">' +
@@ -467,7 +468,7 @@
                 var formName = 'altEditor-delete-form-' + this.random_id;
                 var selector = this.modal_selector;
                 var fill = function () {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-close data-dismiss="modal">' + that.language.modalClose + '</button>' +
+                    var btns = '<button type="button" data-content="remove" class="btn btn-secondary" data-close data-bs-dismiss="modal">' + that.language.modalClose + '</button>' +
                         '<button type="submit"  data-content="remove" class="btn btn-danger button" id="deleteRowBtn">' + that.language.delete.button + '</button>';
                     $(selector).find('.modal-title').html(that.language.delete.title);
                     $(selector).find('.modal-body').html(that.language.deleteMessage || `<h5>Are you sure you wish to delete ${adata.count()} rows?</h5>`);
@@ -622,19 +623,19 @@
                             if(count == 0) {
                                 count++;
                                 data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) + "'>";
-                                data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                                data += "<div class='col-3 text-right' style='padding-top:4px;'>";
                                 data += "<label for='" + this._quoteattr(columnDefs[j].name) + "'>" + title + ":</label></div>";
-                                data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
+                                data += "<div class='col-2'>";
                             }
                             else {
-                                data += "<div class='col-sm-2 col-md-2 col-lg-2'>";
+                                data += "<div class='col-2'>";
                             }
                         }
                         else {
                             data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row' id='alteditor-row-" + this._quoteattr(columnDefs[j].name) +"'>";
-                            data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
+                            data += "<div class='col-3 text-right' style='padding-top:4px;'>";
                             data += "<label for='" + this._quoteattr(columnDefs[j].name) + "'>" + title + ":</label></div>";
-                            data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
+                            data += "<div class='col-9'>";
                         }
 
                         // Adding select-fields
@@ -655,7 +656,7 @@
                                 }
                             }
 
-                            data += "<select class='form-control" + (columnDefs[j].select2 ? ' select2' : '') + "' "
+                            data += "<select class='form-select form-select-sm" + (columnDefs[j].select2 ? ' select2' : '') + "' "
                                 + fillAttrs(columnDefs[j], ['name', 'style', 'readonly', 'disabled', 'required', 'multiple'])
                                 + "id='" + this._quoteattr(columnDefs[j].name) + "' "
                                 + "placeholder='" + this._quoteattr(columnDefs[j].placeholder ? columnDefs[j].placeholder : title) + "' "
@@ -678,7 +679,7 @@
                         }
                         // Adding text-inputs and error labels, but also new HTML5 types (email, color, ...)
                         else {
-                            data += "<input class='form-control' "
+                            data += "<input class='form-control form-control-sm' "
                                 + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxLength', 'value', 'readonly', 'disabled', 'required'])
                                 + /* ???? */ (columnDefs[j].type.indexOf("readonly") >= 0 ? "readonly " : "") 
                                 + "id='" + this._quoteattr(columnDefs[j].name) + "' "
@@ -687,7 +688,8 @@
                                 + "data-special='" + this._quoteattr(columnDefs[j].special) + "' "
                                 + "data-unique='" + columnDefs[j].unique + "' "
                                 + "style='overflow: hidden; " + this._quoteattr(columnDefs[j].style) + "' "
-                                + "class='form-control form-control-sm'>";
+                                //+ "class='form-control form-control-sm'"> ";
+                                + "> ";
                         }
 
                         data += "<label id='" + this._quoteattr(columnDefs[j].name) + "-label"
@@ -706,7 +708,7 @@
                 var selector = this.modal_selector;
                 var fill = function () 
                 {
-                    var btns = '<button type="button" data-content="remove" class="btn btn-default button secondary" data-dismiss="modal" data-close>' + closeCaption + '</button>' 
+                    var btns = '<button type="button" data-content="remove" class="btn btn-secondary" data-bs-dismiss="modal" data-close>' + closeCaption + '</button>' 
                         + '<button type="submit" form="' + formName + '" data-content="remove" class="btn btn-primary button" id="' + buttonClass + '">' + buttonCaption + '</button>';
 
                     $(selector).find('.modal-title').html(modalTitle);
