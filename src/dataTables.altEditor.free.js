@@ -644,14 +644,16 @@
                             if (optionsArray.length > 0) {
                                 // array-style select or select2
                                 for (var i = 0; i < optionsArray.length; i++) {
-                                    options += "<option value='" + this._quoteattr(optionsArray[i])
-                                        + "'>" + optionsArray[i] + "</option>";
+                                    options += "<option value='" + this._quoteattr(optionsArray[i])+ "'"
+									+(optionsArray[i]===columnDefs[j].value?" selected":"") //enables default value for select
+                                        + ">" + optionsArray[i] + "</option>";
                                 }
                             } else {
                                 // object-style select or select2
                                 for (var x in optionsArray) {
-                                    options += "<option value='" + this._quoteattr(x) + "' >"
-                                        + optionsArray[x] + "</option>";
+                                    options += "<option value='" + this._quoteattr(x) + "'"
+								    +(x===columnDefs[j].value?" selected":"")+ ">" //enables defualt value for select
+                                    + optionsArray[x] + "</option>";
                                 }
                             }
 
@@ -732,6 +734,7 @@
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
                         // Require select2 plugin
+						 columnDefs[j].select2.dropdownParent = $("#altEditor-modal-" + this.random_id); //fixes focus issue with select2 per #217
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     } 
                     else if (columnDefs[j].datepicker) {
