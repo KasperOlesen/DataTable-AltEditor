@@ -519,6 +519,15 @@
                 var selector = this.modal_selector;
                 $(selector + ' input[0]').trigger('focus');
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
+                for (var j in columnDefs) { //added default value
+                    if (columnDefs[j].name != null && columnDefs[j].value!=null)  {
+                        var jquerySelector = "#" + columnDefs[j].name.toString().replace(/\./g, "\\.");
+                        $(selector).find(jquerySelector)
+                                    .filter(':input[type!="file"]').val(columnDefs[j].value) // this._quoteattr or not? see #121
+                                                                    .trigger("change"); // required by select2
+                    }
+                }
+              
             },
 
             selectionListener: function() {
@@ -644,14 +653,14 @@
                             if (optionsArray.length > 0) {
                                 // array-style select or select2
                                 for (var i = 0; i < optionsArray.length; i++) {
-                                    options += "<option value='" + this._quoteattr(optionsArray[i])
+                                    options += "<option value='" + this._quoteattr(optionsArray[i])							
                                         + "'>" + optionsArray[i] + "</option>";
                                 }
                             } else {
                                 // object-style select or select2
                                 for (var x in optionsArray) {
-                                    options += "<option value='" + this._quoteattr(x) + "' >"
-                                        + optionsArray[x] + "</option>";
+                                    options += "<option value='" + this._quoteattr(x) + ">"
+                                    + optionsArray[x] + "</option>";
                                 }
                             }
 
@@ -679,7 +688,7 @@
                         // Adding text-inputs and error labels, but also new HTML5 types (email, color, ...)
                         else {
                             data += "<input class='form-control' "
-                                + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxLength', 'value', 'readonly', 'disabled', 'required'])
+                                + fillAttrs(columnDefs[j], ['type', 'pattern', 'accept', 'name', 'step', 'min', 'max', 'maxLength', 'readonly', 'disabled', 'required'])
                                 + /* ???? */ (columnDefs[j].type.indexOf("readonly") >= 0 ? "readonly " : "") 
                                 + "id='" + this._quoteattr(columnDefs[j].name) + "' "
                                 + "title='" + this._quoteattr(columnDefs[j].hoverMsg) + "' "
@@ -732,6 +741,7 @@
                 for (var j in columnDefs) {
                     if (columnDefs[j].select2) {
                         // Require select2 plugin
+						 columnDefs[j].select2.dropdownParent = $("#altEditor-modal-" + this.random_id); //fixes focus issue with select2 per #217
                         $(selector).find("select#" + columnDefs[j].name).select2(columnDefs[j].select2);
                     } 
                     else if (columnDefs[j].datepicker) {
