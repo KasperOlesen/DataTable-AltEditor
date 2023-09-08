@@ -2,7 +2,7 @@
     "modalClose" : "Fechar",
     "edit" : {
         "title" : "Editar",
-        "button" : "Editar"
+        "button" : "Salvar"
     },
     "add" : {
         "title" : "Adicionar Registro",
@@ -12,12 +12,13 @@
         "title" : "Deletar Registro",
         "button" : "Deletar"
     },
+	"deleteMessage" : "Tem certeza que deseja deletar este registro?",
     "success" : "Sucesso!",
     "error" : {
-        "message" : "Ocorreu um erro.",
-        "label" : "Erro!",
-        "responseCode" : "Código de Resposta: ",
-        "required" : "Campo é obrigatório",
-        "unique" : "Valor duplicado"
+		"message" : "Ocorreu um erro.",
+		"label" : "Erro!",
+		"responseCode" : "Código de Resposta: ",
+		"required" : "Campo é obrigatório",
+		"unique" : "Valor duplicado"
     }
 }
