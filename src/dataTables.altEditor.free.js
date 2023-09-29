@@ -686,7 +686,7 @@
                             } else {
                                 // object-style select or select2
                                 for (var x in optionsArray) {
-                                    options += "<option value='" + this._quoteattr(x) + ">"
+                                    options += "<option value='" + this._quoteattr(x) + "'>"
                                     + optionsArray[x] + "</option>";
                                 }
                             }
